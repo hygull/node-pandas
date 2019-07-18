@@ -1,0 +1,26 @@
+{
+  "name": "node-pandas",
+  "version": "1.0.0",
+  "description": "An npm package that incorporates minimal features of python pandas.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./tests/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hygull/node-pandas.git"
+  },
+  "keywords": [
+    "Series",
+    "DataFrame",
+    "JavaScript",
+    "Node",
+    "Python pandas"
+  ],
+  "author": "Rishikesh Agrawani <rishikesh0014051992@gmail.com> (https://hygull.github.io/bibtex/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hygull/node-pandas/issues"
+  },
+  "homepage": "https://github.com/hygull/node-pandas#readme"
+}
