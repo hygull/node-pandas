@@ -2,7 +2,7 @@
   "name": "node-pandas",
   "version": "1.0.0",
   "description": "An npm package that incorporates minimal features of python pandas.",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
     "test": "node ./tests/test.js"
   },
