@@ -2,6 +2,8 @@
 
 An npm package that incorporates minimal features of python pandas. 
 
+![npm](https://img.shields.io/npm/v/node-pandas.svg?label=node-pandas) ![NPM](https://img.shields.io/npm/l/node-pandas.svg)
+
 > **Note:** Currently, this package is in development. More methods/functions/attributes will be added with time. 
 >
 >For now (using v1.0.0), you can 
@@ -9,7 +11,7 @@ An npm package that incorporates minimal features of python pandas.
 > + create Series(using 1D array), DataFrame(using 2D array or file)
 > + view columns, index
 > + access elements using indices/column names
->
+> + view contents in pretty tabular form on console
 
 ## Installation
 
@@ -140,7 +142,7 @@ undefined
 
 <h3 id='df-ex2'><code>Example 2 - Creating DataFrame using a CSV file</code></h3>
 
-> **Note**: If CSV will have multiple lines b/w 2 consecutive rows, no problem, it takes care and considers single one.
+> **Note**: If CSV will have multiple newlines b/w 2 consecutive rows, no problem, it takes care of it and considers as single newline.
 >
 > **`df = pd.readCsv(csvPath)`** where `CsvPath` is absolute/relative path of the CSV file.
 >
@@ -238,20 +240,22 @@ undefined
 
 ### References
 
-- [x] [Node's util](https://millermedeiros.github.io/mdoc/examples/node_api/doc/util.html)
++ [Node's util](https://millermedeiros.github.io/mdoc/examples/node_api/doc/util.html)
 
-- [x] [JavaScript Arrays - w3schools](https://www.w3schools.com/js/js_arrays.asp)
++ [JavaScript Arrays - w3schools](https://www.w3schools.com/js/js_arrays.asp)
 
-- [x] [How to test your new NPM module without publishing it every 5 minutes](https://medium.com/@the1mills/how-to-test-your-npm-module-without-publishing-it-every-5-minutes-1c4cb4b369be)
++ [How to test your new NPM module without publishing it every 5 minutes](https://medium.com/@the1mills/how-to-test-your-npm-module-without-publishing-it-every-5-minutes-1c4cb4b369be)
 
-- [x] [Node's path](https://nodejs.org/dist/latest-v6.x/docs/api/path.html)
++ [Node's path](https://nodejs.org/dist/latest-v6.x/docs/api/path.html)
 
-- [x] [Node's fs - file system](https://nodejs.org/dist/latest-v6.x/docs/api/fs.html)
++ [Node's fs - file system](https://nodejs.org/dist/latest-v6.x/docs/api/fs.html)
 
-- [x] [9 Ways to Remove Elements From A JavaScript Array - Plus How to Safely Clear JavaScript Arrays](https://love2dev.com/blog/javascript-remove-from-array/)
++ [9 Ways to Remove Elements From A JavaScript Array - Plus How to Safely Clear JavaScript Arrays](https://love2dev.com/blog/javascript-remove-from-array/)
 
-- [x] [JS - isNAN()](https://www.w3schools.com/jsref/jsref_isnan.asp)
++ [JS - isNAN()](https://www.w3schools.com/jsref/jsref_isnan.asp)
 
-- [x] [Check synchronously if file/directory exists in Node.js](https://stackoverflow.com/questions/4482686/check-synchronously-if-file-directory-exists-in-node-js/4482701)
++ [Check synchronously if file/directory exists in Node.js](https://stackoverflow.com/questions/4482686/check-synchronously-if-file-directory-exists-in-node-js/4482701)
 
-- [x] [Node's require() returns an empty object (circular refs -> {})](https://stackoverflow.com/questions/23875233/require-returns-an-empty-object/23875299)
++ [Node's require() returns an empty object (circular refs -> {})](https://stackoverflow.com/questions/23875233/require-returns-an-empty-object/23875299)
+
+
