@@ -1,10 +1,28 @@
-const dataType = require('../utils/dataType')
+const {
+    dataType, 
+    getTransformedDataList,
+    getIndicesColumns
+} = require('../utils/utils')
+
 
 class NodeDataFrame extends Object {
     constructor(dataList, columns) {
         // Call the constructor of super class before using this keyword
         super(...dataList)
+
+        let index;
+        
+        if(columns) {
+            ({index, dataList} = getTransformedDataList(dataList, columns))
+            this.columns = columns
+            this.index = index
+        } else {
+            let {index, columns} = getIndicesColumns(dataList)
+            this.columns = columns
+            this.index = index
+        }
         this.data = dataList
+
     }
 
     set data(data) {

@@ -52,9 +52,9 @@ undefined
 
 ### References
 
--[x] [Node's util](https://millermedeiros.github.io/mdoc/examples/node_api/doc/util.html)
+- [x] [Node's util](https://millermedeiros.github.io/mdoc/examples/node_api/doc/util.html)
 
--[x] [JavaScript Arrays - w3schools](https://www.w3schools.com/js/js_arrays.asp)
+- [x] [JavaScript Arrays - w3schools](https://www.w3schools.com/js/js_arrays.asp)
 
--[x] [How to test your new NPM module without publishing it every 5 minutes](https://medium.com/@the1mills/how-to-test-your-npm-module-without-publishing-it-every-5-minutes-1c4cb4b369be)
+- [x] [How to test your new NPM module without publishing it every 5 minutes](https://medium.com/@the1mills/how-to-test-your-npm-module-without-publishing-it-every-5-minutes-1c4cb4b369be)
 

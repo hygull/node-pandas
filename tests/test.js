@@ -6,15 +6,16 @@ console.log(s)
 console.log(s[0])
 s.show
 
-
-
 dataList = [
-    [1, 5, 7],
-    [2, 5, 6],
-    [7, 8, 9],
-    [4, 3, 1],
-    [2, 5, 8]
+    ['Guido Van Rossum', 6, 'Python'],
+    ['Ryan Dahl', 5, 'Node.js'],
+    ['Anders Hezlsberg', 7, 'TypeScript'],
+    ['Wes McKinney', 3, 'Pandas'],
+    ['Ken Thompson', 1, 'B language']
 ]
 
-let df = pd.DataFrame(dataList);
+columns = ['full_name', 'user_id', 'technology']
+let df = pd.DataFrame(dataList, columns);
 df.show
+console.log(df.columns)
+console.log(df.index)
