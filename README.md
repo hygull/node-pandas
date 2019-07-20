@@ -2,11 +2,13 @@
 
 An npm package that incorporates minimal features of python pandas. 
 
-### Installation
+## Installation
 
-`npm install node-pandas`
+#### `npm install node-pandas`
 
-### Getting started
+## Getting started
+
+> ## `Series`
 
 ```javascript
 > const pd = require("node-pandas")
@@ -50,6 +52,61 @@ undefined
 > 
 ```
 
+> ## `DataFrame`
+
+
+```javascript
+> const pd = require("node-pandas")
+undefined
+> 
+> columns = ['full_name', 'user_id', 'technology']
+[ 'full_name', 'user_id', 'technology' ]
+> 
+> df = pd.DataFrame([
+...     ['Guido Van Rossum', 6, 'Python'],
+...     ['Ryan Dahl', 5, 'Node.js'],
+...     ['Anders Hezlsberg', 7, 'TypeScript'],
+...     ['Wes McKinney', 3, 'Pandas'],
+...     ['Ken Thompson', 1, 'B language']
+... ], columns)
+NodeDataFrame {
+  columns: [ 'full_name', 'user_id', 'technology' ],
+  index: [ 0, 1, 2, 3, 4 ],
+  _data:
+   [ { full_name: 'Guido Van Rossum',
+       user_id: 6,
+       technology: 'Python' },
+     { full_name: 'Ryan Dahl', user_id: 5, technology: 'Node.js' },
+     { full_name: 'Anders Hezlsberg',
+       user_id: 7,
+       technology: 'TypeScript' },
+     { full_name: 'Wes McKinney', user_id: 3, technology: 'Pandas' },
+     { full_name: 'Ken Thompson',
+       user_id: 1,
+       technology: 'B language' } ] }
+> 
+> df.show
+┌─────────┬────────────────────┬─────────┬──────────────┐
+│ (index) │     full_name      │ user_id │  technology  │
+├─────────┼────────────────────┼─────────┼──────────────┤
+│    0    │ 'Guido Van Rossum' │    6    │   'Python'   │
+│    1    │    'Ryan Dahl'     │    5    │  'Node.js'   │
+│    2    │ 'Anders Hezlsberg' │    7    │ 'TypeScript' │
+│    3    │   'Wes McKinney'   │    3    │   'Pandas'   │
+│    4    │   'Ken Thompson'   │    1    │ 'B language' │
+└─────────┴────────────────────┴─────────┴──────────────┘
+undefined
+> 
+> df.index
+[ 0, 1, 2, 3, 4 ]
+> 
+> df.coulmns
+undefined
+> 
+> df.columns
+[ 'full_name', 'user_id', 'technology' ]
+> 
+```
 ### References
 
 - [x] [Node's util](https://millermedeiros.github.io/mdoc/examples/node_api/doc/util.html)

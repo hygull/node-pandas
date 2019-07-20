@@ -4,3 +4,6 @@ function getIndicesColumns(dataList) {
 
     return {index, columns}
 }
+
+
+module.exports = getIndicesColumns
