@@ -1,6 +1,6 @@
 # node-pandas
 
-An npm package that incorporates minimal features of python [pandas](https://pandas.pydata.org/). 
+An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates minimal features of python [pandas](https://pandas.pydata.org/). Check it on npm at [https://www.npmjs.com/package/node-pandas](https://www.npmjs.com/package/node-pandas).
 
 ![npm](https://img.shields.io/npm/v/node-pandas.svg?label=node-pandas) ![NPM](https://img.shields.io/npm/l/node-pandas.svg)
 
