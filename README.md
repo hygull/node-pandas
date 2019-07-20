@@ -2,6 +2,14 @@
 
 An npm package that incorporates minimal features of python pandas. 
 
+> **Note:** Currently, this package is in development. More methods/functions/attributes will be added with time. 
+>
+>For now (using v1.0.0), you can 
+>
+> + create Series(using 1D array), DataFrame(using 2D array or file)
+> + view columns, index
+> + access elements using indices/column names
+>
 
 ## Installation
 
@@ -211,6 +219,12 @@ NodeDataFrame {
 │    5    │   'Briella Brown'    │ 'JavaScirpt developer' │  'JavaScript'   │ 8844  │
 └─────────┴──────────────────────┴────────────────────────┴─────────────────┴───────┘
 undefined
+> 
+```
+
+```javascript
+> df[0]['fullName']
+'Ken Thompson'
 > 
 ```
 

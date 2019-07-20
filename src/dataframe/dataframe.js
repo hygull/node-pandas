@@ -5,7 +5,7 @@ const {
 } = require('../utils/utils')
 
 
-class NodeDataFrame extends Object {
+class NodeDataFrame extends Array { // Object => df[0] => undefined 
     constructor(dataList, columns) {
         // Call the constructor of super class before using this keyword
         super(...dataList)
