@@ -2,7 +2,6 @@
 
 An npm package that incorporates minimal features of python pandas. 
 
-<hr>
 
 ## Installation
 
@@ -132,7 +131,13 @@ undefined
 
 > **Note**: If CSV will have multiple lines b/w 2 consecutive rows, no problem, it takes care and considers single one.
 >
-> **`devs.csv`** &nbsp; `cat /Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv`
+> **`df = pd.readCsv(csvPath)`** where `CsvPath` is absolute/relative path of the CSV file.
+>
+> **Examples:**
+> `df = pd.readCsv("../node-pandas/docs/csvs/devs.csv")`
+> `df = pd.readCsv("/Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv")`
+
+**`devs.csv`** &nbsp; `cat /Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv`
 
 ```csv
 fullName,Profession,Language,DevId
