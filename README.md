@@ -2,13 +2,33 @@
 
 An npm package that incorporates minimal features of python pandas. 
 
+<hr>
+
 ## Installation
 
 #### `npm install node-pandas`
 
+<hr>
+
+## Table of contents
+
+> ### `Series`
+
+1.  [Example 1 - Creating Series using 1D array/list](#s-ex1)
+
+> ### `DataFrame`
+
+1.  [Example 1 - Creating DataFrame using 2D array/list](#df-ex1)
+
+2.  [Example 2 - Creating DataFrame using a CSV file](#df-ex2)
+
+<hr>
+
 ## Getting started
 
 > ## `Series`
+
+<h3 id='s-ex1'><code>Example 1 - Creating Series using 1D array/list</code></h3>
 
 ```javascript
 > const pd = require("node-pandas")
@@ -52,9 +72,11 @@ undefined
 > 
 ```
 
+<hr>
+
 > ## `DataFrame` 
 
-<h3 id='df-ex1'><code>Example 1 - Creating DataFrame using 2D list</code></h3>
+<h3 id='df-ex1'><code>Example 1 - Creating DataFrame using 2D array/list</code></h3>
 
 ```javascript
 > const pd = require("node-pandas")
@@ -108,12 +130,9 @@ undefined
 
 <h3 id='df-ex2'><code>Example 2 - Creating DataFrame using a CSV file</code></h3>
 
-
-#### `cat /Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv`
-
 > **Note**: If CSV will have multiple lines b/w 2 consecutive rows, no problem, it takes care and considers single one.
 >
-> **`devs.csv`**
+> **`devs.csv`** &nbsp; `cat /Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv`
 
 ```csv
 fullName,Profession,Language,DevId
@@ -184,6 +203,8 @@ NodeDataFrame {
 undefined
 > 
 ```
+
+<hr>
 
 ### References
 
