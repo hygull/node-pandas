@@ -5,7 +5,6 @@
 const Series = require('./series/series')
 const DataFrame = require('./dataframe/dataframe')
 
-
 module.exports = {
     Series,
     DataFrame

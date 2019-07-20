@@ -1,5 +1,5 @@
 class NodeSeries extends Array {
-    constructor(...data) {
+    constructor(data) {
         super(...data) // ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor
         this._data = data 
     }  
@@ -10,7 +10,7 @@ class NodeSeries extends Array {
 }
 
 function Series(data) {
-    let series = new NodeSeries(...data)
+    let series = new NodeSeries(data)
     return series
 }
 
