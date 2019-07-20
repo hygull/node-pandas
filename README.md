@@ -5,9 +5,12 @@ An npm package that incorporates minimal features of python pandas.
 
 ## Installation
 
-#### `npm install node-pandas`
+| Installation type | command |
+| --- | --- |
+| Local | <h3>`npm install node-pandas --save`</h3> |
+| Local as dev dependency |  <h3>`npm install node-pandas --save-dev`</h3> |
+| Global | <h3>`npm install node-pandas` </h3>|
 
-<hr>
 
 ## Table of contents
 
