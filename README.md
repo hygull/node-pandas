@@ -226,6 +226,12 @@ undefined
 > df[0]['fullName']
 'Ken Thompson'
 > 
+> df[3]['Profession']
+'Python developer'
+> 
+> df[5]['Language']
+'JavaScript'
+> 
 ```
 
 <hr>
