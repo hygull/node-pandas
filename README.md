@@ -8,7 +8,7 @@ An npm package that incorporates minimal features of python [pandas](https://pan
 >
 > **Note:** Currently, this package is in development. More methods/functions/attributes will be added with time. 
 >
->For now (using ![npm](https://img.shields.io/npm/v/node-pandas.svg?label=node-pandas)), you can 
+> For now, you can 
 >
 > + create Series(using 1D array), DataFrame(using 2D array or file)
 > + view columns, index
@@ -20,8 +20,8 @@ An npm package that incorporates minimal features of python [pandas](https://pan
 | Installation type | command |
 | --- | --- |
 | Local | `npm install node-pandas --save` |
-| Local as dev dependency |  `npm install node-pandas --save-dev`|
-| Global | `npm install node-pandas`|
+| Local as dev dependency | `npm install node-pandas --save-dev` |
+| Global | `npm install node-pandas` |
 
 
 ## Table of contents
@@ -254,7 +254,7 @@ undefined
 
 + [9 Ways to Remove Elements From A JavaScript Array - Plus How to Safely Clear JavaScript Arrays](https://love2dev.com/blog/javascript-remove-from-array/)
 
-+ [JS - isNAN()](https://www.w3schools.com/jsref/jsref_isnan.asp)
++ [JS - isNaN()](https://www.w3schools.com/jsref/jsref_isnan.asp)
 
 + [Check synchronously if file/directory exists in Node.js](https://stackoverflow.com/questions/4482686/check-synchronously-if-file-directory-exists-in-node-js/4482701)
 
