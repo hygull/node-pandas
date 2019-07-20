@@ -8,7 +8,7 @@ An npm package that incorporates minimal features of python [pandas](https://pan
 >
 > **Note:** Currently, this package is in development. More methods/functions/attributes will be added with time. 
 >
->For now (using v1.0.0), you can 
+>For now (using ![npm](https://img.shields.io/npm/v/node-pandas.svg?label=node-pandas)), you can 
 >
 > + create Series(using 1D array), DataFrame(using 2D array or file)
 > + view columns, index
@@ -19,9 +19,9 @@ An npm package that incorporates minimal features of python [pandas](https://pan
 
 | Installation type | command |
 | --- | --- |
-| Local | <h3>`npm install node-pandas --save`</h3> |
-| Local as dev dependency |  <h3>`npm install node-pandas --save-dev`</h3> |
-| Global | <h3>`npm install node-pandas` </h3>|
+| Local | `npm install node-pandas --save` |
+| Local as dev dependency |  `npm install node-pandas --save-dev`|
+| Global | `npm install node-pandas`|
 
 
 ## Table of contents
