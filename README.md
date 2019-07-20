@@ -1,9 +1,11 @@
 # node-pandas
 
-An npm package that incorporates minimal features of python pandas. 
+An npm package that incorporates minimal features of python [pandas](https://pandas.pydata.org/). 
 
 ![npm](https://img.shields.io/npm/v/node-pandas.svg?label=node-pandas) ![NPM](https://img.shields.io/npm/l/node-pandas.svg)
 
+> You can also have a look at this colorful documentation at [https://hygull.github.io/node-pandas/](https://hygull.github.io/node-pandas/).
+>
 > **Note:** Currently, this package is in development. More methods/functions/attributes will be added with time. 
 >
 >For now (using v1.0.0), you can 
