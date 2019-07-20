@@ -134,10 +134,12 @@ undefined
 > **`df = pd.readCsv(csvPath)`** where `CsvPath` is absolute/relative path of the CSV file.
 >
 > **Examples:**
+>
 > `df = pd.readCsv("../node-pandas/docs/csvs/devs.csv")`
+>
 > `df = pd.readCsv("/Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv")`
 
-**`devs.csv`** &nbsp; `cat /Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv`
+**`devs.csv`** &raquo; `cat /Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv`
 
 ```csv
 fullName,Profession,Language,DevId
@@ -224,3 +226,9 @@ undefined
 - [x] [Node's fs - file system](https://nodejs.org/dist/latest-v6.x/docs/api/fs.html)
 
 - [x] [9 Ways to Remove Elements From A JavaScript Array - Plus How to Safely Clear JavaScript Arrays](https://love2dev.com/blog/javascript-remove-from-array/)
+
+- [x] [JS - isNAN()](https://www.w3schools.com/jsref/jsref_isnan.asp)
+
+- [x] [Check synchronously if file/directory exists in Node.js](https://stackoverflow.com/questions/4482686/check-synchronously-if-file-directory-exists-in-node-js/4482701)
+
+- [x] [Node's require() returns an empty object (circular refs -> {})](https://stackoverflow.com/questions/23875233/require-returns-an-empty-object/23875299)
