@@ -52,8 +52,9 @@ undefined
 > 
 ```
 
-> ## `DataFrame`
+> ## `DataFrame` 
 
+<h3 id='df-ex1'><code>Example 1 - Creating DataFrame using 2D list</code></h3>
 
 ```javascript
 > const pd = require("node-pandas")
@@ -100,13 +101,90 @@ undefined
 > df.index
 [ 0, 1, 2, 3, 4 ]
 > 
-> df.coulmns
-undefined
-> 
 > df.columns
 [ 'full_name', 'user_id', 'technology' ]
 > 
 ```
+
+<h3 id='df-ex2'><code>Example 2 - Creating DataFrame using a CSV file</code></h3>
+
+
+#### `cat /Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv`
+
+> **Note**: If CSV will have multiple lines b/w 2 consecutive rows, no problem, it takes care and considers single one.
+>
+> **`devs.csv`**
+
+```csv
+fullName,Profession,Language,DevId
+Ken Thompson,C developer,C,1122
+Ron Wilson,Ruby developer,Ruby,4433
+Jeff Thomas,Java developer,Java,8899
+
+
+Rishikesh Agrawani,Python developer,Python,6677
+Kylie Dwine,C++,C++ Developer,0011
+
+Briella Brown,JavaScirpt developer,JavaScript,8844
+```
+
+Now have a look the below statements executed on Node REPL.
+
+```javascript
+> const pd = require("node-pandas")
+undefined
+> 
+> df = pd.readCsv("/Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv")
+NodeDataFrame {
+  columns: [ 'fullName', 'Profession', 'Language', 'DevId' ],
+  index: [ '0', '1', '2', '3', '4', '5' ],
+  _data:
+   [ { fullName: 'Ken Thompson',
+       Profession: 'C developer',
+       Language: 'C',
+       DevId: 1122 },
+     { fullName: 'Ron Wilson',
+       Profession: 'Ruby developer',
+       Language: 'Ruby',
+       DevId: 4433 },
+     { fullName: 'Jeff Thomas',
+       Profession: 'Java developer',
+       Language: 'Java',
+       DevId: 8899 },
+     { fullName: 'Rishikesh Agrawani',
+       Profession: 'Python developer',
+       Language: 'Python',
+       DevId: 6677 },
+     { fullName: 'Kylie Dwine',
+       Profession: 'C++',
+       Language: 'C++ Developer',
+       DevId: 11 },
+     { fullName: 'Briella Brown',
+       Profession: 'JavaScirpt developer',
+       Language: 'JavaScript',
+       DevId: 8844 } ] }
+> 
+> df.index
+[ '0', '1', '2', '3', '4', '5' ]
+> 
+> df.columns
+[ 'fullName', 'Profession', 'Language', 'DevId' ]
+> 
+> df.show
+┌─────────┬──────────────────────┬────────────────────────┬─────────────────┬───────┐
+│ (index) │       fullName       │       Profession       │    Language     │ DevId │
+├─────────┼──────────────────────┼────────────────────────┼─────────────────┼───────┤
+│    0    │    'Ken Thompson'    │     'C developer'      │       'C'       │ 1122  │
+│    1    │     'Ron Wilson'     │    'Ruby developer'    │     'Ruby'      │ 4433  │
+│    2    │    'Jeff Thomas'     │    'Java developer'    │     'Java'      │ 8899  │
+│    3    │ 'Rishikesh Agrawani' │   'Python developer'   │    'Python'     │ 6677  │
+│    4    │    'Kylie Dwine'     │         'C++'          │ 'C++ Developer' │  11   │
+│    5    │   'Briella Brown'    │ 'JavaScirpt developer' │  'JavaScript'   │ 8844  │
+└─────────┴──────────────────────┴────────────────────────┴─────────────────┴───────┘
+undefined
+> 
+```
+
 ### References
 
 - [x] [Node's util](https://millermedeiros.github.io/mdoc/examples/node_api/doc/util.html)
@@ -115,3 +193,8 @@ undefined
 
 - [x] [How to test your new NPM module without publishing it every 5 minutes](https://medium.com/@the1mills/how-to-test-your-npm-module-without-publishing-it-every-5-minutes-1c4cb4b369be)
 
+- [x] [Node's path](https://nodejs.org/dist/latest-v6.x/docs/api/path.html)
+
+- [x] [Node's fs - file system](https://nodejs.org/dist/latest-v6.x/docs/api/fs.html)
+
+- [x] [9 Ways to Remove Elements From A JavaScript Array - Plus How to Safely Clear JavaScript Arrays](https://love2dev.com/blog/javascript-remove-from-array/)

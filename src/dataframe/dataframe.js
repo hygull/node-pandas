@@ -1,7 +1,7 @@
 const {
     dataType, 
     getTransformedDataList,
-    getIndicesColumns
+    getIndicesColumns,
 } = require('../utils/utils')
 
 
@@ -11,7 +11,7 @@ class NodeDataFrame extends Object {
         super(...dataList)
 
         let index;
-        
+
         if(columns) {
             ({index, dataList} = getTransformedDataList(dataList, columns))
             this.columns = columns
@@ -22,7 +22,6 @@ class NodeDataFrame extends Object {
             this.index = index
         }
         this.data = dataList
-
     }
 
     set data(data) {
@@ -38,6 +37,8 @@ class NodeDataFrame extends Object {
     get show() {
         console.table(this.data)
     }
+
+
 }
 
 function DataFrame(dataList, columns=null) {
