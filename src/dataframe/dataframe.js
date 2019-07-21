@@ -4,6 +4,7 @@ const {
     getIndicesColumns,
 } = require('../utils/utils')
 
+const CsvBase = require("../bases/CsvBase")
 
 class NodeDataFrame extends Array { // Object => df[0] => undefined 
     constructor(dataList, columns) {
@@ -22,6 +23,9 @@ class NodeDataFrame extends Array { // Object => df[0] => undefined
             this.index = index
         }
         this.data = dataList
+        this.rows = this.index.length
+        this.cols = this.columns.length
+        this.out = true
     }
 
     set data(data) {
@@ -37,9 +41,10 @@ class NodeDataFrame extends Array { // Object => df[0] => undefined
     get show() {
         console.table(this.data)
     }
-
-
 }
+
+// https://javascript.info/mixins (class, Object)
+Object.assign(NodeDataFrame.prototype, CsvBase)
 
 function DataFrame(dataList, columns=null) {
     let dataframe = new NodeDataFrame(dataList, columns)

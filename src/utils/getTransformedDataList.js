@@ -7,7 +7,6 @@ function getTransformedDataList(dataList, columns) {
         let dType = dataType(dataList[0]);
         let newDataList = []
         
-
         if(dType == 'Array') {
             for(let i=0; i < dataList.length; i++) {
                 let row = dataList[i]

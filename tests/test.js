@@ -47,3 +47,5 @@ console.log(df3)
 df3.show
 
 console.log(df3[0]['fullName'])
+
+df3.toCsv('/Users/hygull/Desktop/try/node-pandas.csv')
