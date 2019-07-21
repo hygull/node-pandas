@@ -260,4 +260,6 @@ undefined
 
 + [Node's require() returns an empty object (circular refs -> {})](https://stackoverflow.com/questions/23875233/require-returns-an-empty-object/23875299)
 
++ [Javascript - Mixins (Adding methods to classes)](https://javascript.info/mixins)
+
 
