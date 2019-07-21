@@ -169,7 +169,7 @@ Jeff Thomas,Java developer,Java,8899
 Rishikesh Agrawani,Python developer,Python,6677
 Kylie Dwine,C++,C++ Developer,0011
 
-Briella Brown,JavaScirpt developer,JavaScript,8844
+Briella Brown,JavaScript developer,JavaScript,8844
 ```
 
 Now have a look the below statements executed on Node REPL.
@@ -204,7 +204,7 @@ NodeDataFrame {
        Language: 'C++ Developer',
        DevId: 11 },
      { fullName: 'Briella Brown',
-       Profession: 'JavaScirpt developer',
+       Profession: 'JavaScript developer',
        Language: 'JavaScript',
        DevId: 8844 } ] }
 > 
@@ -223,7 +223,7 @@ NodeDataFrame {
 │    2    │    'Jeff Thomas'     │    'Java developer'    │     'Java'      │ 8899  │
 │    3    │ 'Rishikesh Agrawani' │   'Python developer'   │    'Python'     │ 6677  │
 │    4    │    'Kylie Dwine'     │         'C++'          │ 'C++ Developer' │  11   │
-│    5    │   'Briella Brown'    │ 'JavaScirpt developer' │  'JavaScript'   │ 8844  │
+│    5    │   'Briella Brown'    │ 'JavaScript developer' │  'JavaScript'   │ 8844  │
 └─────────┴──────────────────────┴────────────────────────┴─────────────────┴───────┘
 undefined
 > 
@@ -272,7 +272,7 @@ NodeDataFrame [
     Language: 'C++ Developer',
     DevId: 11 },
   { fullName: 'Briella Brown',
-    Profession: 'JavaScirpt developer',
+    Profession: 'JavaScript developer',
     Language: 'JavaScript',
     DevId: 8844 },
   columns: [ 'fullName', 'Profession', 'Language', 'DevId' ],
@@ -298,7 +298,7 @@ NodeDataFrame [
       Language: 'C++ Developer',
       DevId: 11 },
     { fullName: 'Briella Brown',
-      Profession: 'JavaScirpt developer',
+      Profession: 'JavaScript developer',
       Language: 'JavaScript',
       DevId: 8844 } ],
   rows: 6,
@@ -332,7 +332,7 @@ Ron Wilson,Ruby developer,Ruby,4433
 Jeff Thomas,Java developer,Java,8899
 Rishikesh Agrawani,Python developer,Python,6677
 Kylie Dwine,C++,C++ Developer,11
-Briella Brown,JavaScirpt developer,JavaScript,8844
+Briella Brown,JavaScript developer,JavaScript,8844
 ```
 
 <hr>
