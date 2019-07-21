@@ -10,8 +10,9 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
 >
 > For now, you can 
 >
-> + create Series(using 1D array), DataFrame(using 2D array or file)
+> + create Series(using 1D array), DataFrame(using 2D array or file `readCsv()`)
 > + view columns, index
+> + save DataFrame in a CSV file `toCsv()`
 > + access elements using indices/column names
 > + view contents in pretty tabular form on console
 
@@ -36,7 +37,7 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
 
 2.  [Example 2 - Creating DataFrame using a CSV file](#df-ex2)
 
-3.  [Example 3 - Saving DataFrame as CSV file](#df-ex3)
+3.  [Example 3 - Saving DataFrame in a CSV file](#df-ex3)
 
 <hr>
 
@@ -240,7 +241,7 @@ undefined
 > 
 ```
 
-<h3 id='df-ex3'><code>Example 3 - Saving DataFrame as CSV file</code></h3>
+<h3 id='df-ex3'><code>Example 3 - Saving DataFrame in a CSV file</code></h3>
 
 > **Note:** Here we will save DataFrame in `/Users/hygull/Desktop/newDevs.csv` (in this case) which can be different in your case.
 
