@@ -36,6 +36,8 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
 
 2.  [Example 2 - Creating DataFrame using a CSV file](#df-ex2)
 
+3.  [Example 3 - Saving DataFrame as CSV file](#df-ex3)
+
 <hr>
 
 ## Getting started
@@ -236,6 +238,100 @@ undefined
 > df[5]['Language']
 'JavaScript'
 > 
+```
+
+<h3 id='df-ex3'><code>Example 3 - Saving DataFrame as CSV file</code></h3>
+
+> **Note:** Here we will save DataFrame in `/Users/hygull/Desktop/newDevs.csv` (in this case) which can be different in your case.
+
+```javascript
+> const pd = require("node-pandas")
+undefined
+> 
+> df = pd.readCsv("../node-pandas/docs/csvs/devs.csv")
+NodeDataFrame [
+  { fullName: 'Ken Thompson',
+    Profession: 'C developer',
+    Language: 'C',
+    DevId: 1122 },
+  { fullName: 'Ron Wilson',
+    Profession: 'Ruby developer',
+    Language: 'Ruby',
+    DevId: 4433 },
+  { fullName: 'Jeff Thomas',
+    Profession: 'Java developer',
+    Language: 'Java',
+    DevId: 8899 },
+  { fullName: 'Rishikesh Agrawani',
+    Profession: 'Python developer',
+    Language: 'Python',
+    DevId: 6677 },
+  { fullName: 'Kylie Dwine',
+    Profession: 'C++',
+    Language: 'C++ Developer',
+    DevId: 11 },
+  { fullName: 'Briella Brown',
+    Profession: 'JavaScirpt developer',
+    Language: 'JavaScript',
+    DevId: 8844 },
+  columns: [ 'fullName', 'Profession', 'Language', 'DevId' ],
+  index: [ '0', '1', '2', '3', '4', '5' ],
+  _data: [ { fullName: 'Ken Thompson',
+      Profession: 'C developer',
+      Language: 'C',
+      DevId: 1122 },
+    { fullName: 'Ron Wilson',
+      Profession: 'Ruby developer',
+      Language: 'Ruby',
+      DevId: 4433 },
+    { fullName: 'Jeff Thomas',
+      Profession: 'Java developer',
+      Language: 'Java',
+      DevId: 8899 },
+    { fullName: 'Rishikesh Agrawani',
+      Profession: 'Python developer',
+      Language: 'Python',
+      DevId: 6677 },
+    { fullName: 'Kylie Dwine',
+      Profession: 'C++',
+      Language: 'C++ Developer',
+      DevId: 11 },
+    { fullName: 'Briella Brown',
+      Profession: 'JavaScirpt developer',
+      Language: 'JavaScript',
+      DevId: 8844 } ],
+  rows: 6,
+  cols: 4,
+  out: true ]
+> 
+> df.cols
+4
+> df.rows
+6
+> df.columns
+[ 'fullName', 'Profession', 'Language', 'DevId' ]
+> df.index
+[ '0', '1', '2', '3', '4', '5' ]
+> 
+> df.toCsv("/Users/hygull/Desktop/newDevs.csv")
+undefined
+> CSV file is successfully created at /Users/hygull/Desktop/newDevs.csv
+
+> 
+```
+
+Let's see content of `/Users/hygull/Desktop/newDevs.csv`
+
+> **cat /Users/hygull/Desktop/newDevs.csv**
+
+```csv 
+fullName,Profession,Language,DevId
+Ken Thompson,C developer,C,1122
+Ron Wilson,Ruby developer,Ruby,4433
+Jeff Thomas,Java developer,Java,8899
+Rishikesh Agrawani,Python developer,Python,6677
+Kylie Dwine,C++,C++ Developer,11
+Briella Brown,JavaScirpt developer,JavaScript,8844
 ```
 
 <hr>

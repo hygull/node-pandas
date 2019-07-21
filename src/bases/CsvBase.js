@@ -31,9 +31,10 @@ const CsvBase = {
                 for(let c=0; c < this.cols; ++c) {
                     csvText += this.data[r][columns[c]] + ','
                 }
-                csvText += '\n'
+                csvText = csvText.trim().slice(0, -1)  + '\n' // Remove , from end of last line
             }
-            csvText = csvText.trim().slice(0, -1) // Remove , from end of last line
+
+            csvText = csvText.trim()
 
             fs.writeFile(outCsvPath, csvText, (error) => {
                 if(error) {
