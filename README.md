@@ -67,7 +67,7 @@ NodeSeries [
   -3,
   0,
   5,
-  _data: [ 1, 9, 2, 6, 7, -8, 4, -3, 0, 5 ] ]
+]
 > 
 > s.show
 ┌─────────┬────────┐
@@ -113,21 +113,18 @@ undefined
 ...     ['Wes McKinney', 3, 'Pandas'],
 ...     ['Ken Thompson', 1, 'B language']
 ... ], columns)
-NodeDataFrame {
+NodeDataFrame [
+  [ 'Guido Van Rossum', 6, 'Python' ],
+  [ 'Ryan Dahl', 5, 'Node.js' ],
+  [ 'Anders Hezlsberg', 7, 'TypeScript' ],
+  [ 'Wes McKinney', 3, 'Pandas' ],
+  [ 'Ken Thompson', 1, 'B language' ],
   columns: [ 'full_name', 'user_id', 'technology' ],
   index: [ 0, 1, 2, 3, 4 ],
-  _data:
-   [ { full_name: 'Guido Van Rossum',
-       user_id: 6,
-       technology: 'Python' },
-     { full_name: 'Ryan Dahl', user_id: 5, technology: 'Node.js' },
-     { full_name: 'Anders Hezlsberg',
-       user_id: 7,
-       technology: 'TypeScript' },
-     { full_name: 'Wes McKinney', user_id: 3, technology: 'Pandas' },
-     { full_name: 'Ken Thompson',
-       user_id: 1,
-       technology: 'B language' } ] }
+  rows: 5,
+  cols: 3,
+  out: true
+]
 > 
 > df.show
 ┌─────────┬────────────────────┬─────────┬──────────────┐
@@ -183,34 +180,49 @@ Now have a look the below statements executed on Node REPL.
 undefined
 > 
 > df = pd.readCsv("/Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv")
-NodeDataFrame {
+NodeDataFrame [
+  {
+    fullName: 'Ken Thompson',
+    Profession: 'C developer',
+    Language: 'C',
+    DevId: 1122
+  },
+  {
+    fullName: 'Ron Wilson',
+    Profession: 'Ruby developer',
+    Language: 'Ruby',
+    DevId: 4433
+  },
+  {
+    fullName: 'Jeff Thomas',
+    Profession: 'Java developer',
+    Language: 'Java',
+    DevId: 8899
+  },
+  {
+    fullName: 'Rishikesh Agrawani',
+    Profession: 'Python developer',
+    Language: 'Python',
+    DevId: 6677
+  },
+  {
+    fullName: 'Kylie Dwine',
+    Profession: 'C++',
+    Language: 'C++ Developer',
+    DevId: 11
+  },
+  {
+    fullName: 'Briella Brown',
+    Profession: 'JavaScirpt developer',
+    Language: 'JavaScript',
+    DevId: 8844
+  },
   columns: [ 'fullName', 'Profession', 'Language', 'DevId' ],
   index: [ 0, 1, 2, 3, 4, 5 ],
-  _data:
-   [ { fullName: 'Ken Thompson',
-       Profession: 'C developer',
-       Language: 'C',
-       DevId: 1122 },
-     { fullName: 'Ron Wilson',
-       Profession: 'Ruby developer',
-       Language: 'Ruby',
-       DevId: 4433 },
-     { fullName: 'Jeff Thomas',
-       Profession: 'Java developer',
-       Language: 'Java',
-       DevId: 8899 },
-     { fullName: 'Rishikesh Agrawani',
-       Profession: 'Python developer',
-       Language: 'Python',
-       DevId: 6677 },
-     { fullName: 'Kylie Dwine',
-       Profession: 'C++',
-       Language: 'C++ Developer',
-       DevId: 11 },
-     { fullName: 'Briella Brown',
-       Profession: 'JavaScript developer',
-       Language: 'JavaScript',
-       DevId: 8844 } ] }
+  rows: 6,
+  cols: 4,
+  out: true
+]
 > 
 > df.index
 [ 0, 1, 2, 3, 4, 5 ]
