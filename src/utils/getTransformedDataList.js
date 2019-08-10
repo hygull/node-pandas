@@ -17,7 +17,7 @@ function getTransformedDataList(dataList, columns) {
                 }
 
                 newDataList.push(obj)
-                index.push(i)
+                index.push('' + i)
             }
         } else if(dType == 'Object') {
             // Nothing

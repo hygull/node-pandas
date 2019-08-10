@@ -51,5 +51,4 @@ const CsvBase = {
     }
 }
 
-
 module.exports = CsvBase
