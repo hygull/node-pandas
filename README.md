@@ -251,7 +251,7 @@ undefined
 > const pd = require("node-pandas")
 undefined
 > 
-> df = pd.readCsv("../node-pandas/docs/csvs/devs.csv")
+> df = pd.readCsv("./docs/csvs/devs.csv")
 NodeDataFrame [
   { fullName: 'Ken Thompson',
     Profession: 'C developer',
@@ -341,11 +341,11 @@ Briella Brown,JavaScript developer,JavaScript,8844
 
 <h3 id='df-ex4'><code>Example 4 - Accessing columns (Retrieving columns using column name)</code></h3>
 
-> **CSV file** (devs.csv): [../node-pandas/docs/csvs/devs.csv](../node-pandas/docs/csvs/devs.csv)
+> **CSV file** (devs.csv): [./docs/csvs/devs.csv](./docs/csvs/devs.csv)
 
 ```javascript
 const pd = require("node-pandas")
-df = pd.readCsv("../node-pandas/docs/csvs/devs.csv") // Node DataFrame object
+df = pd.readCsv("./docs/csvs/devs.csv") // Node DataFrame object
 
 df.show // View DataFrame in tabular form
 /*
