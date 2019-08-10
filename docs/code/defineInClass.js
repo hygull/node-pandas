@@ -30,12 +30,19 @@ class B {
             {'fullName': 'V K', "age": 20}  
         ]
         this.cols = ['fullName', "age"]
-        this.setAttribs() 
-        this.fullName = this.data // Will call set
-        this.age = this.data // Will call set
+
+        let okay = true // Change here
+
+        if(okay) {
+            this.setAttribsOkay() 
+            this["fullName"] = this.data // Will call set or using -> this.fullName also
+            this["age"] = this.data // Will call set or using -> this.age also
+        } else {
+            this.setAttribsBad() 
+        }
     }
 
-    setAttribs() {
+    setAttribsOkay() {
         this.cols.map(function(colName) {
             Object.defineProperty(B.prototype, colName, {
                 set: function(data) {
@@ -48,6 +55,26 @@ class B {
                     return this["__" + colName] // [ 'R K', 'H K', 'P K', 'V K' ]
                 }
             }) 
+        })
+    }
+
+    setAttribsBad() {
+        this.cols.map((colName) => {
+            if(['index', 'columns', 'data'].indexOf(colName) === -1) {
+                // > a= {}
+                // {}
+                // > a[1] = 0
+                // 0
+                // > a
+                // { '1': 0 }
+                // > 
+                this[colName] = this.data.map((row) => {
+                    return row[colName]
+                })
+                console.log('fine+_+', colName)
+            } else {
+                messages.warning('column_name should not be used as CSV column name as it is being used for specific purpose (changed it to something else)')
+            }
         })
     }
 }

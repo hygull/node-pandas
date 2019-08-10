@@ -59,6 +59,7 @@ class NodeDataFrame extends Array { // Object => df[0] => undefined
                 this[column_name] = this.data.map((row) => {
                     return row[column_name]
                 })
+                console.log('fine+_+')
             } else {
                 messages.warning('column_name should not be used as CSV column name as it is being used for specific purpose (changed it to something else)')
             }
