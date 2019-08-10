@@ -39,7 +39,7 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
 
 3.  [Example 3 - Saving DataFrame in a CSV file](#df-ex3)
 
-4.  [Example 4 - Accessing columns (Retriving columns using column name)](#df-ex4) - `df.fullName -> ["R A", "B R", "P K"]`
+4.  [Example 4 - Accessing columns (Retrieving columns using column name)](#df-ex4) - `df.fullName -> ["R A", "B R", "P K"]`
 
 <hr>
 
@@ -339,7 +339,7 @@ Briella Brown,JavaScript developer,JavaScript,8844
 
 <hr>
 
-<h3 id='df-ex4'><code>Example 4 - Accessing columns (Retriving columns using column name)</code></h3>
+<h3 id='df-ex4'><code>Example 4 - Accessing columns (Retrieving columns using column name)</code></h3>
 
 > **CSV file** (devs.csv): [../node-pandas/docs/csvs/devs.csv](../node-pandas/docs/csvs/devs.csv)
 
