@@ -46,23 +46,28 @@ class NodeDataFrame extends Array { // Object => df[0] => undefined
         console.table(this.data)
     }
 
+    setNewAttrib(colName) {
+        console.log('Setting data for columns: ', colName)
+        this["___" + colName + '___'] = this.data.map((row) => row[colName])
+    }
+
     setDataForColumns() {
-        this.columns.map((column_name) => {
-            if(excludingColumns.indexOf(column_name) === -1) {
-                // > a= {}
-                // {}
-                // > a[1] = 0
-                // 0
-                // > a
-                // { '1': 0 }
-                // > 
-                this[column_name] = this.data.map((row) => {
-                    return row[column_name]
-                })
-                console.log('fine+_+')
-            } else {
-                messages.warning('column_name should not be used as CSV column name as it is being used for specific purpose (changed it to something else)')
-            }
+        this.columns.map(function(colName) {
+            Object.defineProperty(NodeDataFrame.prototype, colName, {
+                // set: function(data) {
+                //     console.log('Okay fine')
+                //     this["__" + colName] = data.map((row) => row[colName])
+                // },
+                get: function() {
+                    // will only be called when b.fullName is executed 
+
+                    if(this["___" + colName + '___'] === undefined) {
+                        this.setNewAttrib(colName)
+                    }
+
+                    return this["___" + colName + '___'] // [ 'R K', 'H K', 'P K', 'V K' ]
+                }
+            }) 
         })
     }
 }

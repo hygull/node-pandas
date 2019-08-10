@@ -40,14 +40,65 @@ console.log(df2.columns)
 console.log(df2.index)
 
 let path = "/Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv"
+/*
+➜  node-pandas git:(toCsv) ✗ cat ~/Desktop/try/node-pandas.csv 
+fullName,Profession,Language,DevId
+Ken Thompson,C developer,C,1122
+Ron Wilson,Ruby developer,Ruby,4433
+Jeff Thomas,Java developer,Java,8899
+Rishikesh Agrawani,Python developer,Python,6677
+Kylie Dwine,C++,C++ Developer,11
+Briella Brown,JavaScirpt developer,JavaScript,8844
+*/
 
 df3 = pd.readCsv(path)
-
-console.log(df3)
 df3.show
-
+/*
+┌─────────┬──────────────────────┬────────────────────────┬─────────────────┬───────┐
+│ (index) │       fullName       │       Profession       │    Language     │ DevId │
+├─────────┼──────────────────────┼────────────────────────┼─────────────────┼───────┤
+│    0    │    'Ken Thompson'    │     'C developer'      │       'C'       │ 1122  │
+│    1    │     'Ron Wilson'     │    'Ruby developer'    │     'Ruby'      │ 4433  │
+│    2    │    'Jeff Thomas'     │    'Java developer'    │     'Java'      │ 8899  │
+│    3    │ 'Rishikesh Agrawani' │   'Python developer'   │    'Python'     │ 6677  │
+│    4    │    'Kylie Dwine'     │         'C++'          │ 'C++ Developer' │  11   │
+│    5    │   'Briella Brown'    │ 'JavaScirpt developer' │  'JavaScript'   │ 8844  │
+└─────────┴──────────────────────┴────────────────────────┴─────────────────┴───────┘
+*/
 console.log(df3[0]['fullName'])
 
 df3.toCsv('/Users/hygull/Desktop/try/node-pandas.csv')
 
-// console.log('fullName', df3['fullName'])
+console.log(df3['fullName'])
+/*
+    [
+        'Ken Thompson',
+        'Ron Wilson',
+        'Jeff Thomas',
+        'Rishikesh Agrawani',
+        'Kylie Dwine',
+        'Briella Brown'
+    ]
+*/
+
+console.log(df3.Language) 
+/*
+    [ 'C', 'Ruby', 'Java', 'Python', 'C++ Developer', 'JavaScript' ]
+*/
+
+console.log(df3.Profession) 
+/*
+    [
+        'C developer',
+        'Ruby developer',
+        'Java developer',
+        'Python developer',
+        'C++',
+        'JavaScirpt developer'
+    ]
+*/
+
+console.log(df3.DevId)
+/* 
+    [ 1122, 4433, 8899, 6677, 11, 8844 ]
+*/
