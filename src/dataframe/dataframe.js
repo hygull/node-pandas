@@ -18,13 +18,12 @@ class NodeDataFrame extends Array { // Object => df[0] => undefined
 
         if(columns) {
             ({index, dataList} = getTransformedDataList(dataList, columns))
-            this.columns = columns
-            this.index = index
         } else {
-            let {index, columns} = getIndicesColumns(dataList)
-            this.columns = columns
-            this.index = index
+            ({index, columns} = getIndicesColumns(dataList))
         }
+
+        this.columns = columns
+        this.index = index
         this.data = dataList
         this.rows = this.index.length
         this.cols = this.columns.length
@@ -34,7 +33,12 @@ class NodeDataFrame extends Array { // Object => df[0] => undefined
 
     set data(data) {
         // Set data of this
-        this._data = data
+        Object.defineProperty(NodeDataFrame.prototype, '_data', {
+            value: data,
+            writable: true, // // not(true) & this._data = data -> TypeError: Cannot assign to read only property '_data' of object '[object Array]'
+            enumerable: false, // default
+            configurable: true 
+        })
     }
 
     get data() {

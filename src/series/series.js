@@ -31,9 +31,9 @@ class NodeSeries extends Array {
         if(!this._data) { // If no if -> TypeError: Cannot redefine property: _data
             Object.defineProperty(NodeSeries.prototype, '_data', {
                 value: data,
-                writable: false, 
-                enumerable: false, 
-                configurable: false
+                writable: true, 
+                enumerable: true, 
+                configurable: true
             })
         }
     }  

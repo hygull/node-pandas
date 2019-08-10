@@ -255,59 +255,48 @@ undefined
 > 
 > df = pd.readCsv("./docs/csvs/devs.csv")
 NodeDataFrame [
-  { fullName: 'Ken Thompson',
+  {
+    fullName: 'Ken Thompson',
     Profession: 'C developer',
     Language: 'C',
-    DevId: 1122 },
-  { fullName: 'Ron Wilson',
+    DevId: 1122
+  },
+  {
+    fullName: 'Ron Wilson',
     Profession: 'Ruby developer',
     Language: 'Ruby',
-    DevId: 4433 },
-  { fullName: 'Jeff Thomas',
+    DevId: 4433
+  },
+  {
+    fullName: 'Jeff Thomas',
     Profession: 'Java developer',
     Language: 'Java',
-    DevId: 8899 },
-  { fullName: 'Rishikesh Agrawani',
+    DevId: 8899
+  },
+  {
+    fullName: 'Rishikesh Agrawani',
     Profession: 'Python developer',
     Language: 'Python',
-    DevId: 6677 },
-  { fullName: 'Kylie Dwine',
+    DevId: 6677
+  },
+  {
+    fullName: 'Kylie Dwine',
     Profession: 'C++',
     Language: 'C++ Developer',
-    DevId: 11 },
-  { fullName: 'Briella Brown',
-    Profession: 'JavaScript developer',
+    DevId: 11
+  },
+  {
+    fullName: 'Briella Brown',
+    Profession: 'JavaScirpt developer',
     Language: 'JavaScript',
-    DevId: 8844 },
+    DevId: 8844
+  },
   columns: [ 'fullName', 'Profession', 'Language', 'DevId' ],
-  index: [ '0', '1', '2', '3', '4', '5' ],
-  _data: [ { fullName: 'Ken Thompson',
-      Profession: 'C developer',
-      Language: 'C',
-      DevId: 1122 },
-    { fullName: 'Ron Wilson',
-      Profession: 'Ruby developer',
-      Language: 'Ruby',
-      DevId: 4433 },
-    { fullName: 'Jeff Thomas',
-      Profession: 'Java developer',
-      Language: 'Java',
-      DevId: 8899 },
-    { fullName: 'Rishikesh Agrawani',
-      Profession: 'Python developer',
-      Language: 'Python',
-      DevId: 6677 },
-    { fullName: 'Kylie Dwine',
-      Profession: 'C++',
-      Language: 'C++ Developer',
-      DevId: 11 },
-    { fullName: 'Briella Brown',
-      Profession: 'JavaScript developer',
-      Language: 'JavaScript',
-      DevId: 8844 } ],
+  index: [ 0, 1, 2, 3, 4, 5 ],
   rows: 6,
   cols: 4,
-  out: true ]
+  out: true
+]
 > 
 > df.cols
 4

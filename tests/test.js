@@ -18,6 +18,7 @@ let dataList = [
 columns = ['full_name', 'user_id', 'technology']
 let df = pd.DataFrame(dataList, columns);
 df.show
+console.log(df)
 console.log(df.columns)
 console.log(df.index)
 
@@ -35,6 +36,7 @@ dataList = [
 ]
 
 let df2 = pd.DataFrame(dataList)
+console.log(df2)
 df2.show
 console.log(df2.columns)
 console.log(df2.index)
@@ -52,6 +54,7 @@ Briella Brown,JavaScirpt developer,JavaScript,8844
 */
 
 df3 = pd.readCsv(path)
+console.log(df3)
 df3.show
 /*
 ┌─────────┬──────────────────────┬────────────────────────┬─────────────────┬───────┐
@@ -129,6 +132,10 @@ for(let profession of professions) {
     JavaScirpt developer
 */
 
+// Update entry
+professions[1] = 'Elon Musk'
+
+console.log(professions)
 
 
 
