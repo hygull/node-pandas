@@ -14,4 +14,5 @@ function Series(data) {
     return series
 }
 
+// Exporting Series so that it could be used by modules (i.e. they could import and use)
 module.exports = Series
