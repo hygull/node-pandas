@@ -72,34 +72,63 @@ df3.toCsv('/Users/hygull/Desktop/try/node-pandas.csv')
 
 console.log(df3['fullName'])
 /*
-    [
-        'Ken Thompson',
-        'Ron Wilson',
-        'Jeff Thomas',
-        'Rishikesh Agrawani',
-        'Kylie Dwine',
-        'Briella Brown'
-    ]
-*/
-
-console.log(df3.Language) 
-/*
-    [ 'C', 'Ruby', 'Java', 'Python', 'C++ Developer', 'JavaScript' ]
-*/
-
-console.log(df3.Profession) 
-/*
-    [
-        'C developer',
-        'Ruby developer',
-        'Java developer',
-        'Python developer',
-        'C++',
-        'JavaScirpt developer'
+    NodeSeries [
+      'Ken Thompson',
+      'Ron Wilson',
+      'Jeff Thomas',
+      'Rishikesh Agrawani',
+      'Kylie Dwine',
+      'Briella Brown'
     ]
 */
 
 console.log(df3.DevId)
 /* 
-    [ 1122, 4433, 8899, 6677, 11, 8844 ]
+    NodeSeries [ 1122, 4433, 8899, 6677, 11, 8844 ]
 */
+
+let languages = df3.Language
+console.log(languages) 
+/*
+    NodeSeries [
+      'C',
+      'Ruby',
+      'Java',
+      'Python',
+      'C++ Developer',
+      'JavaScript'
+    ]
+*/
+
+console.log(languages[0], '&', languages[1]) // C & Ruby
+
+
+let professions = df3.Profession
+console.log(professions) 
+/*
+    NodeSeries [
+      'C developer',
+      'Ruby developer',
+      'Java developer',
+      'Python developer',
+      'C++',
+      'JavaScirpt developer'
+    ]
+*/
+
+// Iterate like arrays
+for(let profession of professions) {
+    console.log(profession)
+}
+/*
+    C developer
+    Ruby developer
+    Java developer
+    Python developer
+    C++
+    JavaScirpt developer
+*/
+
+
+
+

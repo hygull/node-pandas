@@ -6,7 +6,7 @@ const {
 } = require('../utils/utils')
 
 const messages  = require('../messages/messages')
-
+const Series = require('../series/series')
 const CsvBase = require("../bases/CsvBase")
 
 class NodeDataFrame extends Array { // Object => df[0] => undefined 
@@ -47,7 +47,6 @@ class NodeDataFrame extends Array { // Object => df[0] => undefined
     }
 
     setNewAttrib(colName) {
-        console.log('Setting data for columns: ', colName)
         this["___" + colName + '___'] = this.data.map((row) => row[colName])
     }
 
@@ -65,7 +64,7 @@ class NodeDataFrame extends Array { // Object => df[0] => undefined
                         this.setNewAttrib(colName)
                     }
 
-                    return this["___" + colName + '___'] // [ 'R K', 'H K', 'P K', 'V K' ]
+                    return Series(this["___" + colName + '___']) // [ 'R K', 'H K', 'P K', 'V K' ]
                 }
             }) 
         })

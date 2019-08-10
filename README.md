@@ -11,10 +11,12 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
 > For now, you can 
 >
 > + create Series(using 1D array), DataFrame(using 2D array or file `readCsv()`)
+> + access Series object using exactly an array like syntax (indexing, looping etc.)
 > + view columns, index
 > + save DataFrame in a CSV file `toCsv()`
 > + access elements using indices/column names
 > + view contents in pretty tabular form on console
+> + access DataFrame's columns using column names
 
 ## Installation
 
@@ -183,7 +185,7 @@ undefined
 > df = pd.readCsv("/Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv")
 NodeDataFrame {
   columns: [ 'fullName', 'Profession', 'Language', 'DevId' ],
-  index: [ '0', '1', '2', '3', '4', '5' ],
+  index: [ 0, 1, 2, 3, 4, 5 ],
   _data:
    [ { fullName: 'Ken Thompson',
        Profession: 'C developer',
@@ -211,7 +213,7 @@ NodeDataFrame {
        DevId: 8844 } ] }
 > 
 > df.index
-[ '0', '1', '2', '3', '4', '5' ]
+[ 0, 1, 2, 3, 4, 5 ]
 > 
 > df.columns
 [ 'fullName', 'Profession', 'Language', 'DevId' ]
@@ -314,7 +316,7 @@ NodeDataFrame [
 > df.columns
 [ 'fullName', 'Profession', 'Language', 'DevId' ]
 > df.index
-[ '0', '1', '2', '3', '4', '5' ]
+[ 0, 1, 2, 3, 4, 5 ]
 > 
 > df.toCsv("/Users/hygull/Desktop/newDevs.csv")
 undefined
@@ -361,38 +363,63 @@ df.show // View DataFrame in tabular form
 └─────────┴──────────────────────┴────────────────────────┴─────────────────┴───────┘
 */
 
-console.log(df['fullName']) // Access Column name fullname
+console.log(df['fullName'])
 /*
-    [
-        'Ken Thompson',
-        'Ron Wilson',
-        'Jeff Thomas',
-        'Rishikesh Agrawani',
-        'Kylie Dwine',
-        'Briella Brown'
-    ]
-*/
-
-console.log(df.Language) // df['Language']
-/*
-    [ 'C', 'Ruby', 'Java', 'Python', 'C++ Developer', 'JavaScript' ]
-*/
-
-console.log(df.Profession) 
-/*
-    [
-        'C developer',
-        'Ruby developer',
-        'Java developer',
-        'Python developer',
-        'C++',
-        'JavaScirpt developer'
+    NodeSeries [
+      'Ken Thompson',
+      'Ron Wilson',
+      'Jeff Thomas',
+      'Rishikesh Agrawani',
+      'Kylie Dwine',
+      'Briella Brown'
     ]
 */
 
 console.log(df.DevId)
 /* 
-    [ 1122, 4433, 8899, 6677, 11, 8844 ]
+    NodeSeries [ 1122, 4433, 8899, 6677, 11, 8844 ]
+*/
+
+let languages = df.Language
+console.log(languages) 
+/*
+    NodeSeries [
+      'C',
+      'Ruby',
+      'Java',
+      'Python',
+      'C++ Developer',
+      'JavaScript'
+    ]
+*/
+
+console.log(languages[0], '&', languages[1]) // C & Ruby
+
+
+let professions = df.Profession
+console.log(professions) 
+/*
+    NodeSeries [
+      'C developer',
+      'Ruby developer',
+      'Java developer',
+      'Python developer',
+      'C++',
+      'JavaScirpt developer'
+    ]
+*/
+
+// Iterate like arrays
+for(let profession of professions) {
+    console.log(profession)
+}
+/*
+    C developer
+    Ruby developer
+    Java developer
+    Python developer
+    C++
+    JavaScirpt developer
 */
 ```
 
@@ -426,4 +453,4 @@ console.log(df.DevId)
 
 + [JavaScript getter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/set)
 
-
++ [JavaScript (enumerable, writable, configurable)](https://hashnode.com/post/what-are-enumerable-properties-in-javascript-ciljnbtqa000exx53n5nbkykx)
