@@ -39,6 +39,8 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
 
 3.  [Example 3 - Saving DataFrame in a CSV file](#df-ex3)
 
+4.  [Example 4 - Accessing columns (Retriving columns using column name)](#df-ex4) - `df.fullName -> ["R A", "B R", "P K"]`
+
 <hr>
 
 ## Getting started
@@ -337,6 +339,65 @@ Briella Brown,JavaScript developer,JavaScript,8844
 
 <hr>
 
+<h3 id='df-ex4'><code>Example 4 - Accessing columns (Retriving columns using column name)</code></h3>
+
+> **CSV file** (devs.csv): [../node-pandas/docs/csvs/devs.csv](../node-pandas/docs/csvs/devs.csv)
+
+```javascript
+const pd = require("node-pandas")
+df = pd.readCsv("../node-pandas/docs/csvs/devs.csv") // Node DataFrame object
+
+df.show // View DataFrame in tabular form
+/*
+┌─────────┬──────────────────────┬────────────────────────┬─────────────────┬───────┐
+│ (index) │       fullName       │       Profession       │    Language     │ DevId │
+├─────────┼──────────────────────┼────────────────────────┼─────────────────┼───────┤
+│    0    │    'Ken Thompson'    │     'C developer'      │       'C'       │ 1122  │
+│    1    │     'Ron Wilson'     │    'Ruby developer'    │     'Ruby'      │ 4433  │
+│    2    │    'Jeff Thomas'     │    'Java developer'    │     'Java'      │ 8899  │
+│    3    │ 'Rishikesh Agrawani' │   'Python developer'   │    'Python'     │ 6677  │
+│    4    │    'Kylie Dwine'     │         'C++'          │ 'C++ Developer' │  11   │
+│    5    │   'Briella Brown'    │ 'JavaScirpt developer' │  'JavaScript'   │ 8844  │
+└─────────┴──────────────────────┴────────────────────────┴─────────────────┴───────┘
+*/
+
+console.log(df['fullName']) // Access Column name fullname
+/*
+    [
+        'Ken Thompson',
+        'Ron Wilson',
+        'Jeff Thomas',
+        'Rishikesh Agrawani',
+        'Kylie Dwine',
+        'Briella Brown'
+    ]
+*/
+
+console.log(df.Language) // df['Language']
+/*
+    [ 'C', 'Ruby', 'Java', 'Python', 'C++ Developer', 'JavaScript' ]
+*/
+
+console.log(df.Profession) 
+/*
+    [
+        'C developer',
+        'Ruby developer',
+        'Java developer',
+        'Python developer',
+        'C++',
+        'JavaScirpt developer'
+    ]
+*/
+
+console.log(df.DevId)
+/* 
+    [ 1122, 4433, 8899, 6677, 11, 8844 ]
+*/
+```
+
+<hr>
+
 ### References
 
 + [Node's util](https://millermedeiros.github.io/mdoc/examples/node_api/doc/util.html)
@@ -358,5 +419,11 @@ Briella Brown,JavaScript developer,JavaScript,8844
 + [Node's require() returns an empty object (circular refs -> {})](https://stackoverflow.com/questions/23875233/require-returns-an-empty-object/23875299)
 
 + [Javascript - Mixins (Adding methods to classes)](https://javascript.info/mixins)
+
++ [JavaScript Object accessors(setters & getters)](https://www.w3schools.com/js/js_object_accessors.asp)
+
++ [JavaScript setter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get)
+
++ [JavaScript getter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/set)
 
 

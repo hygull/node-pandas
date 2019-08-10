@@ -67,6 +67,7 @@ df3.show
 */
 console.log(df3[0]['fullName'])
 
+// Save to CSV file
 df3.toCsv('/Users/hygull/Desktop/try/node-pandas.csv')
 
 console.log(df3['fullName'])
