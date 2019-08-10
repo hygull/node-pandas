@@ -1,6 +1,8 @@
 class A {
     constructor() {
         this.language = ""
+        this.cols = ['fullName', 'age']
+        this.setAttributes()
     }
 
     set lang(language) {
@@ -11,6 +13,12 @@ class A {
     get lang() {
         console.log('Fish False')
         return this.language
+    }
+
+    setAttributes() {
+        this.cols.map(function() {
+            Object.defineProperty(this.constructor.prototype, )
+        })
     }
 }
 

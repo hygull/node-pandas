@@ -3,5 +3,4 @@ function dataType(data) {
     return dType
 }
 
-
 module.exports = dataType
