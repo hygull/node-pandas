@@ -4,14 +4,32 @@ const messages  = require('../messages/messages')
 
 
 function getDateFormats(sep) {
-	let formats = [
-		`yyyy${sep}mm${sep}dd`,
-		`yyyy${sep}dd${sep}mm`,
-		`dd${sep}mm${sep}yyyy`,
-		`dd${sep}yyyy${sep}mm`,
-		`mm${sep}dd${sep}yyyy`,
-		`mm${sep}yyyy${sep}dd`,
-	]
+	/* --- HardCoding (Bad way) ---
+		let formats = [
+			`yyyy${sep}mm${sep}dd`,
+			`yyyy${sep}dd${sep}mm`,
+			`dd${sep}mm${sep}yyyy`,
+			`dd${sep}yyyy${sep}mm`,
+			`mm${sep}dd${sep}yyyy`,
+			`mm${sep}yyyy${sep}dd`,
+		]
+	*/
+
+	// Good way
+	let specifiers = ["dd", "mm", "yyyy"]
+	let formats = []
+
+	for(let indexX = 0; indexX < specifiers.length; ++indexX) {
+		let dateElems = [specifiers[indexX]]
+
+		for(let indexY = 0; indexY < specifiers.length; ++indexY) {
+			if(indexY === indexX)
+				continue
+
+			dateElems.push(specifiers[indexY])
+		}
+		formats.push(dateElems.join(sep))
+	}
 
 	return formats
 }
