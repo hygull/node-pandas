@@ -4,6 +4,7 @@
 
 const Series = require('./series/series')
 const DataFrame = require('./dataframe/dataframe')
+const dateRange = require("./features/dateRange")
 const path = require('path')
 const fs = require('fs')
 
@@ -42,7 +43,11 @@ function readCsv(csvPath) {
 }
 
 module.exports = {
+    // Node pandas supported data types
     Series,
     DataFrame,
-    readCsv
+
+    // Features
+    readCsv,
+    dateRange
 }

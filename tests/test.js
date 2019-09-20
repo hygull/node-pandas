@@ -138,4 +138,5 @@ professions[1] = 'Elon Musk'
 console.log(professions)
 
 
-
+// dateRange() => dateRange(n=1, format="yyyy-mm-dd", sep='-')---
+console.log(pd.dateRange(50, "dd-mm-yyyy", '-', true))
