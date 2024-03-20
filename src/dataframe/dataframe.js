@@ -70,6 +70,8 @@ class NodeDataFrame extends Array { // Object => df[0] => undefined
 
                     return Series(this["___" + colName + '___']) // [ 'R K', 'H K', 'P K', 'V K' ]
                 }
+                ,enumerable:true
+                ,configurable:true
             }) 
         })
     }
