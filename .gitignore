@@ -61,3 +61,7 @@ typings/
 .next
 
 # Project specific
+.vscode/
+
+# .kiro specific
+.kiro/time-log.md
