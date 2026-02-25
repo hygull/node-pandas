@@ -62,3 +62,6 @@ typings/
 
 # Project specific
 .vscode/
+
+# .kiro specific
+.kiro/time-log.md
