@@ -448,13 +448,13 @@ const df = pd.DataFrame([
 
 df.show
 /*
-┌─────────┬──────────────────────┬─────┬────────────┐
-│ (index) │        name          │ age │ department │
-├─────────┼──────────────────────┼─────┼────────────┤
-│    0    │ 'Rishikesh Agrawani' │ 32  │'Engineering'│
-│    1    │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing' │
-│    2    │ 'Malinikesh Agrawani'│ 28  │   'Sales'   │
-└─────────┴──────────────────────┴─────┴────────────┘
+┌─────────┬──────────────────────┬─────┬──────────────┐
+│ (index) │        name          │ age │  department  │
+├─────────┼──────────────────────┼─────┼──────────────┤
+│    0    │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│
+│    1    │  'Hemkesh Agrawani'  │ 30  │  'Marketing' │
+│    2    │ 'Malinikesh Agrawani'│ 28  │   'Sales'    │
+└─────────┴──────────────────────┴─────┴──────────────┘
 */
 
 // Select a single column
@@ -465,7 +465,7 @@ nameOnly.show
 │ (index) │        name          │
 ├─────────┼──────────────────────┤
 │    0    │ 'Rishikesh Agrawani' │
-│    1    │ 'Hemkesh Agrawani'   │
+│    1    │  'Hemkesh Agrawani'  │
 │    2    │ 'Malinikesh Agrawani'│
 └─────────┴──────────────────────┘
 */
@@ -478,7 +478,7 @@ nameAndAge.show
 │ (index) │        name          │ age │
 ├─────────┼──────────────────────┼─────┤
 │    0    │ 'Rishikesh Agrawani' │ 32  │
-│    1    │ 'Hemkesh Agrawani'   │ 30  │
+│    1    │  'Hemkesh Agrawani'  │ 30  │
 │    2    │ 'Malinikesh Agrawani'│ 28  │
 └─────────┴──────────────────────┴─────┘
 */
@@ -505,36 +505,36 @@ const df = pd.DataFrame([
 
 df.show
 /*
-┌─────────┬──────────────────────┬─────┬────────────┐
-│ (index) │        name          │ age │ department │
-├─────────┼──────────────────────┼─────┼────────────┤
-│    0    │ 'Rishikesh Agrawani' │ 32  │'Engineering'│
-│    1    │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing' │
-│    2    │ 'Malinikesh Agrawani'│ 28  │   'Sales'   │
-└─────────┴──────────────────────┴─────┴────────────┘
+┌─────────┬──────────────────────┬─────┬──────────────┐
+│ (index) │        name          │ age │  department  │
+├─────────┼──────────────────────┼─────┼──────────────┤
+│    0    │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│
+│    1    │  'Hemkesh Agrawani'  │ 30  │  'Marketing' │
+│    2    │ 'Malinikesh Agrawani'│ 28  │   'Sales'    │
+└─────────┴──────────────────────┴─────┴──────────────┘
 */
 
 // Filter rows where age is greater than 28
 const over28 = df.filter(row => row.age > 28)
 over28.show
 /*
-┌─────────┬──────────────────────┬─────┬────────────┐
-│ (index) │        name          │ age │ department │
-├─────────┼──────────────────────┼─────┼────────────┤
-│    0    │ 'Rishikesh Agrawani' │ 32  │'Engineering'│
-│    1    │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing' │
-└─────────┴──────────────────────┴─────┴────────────┘
+┌─────────┬──────────────────────┬─────┬──────────────┐
+│ (index) │        name          │ age │  department  │
+├─────────┼──────────────────────┼─────┼──────────────┤
+│    0    │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│
+│    1    │  'Hemkesh Agrawani'  │ 30  │  'Marketing' │
+└─────────┴──────────────────────┴─────┴──────────────┘
 */
 
 // Filter rows where department is 'Engineering'
 const engineering = df.filter(row => row.department === 'Engineering')
 engineering.show
 /*
-┌─────────┬──────────────────────┬─────┬────────────┐
-│ (index) │        name          │ age │ department │
-├─────────┼──────────────────────┼─────┼────────────┤
-│    0    │ 'Rishikesh Agrawani' │ 32  │'Engineering'│
-└─────────┴──────────────────────┴─────┴────────────┘
+┌─────────┬──────────────────────┬─────┬──────────────┐
+│ (index) │        name          │ age │  department  │
+├─────────┼──────────────────────┼─────┼──────────────┤
+│    0    │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│
+└─────────┴──────────────────────┴─────┴──────────────┘
 */
 
 // Chain multiple filters together
@@ -543,12 +543,12 @@ const result = df
     .filter(row => row.department !== 'Sales')
 result.show
 /*
-┌─────────┬──────────────────────┬─────┬────────────┐
-│ (index) │        name          │ age │ department │
-├─────────┼──────────────────────┼─────┼────────────┤
-│    0    │ 'Rishikesh Agrawani' │ 32  │'Engineering'│
-│    1    │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing' │
-└─────────┴──────────────────────┴─────┴────────────┘
+┌─────────┬──────────────────────┬─────┬──────────────┐
+│ (index) │        name          │ age │  department  │
+├─────────┼──────────────────────┼─────┼──────────────┤
+│    0    │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│
+│    1    │  'Hemkesh Agrawani'  │ 30  │  'Marketing' │
+└─────────┴──────────────────────┴─────┴──────────────┘
 */
 ```
 
@@ -573,97 +573,97 @@ const df = pd.DataFrame([
 
 df.show
 /*
-┌─────────┬──────────────────────┬─────┬────────────┬────────┐
-│ (index) │        name          │ age │ department │ salary │
-├─────────┼──────────────────────┼─────┼────────────┼────────┤
-│    0    │ 'Rishikesh Agrawani' │ 32  │'Engineering'│ 95000 │
-│    1    │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing' │ 75000 │
-│    2    │ 'Malinikesh Agrawani'│ 28  │   'Sales'   │ 65000 │
-│    3    │ 'Alice Johnson'      │ 29  │'Engineering'│ 92000 │
-│    4    │ 'Bob Smith'          │ 31  │ 'Marketing' │ 78000 │
-│    5    │ 'Carol White'        │ 27  │   'Sales'   │ 62000 │
-└─────────┴──────────────────────┴─────┴────────────┴────────┘
+┌─────────┬──────────────────────┬─────┬──────────────┬────────┐
+│ (index) │        name          │ age │  department  │ salary │
+├─────────┼──────────────────────┼─────┼──────────────┼────────┤
+│    0    │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│ 95000  │
+│    1    │  'Hemkesh Agrawani'  │ 30  │  'Marketing' │ 75000  │
+│    2    │ 'Malinikesh Agrawani'│ 28  │   'Sales'    │ 65000  │
+│    3    │   'Alice Johnson'    │ 29  │ 'Engineering'│ 92000  │
+│    4    │    'Bob Smith'       │ 31  │  'Marketing' │ 78000  │
+│    5    │    'Carol White'     │ 27  │   'Sales'    │ 62000  │
+└─────────┴──────────────────────┴─────┴──────────────┴────────┘
 */
 
 // Single-column grouping: Group by department and calculate mean salary
 const avgSalaryByDept = df.groupBy('department').mean('salary')
 avgSalaryByDept.show
 /*
-┌─────────┬────────────┬──────────────┐
-│ (index) │ department │ salary_mean  │
-├─────────┼────────────┼──────────────┤
-│    0    │'Engineering'│   93500      │
-│    1    │ 'Marketing' │   76500      │
-│    2    │   'Sales'   │   63500      │
-└─────────┴────────────┴──────────────┘
+┌─────────┬──────────────┬──────────────┐
+│ (index) │  department  │ salary_mean  │
+├─────────┼──────────────┼──────────────┤
+│    0    │ 'Engineering'│   93500      │
+│    1    │  'Marketing' │   76500      │
+│    2    │   'Sales'    │   63500      │
+└─────────┴──────────────┴──────────────┘
 */
 
 // Group by department and calculate sum of salaries
 const totalSalaryByDept = df.groupBy('department').sum('salary')
 totalSalaryByDept.show
 /*
-┌─────────┬────────────┬──────────────┐
-│ (index) │ department │ salary_sum   │
-├─────────┼────────────┼──────────────┤
-│    0    │'Engineering'│   187000     │
-│    1    │ 'Marketing' │   153000     │
-│    2    │   'Sales'   │   127000     │
-└─────────┴────────────┴──────────────┘
+┌─────────┬──────────────┬──────────────┐
+│ (index) │  department  │ salary_sum   │
+├─────────┼──────────────┼──────────────┤
+│    0    │ 'Engineering'│   187000     │
+│    1    │  'Marketing' │   153000     │
+│    2    │   'Sales'    │   127000     │
+└─────────┴──────────────┴──────────────┘
 */
 
 // Group by department and count employees
 const countByDept = df.groupBy('department').count()
 countByDept.show
 /*
-┌─────────┬────────────┬───────┐
-│ (index) │ department │ count │
-├─────────┼────────────┼───────┤
-│    0    │'Engineering'│   2   │
-│    1    │ 'Marketing' │   2   │
-│    2    │   'Sales'   │   2   │
-└─────────┴────────────┴───────┘
+┌─────────┬──────────────┬───────┐
+│ (index) │  department  │ count │
+├─────────┼──────────────┼───────┤
+│    0    │ 'Engineering'│   2   │
+│    1    │  'Marketing' │   2   │
+│    2    │   'Sales'    │   2   │
+└─────────┴──────────────┴───────┘
 */
 
 // Group by department and find minimum age
 const minAgeByDept = df.groupBy('department').min('age')
 minAgeByDept.show
 /*
-┌─────────┬────────────┬──────────┐
-│ (index) │ department │ age_min  │
-├─────────┼────────────┼──────────┤
-│    0    │'Engineering'│   29     │
-│    1    │ 'Marketing' │   30     │
-│    2    │   'Sales'   │   27     │
-└─────────┴────────────┴──────────┘
+┌─────────┬──────────────┬──────────┐
+│ (index) │  department  │ age_min  │
+├─────────┼──────────────┼──────────┤
+│    0    │ 'Engineering'│   29     │
+│    1    │  'Marketing' │   30     │
+│    2    │   'Sales'    │   27     │
+└─────────┴──────────────┴──────────┘
 */
 
 // Group by department and find maximum age
 const maxAgeByDept = df.groupBy('department').max('age')
 maxAgeByDept.show
 /*
-┌─────────┬────────────┬──────────┐
-│ (index) │ department │ age_max  │
-├─────────┼────────────┼──────────┤
-│    0    │'Engineering'│   32     │
-│    1    │ 'Marketing' │   31     │
-│    2    │   'Sales'   │   28     │
-└─────────┴────────────┴──────────┘
+┌─────────┬──────────────┬──────────┐
+│ (index) │  department  │ age_max  │
+├─────────┼──────────────┼──────────┤
+│    0    │ 'Engineering'│   32     │
+│    1    │  'Marketing' │   31     │
+│    2    │   'Sales'    │   28     │
+└─────────┴──────────────┴──────────┘
 */
 
 // Multi-column grouping: Group by department and age range
 const groupedByDeptAndAge = df.groupBy(['department', 'age']).count()
 groupedByDeptAndAge.show
 /*
-┌─────────┬────────────┬─────┬───────┐
-│ (index) │ department │ age │ count │
-├─────────┼────────────┼─────┼───────┤
-│    0    │'Engineering'│ 29  │   1   │
-│    1    │'Engineering'│ 32  │   1   │
-│    2    │ 'Marketing' │ 30  │   1   │
-│    3    │ 'Marketing' │ 31  │   1   │
-│    4    │   'Sales'   │ 27  │   1   │
-│    5    │   'Sales'   │ 28  │   1   │
-└─────────┴────────────┴─────┴───────┘
+┌─────────┬──────────────┬─────┬───────┐
+│ (index) │  department  │ age │ count │
+├─────────┼──────────────┼─────┼───────┤
+│    0    │ 'Engineering'│ 29  │   1   │
+│    1    │ 'Engineering'│ 32  │   1   │
+│    2    │  'Marketing' │ 30  │   1   │
+│    3    │  'Marketing' │ 31  │   1   │
+│    4    │   'Sales'    │ 27  │   1   │
+│    5    │   'Sales'    │ 28  │   1   │
+└─────────┴──────────────┴─────┴───────┘
 */
 ```
 
