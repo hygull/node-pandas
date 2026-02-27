@@ -43,6 +43,12 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
 
 4.  [Example 4 - Accessing columns (Retrieving columns using column name)](#df-ex4) - `df.fullName -> ["R A", "B R", "P K"]`
 
+5.  [Example 5 - Selecting specific columns using select()](#df-ex5)
+
+6.  [Example 6 - Filtering DataFrame rows using filter()](#df-ex6)
+
+7.  [Example 7 - Grouping and aggregating data using groupBy()](#df-ex7)
+
 <hr>
 
 ## Getting started
@@ -421,6 +427,243 @@ for(let profession of professions) {
     Python developer
     C++
     JavaScirpt developer
+*/
+```
+
+<hr>
+
+<h3 id='df-ex5'><code>Example 5 - Selecting specific columns using select()</code></h3>
+
+> **Note:** The `select()` method returns a new DataFrame containing only the specified columns.
+
+```javascript
+const pd = require("node-pandas")
+
+// Create a DataFrame with employee data
+const df = pd.DataFrame([
+    ['Rishikesh Agrawani', 32, 'Engineering'],
+    ['Hemkesh Agrawani', 30, 'Marketing'],
+    ['Malinikesh Agrawani', 28, 'Sales']
+], ['name', 'age', 'department'])
+
+df.show
+/*
+┌─────────┬──────────────────────┬─────┬────────────┐
+│ (index) │        name          │ age │ department │
+├─────────┼──────────────────────┼─────┼────────────┤
+│    0    │ 'Rishikesh Agrawani' │ 32  │'Engineering'│
+│    1    │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing' │
+│    2    │ 'Malinikesh Agrawani'│ 28  │   'Sales'   │
+└─────────┴──────────────────────┴─────┴────────────┘
+*/
+
+// Select a single column
+const nameOnly = df.select(['name'])
+nameOnly.show
+/*
+┌─────────┬──────────────────────┐
+│ (index) │        name          │
+├─────────┼──────────────────────┤
+│    0    │ 'Rishikesh Agrawani' │
+│    1    │ 'Hemkesh Agrawani'   │
+│    2    │ 'Malinikesh Agrawani'│
+└─────────┴──────────────────────┘
+*/
+
+// Select multiple columns
+const nameAndAge = df.select(['name', 'age'])
+nameAndAge.show
+/*
+┌─────────┬──────────────────────┬─────┐
+│ (index) │        name          │ age │
+├─────────┼──────────────────────┼─────┤
+│    0    │ 'Rishikesh Agrawani' │ 32  │
+│    1    │ 'Hemkesh Agrawani'   │ 30  │
+│    2    │ 'Malinikesh Agrawani'│ 28  │
+└─────────┴──────────────────────┴─────┘
+*/
+
+// Original DataFrame remains unchanged
+console.log(df.columns) // ['name', 'age', 'department']
+```
+
+<hr>
+
+<h3 id='df-ex6'><code>Example 6 - Filtering DataFrame rows using filter()</code></h3>
+
+> **Note:** The `filter()` method returns a new DataFrame containing only rows that match the condition. Multiple filters can be chained together.
+
+```javascript
+const pd = require("node-pandas")
+
+// Create a DataFrame with employee data
+const df = pd.DataFrame([
+    ['Rishikesh Agrawani', 32, 'Engineering'],
+    ['Hemkesh Agrawani', 30, 'Marketing'],
+    ['Malinikesh Agrawani', 28, 'Sales']
+], ['name', 'age', 'department'])
+
+df.show
+/*
+┌─────────┬──────────────────────┬─────┬────────────┐
+│ (index) │        name          │ age │ department │
+├─────────┼──────────────────────┼─────┼────────────┤
+│    0    │ 'Rishikesh Agrawani' │ 32  │'Engineering'│
+│    1    │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing' │
+│    2    │ 'Malinikesh Agrawani'│ 28  │   'Sales'   │
+└─────────┴──────────────────────┴─────┴────────────┘
+*/
+
+// Filter rows where age is greater than 28
+const over28 = df.filter(row => row.age > 28)
+over28.show
+/*
+┌─────────┬──────────────────────┬─────┬────────────┐
+│ (index) │        name          │ age │ department │
+├─────────┼──────────────────────┼─────┼────────────┤
+│    0    │ 'Rishikesh Agrawani' │ 32  │'Engineering'│
+│    1    │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing' │
+└─────────┴──────────────────────┴─────┴────────────┘
+*/
+
+// Filter rows where department is 'Engineering'
+const engineering = df.filter(row => row.department === 'Engineering')
+engineering.show
+/*
+┌─────────┬──────────────────────┬─────┬────────────┐
+│ (index) │        name          │ age │ department │
+├─────────┼──────────────────────┼─────┼────────────┤
+│    0    │ 'Rishikesh Agrawani' │ 32  │'Engineering'│
+└─────────┴──────────────────────┴─────┴────────────┘
+*/
+
+// Chain multiple filters together
+const result = df
+    .filter(row => row.age > 28)
+    .filter(row => row.department !== 'Sales')
+result.show
+/*
+┌─────────┬──────────────────────┬─────┬────────────┐
+│ (index) │        name          │ age │ department │
+├─────────┼──────────────────────┼─────┼────────────┤
+│    0    │ 'Rishikesh Agrawani' │ 32  │'Engineering'│
+│    1    │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing' │
+└─────────┴──────────────────────┴─────┴────────────┘
+*/
+```
+
+<hr>
+
+<h3 id='df-ex7'><code>Example 7 - Grouping and aggregating data using groupBy()</code></h3>
+
+> **Note:** The `groupBy()` method groups rows by one or more columns and allows aggregation using methods like `mean()`, `sum()`, `count()`, `min()`, and `max()`.
+
+```javascript
+const pd = require("node-pandas")
+
+// Create a DataFrame with employee data including departments
+const df = pd.DataFrame([
+    ['Rishikesh Agrawani', 32, 'Engineering', 95000],
+    ['Hemkesh Agrawani', 30, 'Marketing', 75000],
+    ['Malinikesh Agrawani', 28, 'Sales', 65000],
+    ['Alice Johnson', 29, 'Engineering', 92000],
+    ['Bob Smith', 31, 'Marketing', 78000],
+    ['Carol White', 27, 'Sales', 62000]
+], ['name', 'age', 'department', 'salary'])
+
+df.show
+/*
+┌─────────┬──────────────────────┬─────┬────────────┬────────┐
+│ (index) │        name          │ age │ department │ salary │
+├─────────┼──────────────────────┼─────┼────────────┼────────┤
+│    0    │ 'Rishikesh Agrawani' │ 32  │'Engineering'│ 95000 │
+│    1    │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing' │ 75000 │
+│    2    │ 'Malinikesh Agrawani'│ 28  │   'Sales'   │ 65000 │
+│    3    │ 'Alice Johnson'      │ 29  │'Engineering'│ 92000 │
+│    4    │ 'Bob Smith'          │ 31  │ 'Marketing' │ 78000 │
+│    5    │ 'Carol White'        │ 27  │   'Sales'   │ 62000 │
+└─────────┴──────────────────────┴─────┴────────────┴────────┘
+*/
+
+// Single-column grouping: Group by department and calculate mean salary
+const avgSalaryByDept = df.groupBy('department').mean('salary')
+avgSalaryByDept.show
+/*
+┌─────────┬────────────┬──────────────┐
+│ (index) │ department │ salary_mean  │
+├─────────┼────────────┼──────────────┤
+│    0    │'Engineering'│   93500      │
+│    1    │ 'Marketing' │   76500      │
+│    2    │   'Sales'   │   63500      │
+└─────────┴────────────┴──────────────┘
+*/
+
+// Group by department and calculate sum of salaries
+const totalSalaryByDept = df.groupBy('department').sum('salary')
+totalSalaryByDept.show
+/*
+┌─────────┬────────────┬──────────────┐
+│ (index) │ department │ salary_sum   │
+├─────────┼────────────┼──────────────┤
+│    0    │'Engineering'│   187000     │
+│    1    │ 'Marketing' │   153000     │
+│    2    │   'Sales'   │   127000     │
+└─────────┴────────────┴──────────────┘
+*/
+
+// Group by department and count employees
+const countByDept = df.groupBy('department').count()
+countByDept.show
+/*
+┌─────────┬────────────┬───────┐
+│ (index) │ department │ count │
+├─────────┼────────────┼───────┤
+│    0    │'Engineering'│   2   │
+│    1    │ 'Marketing' │   2   │
+│    2    │   'Sales'   │   2   │
+└─────────┴────────────┴───────┘
+*/
+
+// Group by department and find minimum age
+const minAgeByDept = df.groupBy('department').min('age')
+minAgeByDept.show
+/*
+┌─────────┬────────────┬──────────┐
+│ (index) │ department │ age_min  │
+├─────────┼────────────┼──────────┤
+│    0    │'Engineering'│   29     │
+│    1    │ 'Marketing' │   30     │
+│    2    │   'Sales'   │   27     │
+└─────────┴────────────┴──────────┘
+*/
+
+// Group by department and find maximum age
+const maxAgeByDept = df.groupBy('department').max('age')
+maxAgeByDept.show
+/*
+┌─────────┬────────────┬──────────┐
+│ (index) │ department │ age_max  │
+├─────────┼────────────┼──────────┤
+│    0    │'Engineering'│   32     │
+│    1    │ 'Marketing' │   31     │
+│    2    │   'Sales'   │   28     │
+└─────────┴────────────┴──────────┘
+*/
+
+// Multi-column grouping: Group by department and age range
+const groupedByDeptAndAge = df.groupBy(['department', 'age']).count()
+groupedByDeptAndAge.show
+/*
+┌─────────┬────────────┬─────┬───────┐
+│ (index) │ department │ age │ count │
+├─────────┼────────────┼─────┼───────┤
+│    0    │'Engineering'│ 29  │   1   │
+│    1    │'Engineering'│ 32  │   1   │
+│    2    │ 'Marketing' │ 30  │   1   │
+│    3    │ 'Marketing' │ 31  │   1   │
+│    4    │   'Sales'   │ 27  │   1   │
+│    5    │   'Sales'   │ 28  │   1   │
+└─────────┴────────────┴─────┴───────┘
 */
 ```
 
