@@ -12,15 +12,6 @@ const CsvBase = {
         } else {
             pathDetails = null
         }
-        /*
-            { 
-                root: '/',
-                dir: '/Users/hygull/Desktop/try',
-                base: 'node-pandas.csv',
-                ext: '.csv',
-                name: 'node-pandas' 
-            }
-        */
 
         if(pathDetails && fs.existsSync(pathDetails)) {
             let csvText = ''
@@ -29,9 +20,9 @@ const CsvBase = {
 
             for(let r=0; r < this.rows; ++r) {
                 for(let c=0; c < this.cols; ++c) {
-                    csvText += this.data[r][columns[c]] + ','
+                    csvText += this.data[r][this.columns[c]] + ','
                 }
-                csvText = csvText.trim().slice(0, -1)  + '\n' // Remove , from end of last line
+                csvText = csvText.trim().slice(0, -1)  + '\n'
             }
 
             csvText = csvText.trim()
@@ -44,7 +35,7 @@ const CsvBase = {
                         console.log(`CSV file is successfully created at ${outCsvPath}`)
                     }
                 }
-            }) // Write CSV contents to file (Asynchronously)
+            })
         } else {
             messages.error(`Provided CSV path \`${outCsvPath}\` is invalid`)
         }
