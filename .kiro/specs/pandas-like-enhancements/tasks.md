@@ -138,7 +138,7 @@ This implementation plan transforms the node-pandas library into a production-re
     - **Property 12: Cell Access Returns Correct Value**
     - **Validates: Requirements 3.3, 3.4**
 
-- [ ] 7. Implement DataFrame selection and indexing operations
+- [x] 7. Implement DataFrame selection and indexing operations
   - [x] 7.1 Implement select method for column selection
     - Add select method that accepts array of column names
     - Validate column names exist
@@ -159,8 +159,8 @@ This implementation plan transforms the node-pandas library into a production-re
     - Test empty selection
     - _Requirements: 13.1, 13.3_
 
-- [ ] 8. Implement DataFrame filtering and querying
-  - [ ] 8.1 Implement filter method
+- [x] 8. Implement DataFrame filtering and querying
+  - [x] 8.1 Implement filter method
     - Add filter method that accepts condition function
     - Support chaining multiple filters
     - Handle empty filter results
@@ -180,24 +180,24 @@ This implementation plan transforms the node-pandas library into a production-re
     - Test filters with invalid columns
     - _Requirements: 13.1, 13.3_
 
-- [ ] 9. Checkpoint - Ensure all tests pass
+- [x] 9. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 10. Implement DataFrame aggregation and GroupBy
-  - [ ] 10.1 Create GroupBy class
+- [x] 10. Implement DataFrame aggregation and GroupBy
+  - [x] 10.1 Create GroupBy class
     - Implement `src/features/GroupBy.js` with GroupBy class
     - Add constructor that accepts DataFrame and grouping columns
     - Store groups internally with efficient data structure
     - _Requirements: 5.1_
   
-  - [ ] 10.2 Implement aggregation methods on GroupBy
+  - [x] 10.2 Implement aggregation methods on GroupBy
     - Add mean, sum, count, min, max, std methods
     - Each method returns DataFrame with group keys and aggregated values
     - Handle non-numeric values by excluding them
     - Handle empty groups gracefully
     - _Requirements: 5.2, 5.3, 5.4, 5.6_
   
-  - [ ] 10.3 Add groupBy method to DataFrame
+  - [x] 10.3 Add groupBy method to DataFrame
     - Add groupBy method that accepts column name or array of column names
     - Support multi-column grouping with hierarchical groups
     - Return GroupBy object
