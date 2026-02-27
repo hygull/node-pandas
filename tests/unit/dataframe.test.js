@@ -13,7 +13,7 @@ const { ValidationError, ColumnError, IndexError } = require('../../src/utils/er
 describe('DataFrame Class', () => {
   describe('Constructor', () => {
     test('should create a DataFrame with explicit column names', () => {
-      const data = [[1, 'Alice', 25], [2, 'Bob', 30]];
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30]];
       const columns = ['id', 'name', 'age'];
       const df = DataFrame(data, columns);
 
@@ -24,7 +24,7 @@ describe('DataFrame Class', () => {
     });
 
     test('should create a DataFrame without column names (auto-generated)', () => {
-      const data = [[1, 'Alice'], [2, 'Bob']];
+      const data = [[1, 'Rishikesh Agrawani'], [2, 'Hemkesh Agrawani']];
       const df = DataFrame(data);
 
       expect(df.columns).toEqual(['0', '1']);
@@ -116,7 +116,7 @@ describe('DataFrame Class', () => {
     let df;
 
     beforeEach(() => {
-      const data = [[1, 'Alice', 25], [2, 'Bob', 30], [3, 'Charlie', 35]];
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
       const columns = ['id', 'name', 'age'];
       df = DataFrame(data, columns);
     });
@@ -126,9 +126,9 @@ describe('DataFrame Class', () => {
 
       expect(nameColumn).toBeDefined();
       expect(nameColumn.length).toBe(3);
-      expect(nameColumn[0]).toBe('Alice');
-      expect(nameColumn[1]).toBe('Bob');
-      expect(nameColumn[2]).toBe('Charlie');
+      expect(nameColumn[0]).toBe('Rishikesh Agrawani');
+      expect(nameColumn[1]).toBe('Hemkesh Agrawani');
+      expect(nameColumn[2]).toBe('Malinikesh Agrawani');
     });
 
     test('should return Series when accessing column by bracket notation', () => {
@@ -164,7 +164,7 @@ describe('DataFrame Class', () => {
     let df;
 
     beforeEach(() => {
-      const data = [[1, 'Alice', 25], [2, 'Bob', 30], [3, 'Charlie', 35]];
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
       const columns = ['id', 'name', 'age'];
       df = DataFrame(data, columns);
     });
@@ -172,15 +172,15 @@ describe('DataFrame Class', () => {
     test('should return row object with column names as keys', () => {
       const row = df.getRow(0);
 
-      expect(row).toEqual({ id: 1, name: 'Alice', age: 25 });
+      expect(row).toEqual({ id: 1, name: 'Rishikesh Agrawani', age: 25 });
     });
 
     test('should return correct row for any valid index', () => {
       const row1 = df.getRow(1);
       const row2 = df.getRow(2);
 
-      expect(row1).toEqual({ id: 2, name: 'Bob', age: 30 });
-      expect(row2).toEqual({ id: 3, name: 'Charlie', age: 35 });
+      expect(row1).toEqual({ id: 2, name: 'Hemkesh Agrawani', age: 30 });
+      expect(row2).toEqual({ id: 3, name: 'Malinikesh Agrawani', age: 35 });
     });
 
     test('should throw IndexError for negative row index', () => {
@@ -201,6 +201,7 @@ describe('DataFrame Class', () => {
 
       expect(keys).toEqual(['id', 'name', 'age']);
       expect(keys.length).toBe(df.cols);
+      expect(row.name).toBe('Rishikesh Agrawani');
     });
   });
 
@@ -208,20 +209,20 @@ describe('DataFrame Class', () => {
     let df;
 
     beforeEach(() => {
-      const data = [[1, 'Alice', 25], [2, 'Bob', 30], [3, 'Charlie', 35]];
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
       const columns = ['id', 'name', 'age'];
       df = DataFrame(data, columns);
     });
 
     test('should return correct cell value by row index and column name', () => {
       expect(df.getCell(0, 'id')).toBe(1);
-      expect(df.getCell(0, 'name')).toBe('Alice');
+      expect(df.getCell(0, 'name')).toBe('Rishikesh Agrawani');
       expect(df.getCell(0, 'age')).toBe(25);
     });
 
     test('should return correct values for all cells', () => {
       expect(df.getCell(1, 'id')).toBe(2);
-      expect(df.getCell(1, 'name')).toBe('Bob');
+      expect(df.getCell(1, 'name')).toBe('Hemkesh Agrawani');
       expect(df.getCell(2, 'age')).toBe(35);
     });
 
@@ -249,7 +250,7 @@ describe('DataFrame Class', () => {
 
   describe('Show Property', () => {
     test('should display DataFrame without errors', () => {
-      const data = [[1, 'Alice'], [2, 'Bob']];
+      const data = [[1, 'Rishikesh Agrawani'], [2, 'Hemkesh Agrawani']];
       const columns = ['id', 'name'];
       const df = DataFrame(data, columns);
 
@@ -263,7 +264,7 @@ describe('DataFrame Class', () => {
     });
 
     test('should display data property', () => {
-      const data = [[1, 'Alice'], [2, 'Bob']];
+      const data = [[1, 'Rishikesh Agrawani'], [2, 'Hemkesh Agrawani']];
       const columns = ['id', 'name'];
       const df = DataFrame(data, columns);
 
@@ -278,16 +279,16 @@ describe('DataFrame Class', () => {
 
   describe('Data Preservation', () => {
     test('should preserve data structure after creation', () => {
-      const originalData = [[1, 'Alice', 25], [2, 'Bob', 30]];
+      const originalData = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30]];
       const columns = ['id', 'name', 'age'];
       const df = DataFrame(originalData, columns);
 
       // Verify data is preserved (data is stored in object format)
       expect(df.data[0]['id']).toBe(1);
-      expect(df.data[0]['name']).toBe('Alice');
+      expect(df.data[0]['name']).toBe('Rishikesh Agrawani');
       expect(df.data[0]['age']).toBe(25);
       expect(df.data[1]['id']).toBe(2);
-      expect(df.data[1]['name']).toBe('Bob');
+      expect(df.data[1]['name']).toBe('Hemkesh Agrawani');
       expect(df.data[1]['age']).toBe(30);
     });
 
@@ -306,13 +307,13 @@ describe('DataFrame Class', () => {
 
   describe('Edge Cases', () => {
     test('should handle single row DataFrame', () => {
-      const data = [[1, 'Alice', 25]];
+      const data = [[1, 'Rishikesh Agrawani', 25]];
       const columns = ['id', 'name', 'age'];
       const df = DataFrame(data, columns);
 
       expect(df.rows).toBe(1);
       expect(df.cols).toBe(3);
-      expect(df.getRow(0)).toEqual({ id: 1, name: 'Alice', age: 25 });
+      expect(df.getRow(0)).toEqual({ id: 1, name: 'Rishikesh Agrawani', age: 25 });
     });
 
     test('should handle single column DataFrame', () => {
@@ -378,6 +379,456 @@ describe('DataFrame Class', () => {
 
       expect(df[0]).toEqual([1, 'Alice']);
       expect(df[1]).toEqual([2, 'Bob']);
+    });
+  });
+
+  describe('Select Method', () => {
+    let df;
+
+    beforeEach(() => {
+      const data = [
+        [1, 'Rishikesh Agrawani', 25, true],
+        [2, 'Hemkesh Agrawani', 30, false],
+        [3, 'Malinikesh Agrawani', 35, true]
+      ];
+      const columns = ['id', 'name', 'age', 'active'];
+      df = DataFrame(data, columns);
+    });
+
+    test('should select a single column', () => {
+      const result = df.select(['id']);
+
+      expect(result.cols).toBe(1);
+      expect(result.rows).toBe(3);
+      expect(result.columns).toEqual(['id']);
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(1, 'id')).toBe(2);
+      expect(result.getCell(2, 'id')).toBe(3);
+    });
+
+    test('should select multiple columns', () => {
+      const result = df.select(['id', 'name']);
+
+      expect(result.cols).toBe(2);
+      expect(result.rows).toBe(3);
+      expect(result.columns).toEqual(['id', 'name']);
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(0, 'name')).toBe('Rishikesh Agrawani');
+      expect(result.getCell(1, 'id')).toBe(2);
+      expect(result.getCell(1, 'name')).toBe('Hemkesh Agrawani');
+    });
+
+    test('should select columns in specified order', () => {
+      const result = df.select(['name', 'id', 'age']);
+
+      expect(result.columns).toEqual(['name', 'id', 'age']);
+      expect(result.getCell(0, 'name')).toBe('Rishikesh Agrawani');
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(0, 'age')).toBe(25);
+    });
+
+    test('should throw ColumnError for non-existent column', () => {
+      expect(() => df.select(['nonexistent'])).toThrow(ColumnError);
+    });
+
+    test('should throw ColumnError when one of multiple columns does not exist', () => {
+      expect(() => df.select(['id', 'nonexistent', 'name'])).toThrow(ColumnError);
+    });
+
+    test('should throw ValidationError for non-array input', () => {
+      expect(() => df.select('id')).toThrow(ValidationError);
+    });
+
+    test('should throw ValidationError for null input', () => {
+      expect(() => df.select(null)).toThrow(ValidationError);
+    });
+
+    test('should throw ValidationError for undefined input', () => {
+      expect(() => df.select(undefined)).toThrow(ValidationError);
+    });
+
+    test('should handle empty selection array', () => {
+      const result = df.select([]);
+
+      expect(result.cols).toBe(0);
+      expect(result.rows).toBe(3);
+      expect(result.columns).toEqual([]);
+    });
+
+    test('should preserve data types in selected columns', () => {
+      const result = df.select(['id', 'name', 'age', 'active']);
+
+      expect(typeof result.getCell(0, 'id')).toBe('number');
+      expect(typeof result.getCell(0, 'name')).toBe('string');
+      expect(typeof result.getCell(0, 'age')).toBe('number');
+      expect(typeof result.getCell(0, 'active')).toBe('boolean');
+    });
+
+    test('should preserve row order in selected columns', () => {
+      const result = df.select(['id', 'name']);
+
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(1, 'id')).toBe(2);
+      expect(result.getCell(2, 'id')).toBe(3);
+      expect(result.getCell(0, 'name')).toBe('Rishikesh Agrawani');
+      expect(result.getCell(1, 'name')).toBe('Hemkesh Agrawani');
+      expect(result.getCell(2, 'name')).toBe('Malinikesh Agrawani');
+    });
+
+    test('should maintain index in selected DataFrame', () => {
+      const result = df.select(['id', 'name']);
+
+      expect(result.index).toEqual([0, 1, 2]);
+      expect(result.rows).toBe(3);
+    });
+
+    test('should return new DataFrame instance', () => {
+      const result = df.select(['id', 'name']);
+
+      expect(result).not.toBe(df);
+      expect(result instanceof Array).toBe(true);
+    });
+
+    test('should select all columns when all column names provided', () => {
+      const result = df.select(['id', 'name', 'age', 'active']);
+
+      expect(result.cols).toBe(4);
+      expect(result.rows).toBe(3);
+      expect(result.columns).toEqual(['id', 'name', 'age', 'active']);
+    });
+
+    test('should handle DataFrame with null values in selected columns', () => {
+      const data = [[1, null], [2, 'Hemkesh Agrawani'], [3, null]];
+      const columns = ['id', 'name'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.select(['id', 'name']);
+
+      expect(result.getCell(0, 'name')).toBeNull();
+      expect(result.getCell(1, 'name')).toBe('Hemkesh Agrawani');
+      expect(result.getCell(2, 'name')).toBeNull();
+    });
+
+    test('should handle DataFrame with undefined values in selected columns', () => {
+      const data = [[1, undefined], [2, 'Hemkesh Agrawani'], [3, undefined]];
+      const columns = ['id', 'name'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.select(['id', 'name']);
+
+      expect(result.getCell(0, 'name')).toBeUndefined();
+      expect(result.getCell(1, 'name')).toBe('Hemkesh Agrawani');
+      expect(result.getCell(2, 'name')).toBeUndefined();
+    });
+
+    test('should work with single row DataFrame', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25, true]];
+      const columns = ['id', 'name', 'age', 'active'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.select(['id', 'name']);
+
+      expect(result.rows).toBe(1);
+      expect(result.cols).toBe(2);
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(0, 'name')).toBe('Rishikesh Agrawani');
+    });
+
+    test('should work with single column DataFrame', () => {
+      const data = [[1], [2], [3]];
+      const columns = ['id'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.select(['id']);
+
+      expect(result.rows).toBe(3);
+      expect(result.cols).toBe(1);
+      expect(result.columns).toEqual(['id']);
+    });
+
+    test('should preserve numeric data types correctly', () => {
+      const data = [[1, 2.5], [3, 4.7], [5, 6.2]];
+      const columns = ['int_col', 'float_col'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.select(['int_col', 'float_col']);
+
+      expect(result.getCell(0, 'int_col')).toBe(1);
+      expect(result.getCell(0, 'float_col')).toBe(2.5);
+      expect(result.getCell(1, 'float_col')).toBe(4.7);
+    });
+
+    test('should preserve string data types correctly', () => {
+      const data = [['Kendrick Lamar', 'Dooj Sahu'], ['Brinston Jones', 'Malinikesh Agrawani']];
+      const columns = ['col1', 'col2'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.select(['col1', 'col2']);
+
+      expect(result.getCell(0, 'col1')).toBe('Kendrick Lamar');
+      expect(result.getCell(0, 'col2')).toBe('Dooj Sahu');
+      expect(result.getCell(1, 'col1')).toBe('Brinston Jones');
+    });
+
+    test('should preserve boolean data types correctly', () => {
+      const data = [[true, false], [false, true]];
+      const columns = ['bool1', 'bool2'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.select(['bool1', 'bool2']);
+
+      expect(result.getCell(0, 'bool1')).toBe(true);
+      expect(result.getCell(0, 'bool2')).toBe(false);
+      expect(result.getCell(1, 'bool1')).toBe(false);
+    });
+
+    test('should handle case-sensitive column names', () => {
+      const data = [[1, 2], [3, 4]];
+      const columns = ['ID', 'Name'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.select(['ID']);
+
+      expect(result.columns).toEqual(['ID']);
+      expect(result.getCell(0, 'ID')).toBe(1);
+    });
+
+    test('should throw error for case mismatch in column names', () => {
+      const data = [[1, 2], [3, 4]];
+      const columns = ['ID', 'Name'];
+      const df2 = DataFrame(data, columns);
+
+      expect(() => df2.select(['id'])).toThrow(ColumnError);
+    });
+  });
+
+  describe('Filter Method', () => {
+    let df;
+
+    beforeEach(() => {
+      const data = [
+        [1, 'Rishikesh Agrawani', 32],
+        [2, 'Hemkesh Agrawani', 30],
+        [3, 'Malinikesh Agrawani', 28]
+      ];
+      const columns = ['id', 'name', 'age'];
+      df = DataFrame(data, columns);
+    });
+
+    test('should filter rows based on numeric condition', () => {
+      const result = df.filter(row => row.age > 29);
+
+      expect(result.rows).toBe(2);
+      expect(result.cols).toBe(3);
+      expect(result.columns).toEqual(['id', 'name', 'age']);
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(0, 'age')).toBe(32);
+      expect(result.getCell(1, 'id')).toBe(2);
+      expect(result.getCell(1, 'age')).toBe(30);
+    });
+
+    test('should filter rows based on string condition', () => {
+      const result = df.filter(row => row.name.includes('Agrawani'));
+
+      expect(result.rows).toBe(3);
+      expect(result.getCell(0, 'name')).toBe('Rishikesh Agrawani');
+      expect(result.getCell(1, 'name')).toBe('Hemkesh Agrawani');
+      expect(result.getCell(2, 'name')).toBe('Malinikesh Agrawani');
+    });
+
+    test('should filter rows with exact match condition', () => {
+      const result = df.filter(row => row.age === 28);
+
+      expect(result.rows).toBe(1);
+      expect(result.getCell(0, 'id')).toBe(3);
+      expect(result.getCell(0, 'name')).toBe('Malinikesh Agrawani');
+      expect(result.getCell(0, 'age')).toBe(28);
+    });
+
+    test('should return empty DataFrame when no rows match', () => {
+      const result = df.filter(row => row.age > 100);
+
+      expect(result.rows).toBe(0);
+      expect(result.cols).toBe(3);
+      expect(result.columns).toEqual(['id', 'name', 'age']);
+    });
+
+    test('should return all rows when condition matches all', () => {
+      const result = df.filter(row => row.age > 0);
+
+      expect(result.rows).toBe(3);
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(1, 'id')).toBe(2);
+      expect(result.getCell(2, 'id')).toBe(3);
+    });
+
+    test('should support chaining multiple filters', () => {
+      const result = df.filter(row => row.age > 28).filter(row => row.id < 3);
+
+      expect(result.rows).toBe(2);
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(0, 'age')).toBe(32);
+      expect(result.getCell(1, 'id')).toBe(2);
+      expect(result.getCell(1, 'age')).toBe(30);
+    });
+
+    test('should support chaining three or more filters', () => {
+      const result = df
+        .filter(row => row.age > 25)
+        .filter(row => row.id > 0)
+        .filter(row => row.age < 35);
+
+      expect(result.rows).toBe(3);
+    });
+
+    test('should preserve data types in filtered DataFrame', () => {
+      const result = df.filter(row => row.age > 28);
+
+      expect(typeof result.getCell(0, 'id')).toBe('number');
+      expect(typeof result.getCell(0, 'name')).toBe('string');
+      expect(typeof result.getCell(0, 'age')).toBe('number');
+    });
+
+    test('should preserve row order in filtered DataFrame', () => {
+      const result = df.filter(row => row.age > 28);
+
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(1, 'id')).toBe(2);
+    });
+
+    test('should return new DataFrame instance', () => {
+      const result = df.filter(row => row.age > 29);
+
+      expect(result).not.toBe(df);
+      expect(result instanceof Array).toBe(true);
+    });
+
+    test('should throw ValidationError for non-function condition', () => {
+      expect(() => df.filter('not a function')).toThrow(ValidationError);
+    });
+
+    test('should throw ValidationError for null condition', () => {
+      expect(() => df.filter(null)).toThrow(ValidationError);
+    });
+
+    test('should throw ValidationError for undefined condition', () => {
+      expect(() => df.filter(undefined)).toThrow(ValidationError);
+    });
+
+    test('should handle filter with non-existent column gracefully', () => {
+      // When accessing a non-existent column, it returns undefined
+      // The condition will evaluate but won't throw an error
+      const result = df.filter(row => row.nonexistent === undefined);
+
+      // All rows should match because nonexistent is undefined for all
+      expect(result.rows).toBe(3);
+    });
+
+    test('should handle complex filter conditions', () => {
+      const result = df.filter(row => row.age > 28 && row.id < 3);
+
+      expect(result.rows).toBe(2);
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(1, 'id')).toBe(2);
+    });
+
+    test('should handle OR conditions in filter', () => {
+      const result = df.filter(row => row.id === 1 || row.id === 3);
+
+      expect(result.rows).toBe(2);
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(1, 'id')).toBe(3);
+    });
+
+    test('should handle NOT conditions in filter', () => {
+      const result = df.filter(row => !(row.id === 2));
+
+      expect(result.rows).toBe(2);
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(1, 'id')).toBe(3);
+    });
+
+    test('should handle filter with null values', () => {
+      const data = [[1, 'Alice', null], [2, 'Bob', 30], [3, 'Charlie', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.filter(row => row.age !== null && row.age > 24);
+
+      expect(result.rows).toBe(2);
+      expect(result.getCell(0, 'id')).toBe(2);
+      expect(result.getCell(1, 'id')).toBe(3);
+    });
+
+    test('should handle filter with undefined values', () => {
+      const data = [[1, 'Alice', undefined], [2, 'Bob', 30], [3, 'Charlie', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.filter(row => row.age !== undefined && row.age > 24);
+
+      expect(result.rows).toBe(2);
+      expect(result.getCell(0, 'id')).toBe(2);
+      expect(result.getCell(1, 'id')).toBe(3);
+    });
+
+    test('should handle single row DataFrame filter', () => {
+      const data = [[1, 'Alice', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.filter(row => row.age > 20);
+
+      expect(result.rows).toBe(1);
+      expect(result.getCell(0, 'id')).toBe(1);
+    });
+
+    test('should handle filter on DataFrame with mixed data types', () => {
+      const data = [[1, 'text', true], [2, 'more', false], [3, 'data', true]];
+      const columns = ['num', 'str', 'bool'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.filter(row => row.bool === true);
+
+      expect(result.rows).toBe(2);
+      expect(result.getCell(0, 'num')).toBe(1);
+      expect(result.getCell(1, 'num')).toBe(3);
+    });
+
+    test('should maintain index property in filtered DataFrame', () => {
+      const result = df.filter(row => row.age > 28);
+
+      expect(result.index).toEqual([0, 1]);
+      expect(result.rows).toBe(2);
+    });
+
+    test('should handle chained filters that result in empty DataFrame', () => {
+      const result = df
+        .filter(row => row.age > 30)
+        .filter(row => row.age < 30);
+
+      expect(result.rows).toBe(0);
+      expect(result.cols).toBe(3);
+      expect(result.columns).toEqual(['id', 'name', 'age']);
+    });
+
+    test('should handle filter with string comparison', () => {
+      const result = df.filter(row => row.name > 'Hemkesh Agrawani');
+
+      // String comparison: 'Rishikesh Agrawani' > 'Hemkesh Agrawani' is true
+      // 'Malinikesh Agrawani' > 'Hemkesh Agrawani' is true
+      expect(result.rows).toBe(2);
+      expect(result.getCell(0, 'name')).toBe('Rishikesh Agrawani');
+      expect(result.getCell(1, 'name')).toBe('Malinikesh Agrawani');
+    });
+
+    test('should handle filter with multiple column references', () => {
+      const result = df.filter(row => row.id + row.age > 30);
+
+      // 1 + 32 = 33 > 30 ✓
+      // 2 + 30 = 32 > 30 ✓
+      // 3 + 28 = 31 > 30 ✓
+      expect(result.rows).toBe(3);
     });
   });
 });
