@@ -424,6 +424,105 @@ class NodeDataFrame extends Array {
       columnNames
     );
   }
+  /**
+   * Filters the DataFrame based on a condition function and returns a new DataFrame.
+   *
+   * Creates a new DataFrame containing only rows where the condition function
+   * evaluates to true. The condition function receives a row object with column
+   * names as keys. Multiple filters can be chained together to apply sequential
+   * filtering conditions.
+   *
+   * @param {Function} condition - A function that takes a row object and returns a boolean
+   * @returns {NodeDataFrame} A new DataFrame containing only rows that satisfy the condition
+   *
+   * @throws {ValidationError} If condition is not a function
+   * @throws {ColumnError} If the condition references non-existent columns
+   *
+   * @example
+   * const df = new DataFrame(
+   *   [[1, 'Rishikesh Agrawani', 32], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 28]],
+   *   ['id', 'name', 'age']
+   * );
+   *
+   * // Filter rows where age > 29
+   * const filtered = df.filter(row => row.age > 29);
+   * // Returns DataFrame with 2 rows (Rishikesh and Hemkesh)
+   *
+   * // Filter rows where name includes 'Agrawani'
+   * const allAgrawani = df.filter(row => row.name.includes('Agrawani'));
+   * // Returns DataFrame with all 3 rows
+   *
+   * // Chain multiple filters
+   * const result = df.filter(row => row.age > 28).filter(row => row.id < 3);
+   * // Returns DataFrame with 2 rows (Rishikesh and Hemkesh)
+   *
+   * @example
+   * // Filter that matches no rows
+   * const empty = df.filter(row => row.age > 100);
+   * // Returns empty DataFrame with same columns but no rows
+   *
+   * @example
+   * // Error handling
+   * try {
+   *   df.filter('not a function'); // Invalid condition
+   * } catch (error) {
+   *   console.error(error.message); // "condition must be a function"
+   * }
+   */
+  filter(condition) {
+    // Validate input
+    try {
+      validation.validateFunction(condition, 'condition');
+    } catch (error) {
+      throw new ValidationError(`Invalid filter condition: ${error.message}`, {
+        operation: 'filter',
+        value: condition
+      });
+    }
+
+    // Filter rows based on condition
+    const filteredData = [];
+
+    for (let i = 0; i < this.rows; i++) {
+      const row = this.getRow(i);
+
+      try {
+        // Evaluate condition on the row
+        const shouldInclude = condition(row);
+
+        if (shouldInclude) {
+          // Convert row object back to array format for new DataFrame
+          const rowArray = this.columns.map(col => row[col]);
+          filteredData.push(rowArray);
+        }
+      } catch (error) {
+        // If condition throws an error, it likely references a non-existent column
+        throw new ColumnError(
+          `Filter condition error: ${error.message}`,
+          {
+            operation: 'filter',
+            column: 'unknown',
+            value: this.columns
+          }
+        );
+      }
+    }
+
+    // Create and return new DataFrame with filtered data
+    // For empty filtered data, we need to create a DataFrame with the same columns
+    // but no rows. We do this by creating a new DataFrame with empty data and then
+    // manually setting the columns property.
+    if (filteredData.length === 0) {
+      const emptyDf = new NodeDataFrame([]);
+      emptyDf.columns = this.columns;
+      emptyDf.cols = this.columns.length;
+      emptyDf.setDataForColumns();
+      return emptyDf;
+    }
+
+    return new NodeDataFrame(filteredData, this.columns);
+  }
+
 
 }
 
