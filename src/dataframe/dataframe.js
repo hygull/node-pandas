@@ -18,6 +18,7 @@ const {
 const messages = require('../messages/messages');
 const Series = require('../series/series');
 const CsvBase = require('../bases/CsvBase');
+const GroupBy = require('../features/GroupBy');
 const { ValidationError, ColumnError, IndexError } = require('../utils/errors');
 const validation = require('../utils/validation');
 const typeDetection = require('../utils/typeDetection');
@@ -424,6 +425,146 @@ class NodeDataFrame extends Array {
       columnNames
     );
   }
+  /**
+   * Filters the DataFrame based on a condition function and returns a new DataFrame.
+   *
+   * Creates a new DataFrame containing only rows where the condition function
+   * evaluates to true. The condition function receives a row object with column
+   * names as keys. Multiple filters can be chained together to apply sequential
+   * filtering conditions.
+   *
+   * @param {Function} condition - A function that takes a row object and returns a boolean
+   * @returns {NodeDataFrame} A new DataFrame containing only rows that satisfy the condition
+   *
+   * @throws {ValidationError} If condition is not a function
+   * @throws {ColumnError} If the condition references non-existent columns
+   *
+   * @example
+   * const df = new DataFrame(
+   *   [[1, 'Rishikesh Agrawani', 32], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 28]],
+   *   ['id', 'name', 'age']
+   * );
+   *
+   * // Filter rows where age > 29
+   * const filtered = df.filter(row => row.age > 29);
+   * // Returns DataFrame with 2 rows (Rishikesh and Hemkesh)
+   *
+   * // Filter rows where name includes 'Agrawani'
+   * const allAgrawani = df.filter(row => row.name.includes('Agrawani'));
+   * // Returns DataFrame with all 3 rows
+   *
+   * // Chain multiple filters
+   * const result = df.filter(row => row.age > 28).filter(row => row.id < 3);
+   * // Returns DataFrame with 2 rows (Rishikesh and Hemkesh)
+   *
+   * @example
+   * // Filter that matches no rows
+   * const empty = df.filter(row => row.age > 100);
+   * // Returns empty DataFrame with same columns but no rows
+   *
+   * @example
+   * // Error handling
+   * try {
+   *   df.filter('not a function'); // Invalid condition
+   * } catch (error) {
+   *   console.error(error.message); // "condition must be a function"
+   * }
+   */
+  filter(condition) {
+    // Validate input
+    try {
+      validation.validateFunction(condition, 'condition');
+    } catch (error) {
+      throw new ValidationError(`Invalid filter condition: ${error.message}`, {
+        operation: 'filter',
+        value: condition
+      });
+    }
+
+    // Filter rows based on condition
+    const filteredData = [];
+
+    for (let i = 0; i < this.rows; i++) {
+      const row = this.getRow(i);
+
+      try {
+        // Evaluate condition on the row
+        const shouldInclude = condition(row);
+
+        if (shouldInclude) {
+          // Convert row object back to array format for new DataFrame
+          const rowArray = this.columns.map(col => row[col]);
+          filteredData.push(rowArray);
+        }
+      } catch (error) {
+        // If condition throws an error, it likely references a non-existent column
+        throw new ColumnError(
+          `Filter condition error: ${error.message}`,
+          {
+            operation: 'filter',
+            column: 'unknown',
+            value: this.columns
+          }
+        );
+      }
+    }
+
+    // Create and return new DataFrame with filtered data
+    // For empty filtered data, we need to create a DataFrame with the same columns
+    // but no rows. We do this by creating a new DataFrame with empty data and then
+    // manually setting the columns property.
+    if (filteredData.length === 0) {
+      const emptyDf = new NodeDataFrame([]);
+      emptyDf.columns = this.columns;
+      emptyDf.cols = this.columns.length;
+      emptyDf.setDataForColumns();
+      return emptyDf;
+    }
+
+    return new NodeDataFrame(filteredData, this.columns);
+  }
+
+  /**
+   * Groups the DataFrame by one or more columns and returns a GroupBy object.
+   *
+   * Creates a GroupBy object that supports aggregation methods (mean, sum, count, min, max, std).
+   * Supports both single-column and multi-column grouping with hierarchical group organization.
+   *
+   * @param {string|Array<string>} columns - Column name(s) to group by
+   * @returns {GroupBy} A GroupBy object for performing aggregations
+   *
+   * @throws {ValidationError} If columns is not a string or array
+   * @throws {ColumnError} If any column doesn't exist in the DataFrame
+   *
+   * @example
+   * const df = DataFrame(
+   *   [[1, 'Rishikesh Agrawani', 32, 'Engineering'],
+   *    [2, 'Hemkesh Agrawani', 30, 'Sales'],
+   *    [3, 'Malinikesh Agrawani', 28, 'Engineering']],
+   *   ['id', 'name', 'age', 'department']
+   * );
+   *
+   * // Single-column grouping
+   * const grouped = df.groupBy('department');
+   * const meanAge = grouped.mean(); // Returns DataFrame with mean age by department
+   * const counts = grouped.count(); // Returns DataFrame with counts by department
+   *
+   * // Multi-column grouping
+   * const grouped2 = df.groupBy(['department', 'name']);
+   * const sums = grouped2.sum(); // Returns DataFrame with sums by department and name
+   *
+   * @example
+   * // Error handling
+   * try {
+   *   df.groupBy('nonexistent'); // Column doesn't exist
+   * } catch (error) {
+   *   console.error(error.message); // "Column 'nonexistent' does not exist"
+   * }
+   */
+  groupBy(columns) {
+    return new GroupBy(this, columns);
+  }
+
 
 }
 
