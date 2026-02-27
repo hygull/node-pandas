@@ -2,12 +2,16 @@ const dataType = require('./dataType') // require('dataType') => Error: Cannot f
 const getTransformedDataList = require('./getTransformedDataList')
 const getIndicesColumns = require('./getIndicesColumns')
 const excludingColumns = require("./excludingColumns")
+const typeDetection = require('./typeDetection')
+const validation = require('./validation')
 // const readCsv = require('./readCsv')
 
 module.exports = {
     dataType,
     getTransformedDataList,
     getIndicesColumns,
-    excludingColumns
+    excludingColumns,
+    typeDetection,
+    validation
     // readCsv
 }
