@@ -831,4 +831,311 @@ describe('DataFrame Class', () => {
       expect(result.rows).toBe(3);
     });
   });
+
+  describe('GroupBy Method', () => {
+    let df;
+
+    beforeEach(() => {
+      const data = [
+        [1, 'Rishikesh Agrawani', 32, 'Engineering'],
+        [2, 'Hemkesh Agrawani', 30, 'Sales'],
+        [3, 'Malinikesh Agrawani', 28, 'Engineering']
+      ];
+      const columns = ['id', 'name', 'age', 'department'];
+      df = DataFrame(data, columns);
+    });
+
+    test('should return GroupBy object for single column', () => {
+      const grouped = df.groupBy('department');
+
+      expect(grouped).toBeDefined();
+      expect(grouped.constructor.name).toBe('GroupBy');
+    });
+
+    test('should return GroupBy object for multiple columns', () => {
+      const grouped = df.groupBy(['department', 'name']);
+
+      expect(grouped).toBeDefined();
+      expect(grouped.constructor.name).toBe('GroupBy');
+    });
+
+    test('should throw ColumnError for non-existent column', () => {
+      expect(() => df.groupBy('nonexistent')).toThrow(ColumnError);
+    });
+
+    test('should throw ValidationError for invalid grouping columns', () => {
+      expect(() => df.groupBy(123)).toThrow(ValidationError);
+    });
+  });
+
+  describe('GroupBy Aggregation - Single Column', () => {
+    let df;
+
+    beforeEach(() => {
+      const data = [
+        [1, 'Rishikesh Agrawani', 32, 'Engineering'],
+        [2, 'Hemkesh Agrawani', 30, 'Sales'],
+        [3, 'Malinikesh Agrawani', 28, 'Engineering']
+      ];
+      const columns = ['id', 'name', 'age', 'department'];
+      df = DataFrame(data, columns);
+    });
+
+    test('should compute mean by group', () => {
+      const result = df.groupBy('department').mean();
+
+      expect(result.rows).toBe(2);
+      expect(result.columns).toContain('department');
+      expect(result.columns).toContain('id');
+      expect(result.columns).toContain('age');
+
+      // Engineering group: ids [1, 3], ages [32, 28]
+      const engRow = result.data.find(row => row.department === 'Engineering');
+      expect(engRow.id).toBe(2); // (1 + 3) / 2
+      expect(engRow.age).toBe(30); // (32 + 28) / 2
+
+      // Sales group: ids [2], ages [30]
+      const salesRow = result.data.find(row => row.department === 'Sales');
+      expect(salesRow.id).toBe(2);
+      expect(salesRow.age).toBe(30);
+    });
+
+    test('should compute sum by group', () => {
+      const result = df.groupBy('department').sum();
+
+      expect(result.rows).toBe(2);
+
+      const engRow = result.data.find(row => row.department === 'Engineering');
+      expect(engRow.id).toBe(4); // 1 + 3
+      expect(engRow.age).toBe(60); // 32 + 28
+
+      const salesRow = result.data.find(row => row.department === 'Sales');
+      expect(salesRow.id).toBe(2);
+      expect(salesRow.age).toBe(30);
+    });
+
+    test('should compute count by group', () => {
+      const result = df.groupBy('department').count();
+
+      expect(result.rows).toBe(2);
+      expect(result.columns).toContain('department');
+      expect(result.columns).toContain('count');
+
+      const engRow = result.data.find(row => row.department === 'Engineering');
+      expect(engRow.count).toBe(2);
+
+      const salesRow = result.data.find(row => row.department === 'Sales');
+      expect(salesRow.count).toBe(1);
+    });
+
+    test('should compute min by group', () => {
+      const result = df.groupBy('department').min();
+
+      expect(result.rows).toBe(2);
+
+      const engRow = result.data.find(row => row.department === 'Engineering');
+      expect(engRow.id).toBe(1);
+      expect(engRow.age).toBe(28);
+
+      const salesRow = result.data.find(row => row.department === 'Sales');
+      expect(salesRow.id).toBe(2);
+      expect(salesRow.age).toBe(30);
+    });
+
+    test('should compute max by group', () => {
+      const result = df.groupBy('department').max();
+
+      expect(result.rows).toBe(2);
+
+      const engRow = result.data.find(row => row.department === 'Engineering');
+      expect(engRow.id).toBe(3);
+      expect(engRow.age).toBe(32);
+
+      const salesRow = result.data.find(row => row.department === 'Sales');
+      expect(salesRow.id).toBe(2);
+      expect(salesRow.age).toBe(30);
+    });
+
+    test('should compute std by group', () => {
+      const result = df.groupBy('department').std();
+
+      expect(result.rows).toBe(2);
+
+      const engRow = result.data.find(row => row.department === 'Engineering');
+      // std of [1, 3] = sqrt(2) ≈ 1.414
+      // std of [32, 28] = sqrt(8) ≈ 2.828
+      expect(engRow.id).toBeCloseTo(Math.sqrt(2), 2);
+      expect(engRow.age).toBeCloseTo(Math.sqrt(8), 2);
+
+      const salesRow = result.data.find(row => row.department === 'Sales');
+      // Single value, std should be null
+      expect(salesRow.id).toBeNull();
+      expect(salesRow.age).toBeNull();
+    });
+
+    test('should exclude non-numeric values from aggregation', () => {
+      const data = [
+        [1, 'Alice', 25, 'A'],
+        [2, 'Bob', 30, 'A'],
+        [3, 'Charlie', 35, 'B']
+      ];
+      const columns = ['id', 'name', 'age', 'group'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.groupBy('group').mean();
+
+      // Should include all columns but only compute aggregations for numeric ones
+      expect(result.columns).toContain('id');
+      expect(result.columns).toContain('age');
+      expect(result.columns).toContain('name');
+      expect(result.columns).toContain('group');
+      
+      // Check that name column has null values (not aggregated)
+      const groupA = result.data.find(r => r.group === 'A');
+      expect(groupA.name).toBeNull();
+    });
+
+    test('should handle groups with single row', () => {
+      const result = df.groupBy('department').mean();
+
+      const salesRow = result.data.find(row => row.department === 'Sales');
+      expect(salesRow.id).toBe(2);
+      expect(salesRow.age).toBe(30);
+    });
+  });
+
+  describe('GroupBy Aggregation - Multiple Columns', () => {
+    let df;
+
+    beforeEach(() => {
+      const data = [
+        [1, 'Rishikesh Agrawani', 32, 'Engineering'],
+        [2, 'Hemkesh Agrawani', 30, 'Sales'],
+        [3, 'Malinikesh Agrawani', 28, 'Engineering'],
+        [4, 'Rishikesh Agrawani', 32, 'Sales']
+      ];
+      const columns = ['id', 'name', 'age', 'department'];
+      df = DataFrame(data, columns);
+    });
+
+    test('should create hierarchical groups for multiple columns', () => {
+      const result = df.groupBy(['department', 'name']).count();
+
+      expect(result.rows).toBe(4);
+      expect(result.columns).toContain('department');
+      expect(result.columns).toContain('name');
+      expect(result.columns).toContain('count');
+    });
+
+    test('should compute aggregations for multi-column groups', () => {
+      const result = df.groupBy(['department', 'name']).mean();
+
+      expect(result.rows).toBe(4);
+
+      // Find the row for Engineering + Rishikesh Agrawani
+      const row = result.data.find(
+        r => r.department === 'Engineering' && r.name === 'Rishikesh Agrawani'
+      );
+      expect(row).toBeDefined();
+      expect(row.id).toBe(1);
+      expect(row.age).toBe(32);
+    });
+
+    test('should compute count for multi-column groups', () => {
+      const result = df.groupBy(['department', 'name']).count();
+
+      // Rishikesh Agrawani appears in both Engineering and Sales
+      const engRow = result.data.find(
+        r => r.department === 'Engineering' && r.name === 'Rishikesh Agrawani'
+      );
+      expect(engRow.count).toBe(1);
+
+      const salesRow = result.data.find(
+        r => r.department === 'Sales' && r.name === 'Rishikesh Agrawani'
+      );
+      expect(salesRow.count).toBe(1);
+    });
+  });
+
+  describe('GroupBy Edge Cases', () => {
+    test('should handle empty DataFrame', () => {
+      // Create a DataFrame with data, then filter to empty
+      const data = [
+        [1, 'Alice', 25, 'A'],
+        [2, 'Bob', 30, 'B']
+      ];
+      const columns = ['id', 'name', 'age', 'group'];
+      const df = DataFrame(data, columns);
+      
+      // Filter to empty DataFrame
+      const emptyDf = df.filter(row => row.id > 100);
+      const result = emptyDf.groupBy('group').count();
+
+      expect(result.rows).toBe(0);
+      expect(result.columns).toContain('group');
+      expect(result.columns).toContain('count');
+    });
+
+    test('should handle single row DataFrame', () => {
+      const data = [[1, 'Alice', 25, 'A']];
+      const columns = ['id', 'name', 'age', 'group'];
+      const df = DataFrame(data, columns);
+
+      const result = df.groupBy('group').mean();
+
+      expect(result.rows).toBe(1);
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(0, 'age')).toBe(25);
+    });
+
+    test('should handle all rows in same group', () => {
+      const data = [
+        [1, 'Alice', 25, 'A'],
+        [2, 'Bob', 30, 'A'],
+        [3, 'Charlie', 35, 'A']
+      ];
+      const columns = ['id', 'name', 'age', 'group'];
+      const df = DataFrame(data, columns);
+
+      const result = df.groupBy('group').mean();
+
+      expect(result.rows).toBe(1);
+      expect(result.getCell(0, 'id')).toBe(2); // (1 + 2 + 3) / 3
+      expect(result.getCell(0, 'age')).toBe(30); // (25 + 30 + 35) / 3
+    });
+
+    test('should handle null values in grouping column', () => {
+      const data = [
+        [1, 'Alice', 25, 'A'],
+        [2, 'Bob', 30, null],
+        [3, 'Charlie', 35, 'A']
+      ];
+      const columns = ['id', 'name', 'age', 'group'];
+      const df = DataFrame(data, columns);
+
+      const result = df.groupBy('group').count();
+
+      // Should have 2 groups: 'A' and 'null'
+      expect(result.rows).toBe(2);
+    });
+
+    test('should handle numeric group keys', () => {
+      const data = [
+        [1, 'Alice', 25, 1],
+        [2, 'Bob', 30, 2],
+        [3, 'Charlie', 35, 1]
+      ];
+      const columns = ['id', 'name', 'age', 'group'];
+      const df = DataFrame(data, columns);
+
+      const result = df.groupBy('group').mean();
+
+      expect(result.rows).toBe(2);
+      // Group keys are stored as strings in the result
+      const group1 = result.data.find(r => String(r.group) === '1');
+      expect(group1).toBeDefined();
+      expect(group1.id).toBe(2); // (1 + 3) / 2
+    });
+  });
 });
+

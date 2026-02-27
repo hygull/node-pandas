@@ -18,6 +18,7 @@ const {
 const messages = require('../messages/messages');
 const Series = require('../series/series');
 const CsvBase = require('../bases/CsvBase');
+const GroupBy = require('../features/GroupBy');
 const { ValidationError, ColumnError, IndexError } = require('../utils/errors');
 const validation = require('../utils/validation');
 const typeDetection = require('../utils/typeDetection');
@@ -521,6 +522,47 @@ class NodeDataFrame extends Array {
     }
 
     return new NodeDataFrame(filteredData, this.columns);
+  }
+
+  /**
+   * Groups the DataFrame by one or more columns and returns a GroupBy object.
+   *
+   * Creates a GroupBy object that supports aggregation methods (mean, sum, count, min, max, std).
+   * Supports both single-column and multi-column grouping with hierarchical group organization.
+   *
+   * @param {string|Array<string>} columns - Column name(s) to group by
+   * @returns {GroupBy} A GroupBy object for performing aggregations
+   *
+   * @throws {ValidationError} If columns is not a string or array
+   * @throws {ColumnError} If any column doesn't exist in the DataFrame
+   *
+   * @example
+   * const df = DataFrame(
+   *   [[1, 'Rishikesh Agrawani', 32, 'Engineering'],
+   *    [2, 'Hemkesh Agrawani', 30, 'Sales'],
+   *    [3, 'Malinikesh Agrawani', 28, 'Engineering']],
+   *   ['id', 'name', 'age', 'department']
+   * );
+   *
+   * // Single-column grouping
+   * const grouped = df.groupBy('department');
+   * const meanAge = grouped.mean(); // Returns DataFrame with mean age by department
+   * const counts = grouped.count(); // Returns DataFrame with counts by department
+   *
+   * // Multi-column grouping
+   * const grouped2 = df.groupBy(['department', 'name']);
+   * const sums = grouped2.sum(); // Returns DataFrame with sums by department and name
+   *
+   * @example
+   * // Error handling
+   * try {
+   *   df.groupBy('nonexistent'); // Column doesn't exist
+   * } catch (error) {
+   *   console.error(error.message); // "Column 'nonexistent' does not exist"
+   * }
+   */
+  groupBy(columns) {
+    return new GroupBy(this, columns);
   }
 
 
