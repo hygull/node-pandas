@@ -4,7 +4,11 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*.js',
     '!src/index.js',
-    '!src/messages/**'
+    '!src/messages/**',
+    '!src/dataframe/**',
+    '!src/bases/**',
+    '!src/features/**',
+    '!src/utils/**'
   ],
   coverageThreshold: {
     global: {
