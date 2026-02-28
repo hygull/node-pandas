@@ -1974,5 +1974,477 @@ describe('DataFrame Class', () => {
       expect(filtered instanceof Array).toBe(true);
     });
   });
-});
 
+  describe('Merge Operations', () => {
+    describe('Single Column Join', () => {
+      test('should perform inner join on single column', () => {
+        const df1 = DataFrame(
+          [[1, 'Rishikesh Agrawani'], [2, 'Hemkesh Agrawani'], [3, 'Malinikesh Agrawani']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[1, 25], [2, 30]],
+          ['id', 'age']
+        );
+
+        const merged = df1.merge(df2, 'id', 'inner');
+
+        expect(merged.rows).toBe(2);
+        expect(merged.columns).toEqual(['id', 'name', 'age']);
+        expect(merged.getCell(0, 'id')).toBe(1);
+        expect(merged.getCell(0, 'name')).toBe('Rishikesh Agrawani');
+        expect(merged.getCell(0, 'age')).toBe(25);
+        expect(merged.getCell(1, 'id')).toBe(2);
+        expect(merged.getCell(1, 'age')).toBe(30);
+      });
+
+      test('should perform left join on single column', () => {
+        const df1 = DataFrame(
+          [[1, 'Rishikesh Agrawani'], [2, 'Hemkesh Agrawani'], [3, 'Malinikesh Agrawani']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[1, 25], [2, 30]],
+          ['id', 'age']
+        );
+
+        const merged = df1.merge(df2, 'id', 'left');
+
+        expect(merged.rows).toBe(3);
+        expect(merged.columns).toEqual(['id', 'name', 'age']);
+        expect(merged.getCell(0, 'age')).toBe(25);
+        expect(merged.getCell(1, 'age')).toBe(30);
+        expect(merged.getCell(2, 'age')).toBeNull();
+      });
+
+      test('should perform right join on single column', () => {
+        const df1 = DataFrame(
+          [[1, 'Rishikesh Agrawani'], [2, 'Hemkesh Agrawani']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[1, 25], [2, 30], [3, 35]],
+          ['id', 'age']
+        );
+
+        const merged = df1.merge(df2, 'id', 'right');
+
+        expect(merged.rows).toBe(3);
+        expect(merged.columns).toEqual(['id', 'name', 'age']);
+        expect(merged.getCell(0, 'name')).toBe('Rishikesh Agrawani');
+        expect(merged.getCell(1, 'name')).toBe('Hemkesh Agrawani');
+        expect(merged.getCell(2, 'name')).toBeNull();
+        expect(merged.getCell(2, 'age')).toBe(35);
+      });
+
+      test('should perform outer join on single column', () => {
+        const df1 = DataFrame(
+          [[1, 'Rishikesh Agrawani'], [2, 'Hemkesh Agrawani']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[2, 30], [3, 35]],
+          ['id', 'age']
+        );
+
+        const merged = df1.merge(df2, 'id', 'outer');
+
+        expect(merged.rows).toBe(3);
+        expect(merged.columns).toEqual(['id', 'name', 'age']);
+        expect(merged.getCell(0, 'id')).toBe(1);
+        expect(merged.getCell(0, 'age')).toBeNull();
+        expect(merged.getCell(1, 'id')).toBe(2);
+        expect(merged.getCell(1, 'age')).toBe(30);
+        expect(merged.getCell(2, 'id')).toBe(3);
+        expect(merged.getCell(2, 'name')).toBeNull();
+      });
+    });
+
+    describe('Multi-Column Join', () => {
+      test('should perform inner join on multiple columns', () => {
+        const df1 = DataFrame(
+          [[1, 'A', 100], [1, 'B', 200], [2, 'A', 300]],
+          ['id', 'type', 'value']
+        );
+        const df2 = DataFrame(
+          [[1, 'A', 'X'], [1, 'B', 'Y'], [2, 'B', 'Z']],
+          ['id', 'type', 'category']
+        );
+
+        const merged = df1.merge(df2, ['id', 'type'], 'inner');
+
+        expect(merged.rows).toBe(2);
+        expect(merged.columns).toEqual(['id', 'type', 'value', 'category']);
+        expect(merged.getCell(0, 'category')).toBe('X');
+        expect(merged.getCell(1, 'category')).toBe('Y');
+      });
+
+      test('should perform left join on multiple columns', () => {
+        const df1 = DataFrame(
+          [[1, 'A', 100], [1, 'B', 200], [2, 'A', 300]],
+          ['id', 'type', 'value']
+        );
+        const df2 = DataFrame(
+          [[1, 'A', 'X'], [1, 'B', 'Y']],
+          ['id', 'type', 'category']
+        );
+
+        const merged = df1.merge(df2, ['id', 'type'], 'left');
+
+        expect(merged.rows).toBe(3);
+        expect(merged.getCell(0, 'category')).toBe('X');
+        expect(merged.getCell(1, 'category')).toBe('Y');
+        expect(merged.getCell(2, 'category')).toBeNull();
+      });
+    });
+
+    describe('Conflicting Column Names', () => {
+      test('should add suffixes to conflicting column names', () => {
+        const df1 = DataFrame(
+          [[1, 'Alice', 'NY'], [2, 'Bob', 'LA']],
+          ['id', 'name', 'city']
+        );
+        const df2 = DataFrame(
+          [[1, 'NYC'], [2, 'LAX']],
+          ['id', 'city']
+        );
+
+        const merged = df1.merge(df2, 'id', 'inner', ['_left', '_right']);
+
+        expect(merged.columns).toEqual(['id', 'name', 'city_left', 'city_right']);
+        expect(merged.getCell(0, 'city_left')).toBe('NY');
+        expect(merged.getCell(0, 'city_right')).toBe('NYC');
+      });
+
+      test('should use custom suffixes', () => {
+        const df1 = DataFrame(
+          [[1, 'value'], [2, 'value']],
+          ['id', 'data']
+        );
+        const df2 = DataFrame(
+          [[1, 'info'], [2, 'info']],
+          ['id', 'data']
+        );
+
+        const merged = df1.merge(df2, 'id', 'inner', ['_old', '_new']);
+
+        expect(merged.columns).toEqual(['id', 'data_old', 'data_new']);
+      });
+    });
+
+    describe('Error Handling', () => {
+      test('should throw error if otherDataFrame is not a DataFrame', () => {
+        const df = DataFrame([[1, 'Alice']], ['id', 'name']);
+
+        expect(() => df.merge([1, 2], 'id')).toThrow(ValidationError);
+      });
+
+      test('should throw error if join key does not exist in left DataFrame', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([[1, 25]], ['id', 'age']);
+
+        expect(() => df1.merge(df2, 'nonexistent')).toThrow(ColumnError);
+      });
+
+      test('should throw error if join key does not exist in right DataFrame', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([[1, 25]], ['id', 'age']);
+
+        expect(() => df1.merge(df2, 'age')).toThrow(ColumnError);
+      });
+
+      test('should throw error for invalid join type', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([[1, 25]], ['id', 'age']);
+
+        expect(() => df1.merge(df2, 'id', 'invalid')).toThrow(ValidationError);
+      });
+
+      test('should throw error for invalid suffixes', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([[1, 25]], ['id', 'age']);
+
+        expect(() => df1.merge(df2, 'id', 'inner', ['_x'])).toThrow(ValidationError);
+      });
+    });
+
+    describe('Edge Cases', () => {
+      test('should handle empty DataFrames', () => {
+        const df1 = DataFrame([]);
+        const df2 = DataFrame([[1, 25]], ['id', 'age']);
+
+        const merged = df1.merge(df2, 'id', 'inner');
+
+        expect(merged.rows).toBe(0);
+      });
+
+      test('should handle no matching keys', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([[2, 25]], ['id', 'age']);
+
+        const merged = df1.merge(df2, 'id', 'inner');
+
+        expect(merged.rows).toBe(0);
+      });
+
+      test('should handle duplicate keys in left DataFrame', () => {
+        const df1 = DataFrame(
+          [[1, 'Alice'], [1, 'Alice2']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[1, 25]],
+          ['id', 'age']
+        );
+
+        const merged = df1.merge(df2, 'id', 'inner');
+
+        expect(merged.rows).toBe(2);
+        expect(merged.getCell(0, 'age')).toBe(25);
+        expect(merged.getCell(1, 'age')).toBe(25);
+      });
+
+      test('should handle duplicate keys in right DataFrame', () => {
+        const df1 = DataFrame(
+          [[1, 'Alice']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[1, 25], [1, 26]],
+          ['id', 'age']
+        );
+
+        const merged = df1.merge(df2, 'id', 'inner');
+
+        expect(merged.rows).toBe(2);
+        expect(merged.getCell(0, 'age')).toBe(25);
+        expect(merged.getCell(1, 'age')).toBe(26);
+      });
+
+      test('should handle null values in join keys', () => {
+        const df1 = DataFrame(
+          [[1, 'Alice'], [null, 'Bob']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[1, 25], [null, 30]],
+          ['id', 'age']
+        );
+
+        const merged = df1.merge(df2, 'id', 'inner');
+
+        expect(merged.rows).toBe(2);
+        expect(merged.getCell(0, 'age')).toBe(25);
+        expect(merged.getCell(1, 'age')).toBe(30);
+      });
+    });
+  });
+
+  describe('Concat Operations', () => {
+    describe('Vertical Concatenation (axis=0)', () => {
+      test('should concatenate DataFrames vertically with same columns', () => {
+        const df1 = DataFrame(
+          [[1, 'Rishikesh Agrawani'], [2, 'Hemkesh Agrawani']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[3, 'Malinikesh Agrawani']],
+          ['id', 'name']
+        );
+
+        const concatenated = DataFrame.concat([df1, df2], 0);
+
+        expect(concatenated.rows).toBe(3);
+        expect(concatenated.columns).toEqual(['id', 'name']);
+        expect(concatenated.getCell(0, 'id')).toBe(1);
+        expect(concatenated.getCell(1, 'id')).toBe(2);
+        expect(concatenated.getCell(2, 'id')).toBe(3);
+        expect(concatenated.getCell(2, 'name')).toBe('Malinikesh Agrawani');
+      });
+
+      test('should concatenate DataFrames with different column orders', () => {
+        const df1 = DataFrame(
+          [[1, 'Alice', 25]],
+          ['id', 'name', 'age']
+        );
+        const df2 = DataFrame(
+          [[30, 'Bob', 2]],
+          ['age', 'name', 'id']
+        );
+
+        const concatenated = DataFrame.concat([df1, df2], 0);
+
+        expect(concatenated.rows).toBe(2);
+        expect(concatenated.columns).toEqual(['id', 'name', 'age']);
+        expect(concatenated.getCell(1, 'id')).toBe(2);
+        expect(concatenated.getCell(1, 'name')).toBe('Bob');
+        expect(concatenated.getCell(1, 'age')).toBe(30);
+      });
+
+      test('should concatenate DataFrames with different columns', () => {
+        const df1 = DataFrame(
+          [[1, 'Alice']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[2, 'Bob', 30]],
+          ['id', 'name', 'age']
+        );
+
+        const concatenated = DataFrame.concat([df1, df2], 0);
+
+        expect(concatenated.rows).toBe(2);
+        expect(concatenated.columns).toEqual(['id', 'name', 'age']);
+        expect(concatenated.getCell(0, 'age')).toBeNull();
+        expect(concatenated.getCell(1, 'age')).toBe(30);
+      });
+
+      test('should concatenate multiple DataFrames', () => {
+        const df1 = DataFrame([[1, 'A']], ['id', 'letter']);
+        const df2 = DataFrame([[2, 'B']], ['id', 'letter']);
+        const df3 = DataFrame([[3, 'C']], ['id', 'letter']);
+
+        const concatenated = DataFrame.concat([df1, df2, df3], 0);
+
+        expect(concatenated.rows).toBe(3);
+        expect(concatenated.getCell(0, 'id')).toBe(1);
+        expect(concatenated.getCell(1, 'id')).toBe(2);
+        expect(concatenated.getCell(2, 'id')).toBe(3);
+      });
+
+      test('should handle empty DataFrames in vertical concat', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([]);
+        const df3 = DataFrame([[2, 'Bob']], ['id', 'name']);
+
+        const concatenated = DataFrame.concat([df1, df2, df3], 0);
+
+        expect(concatenated.rows).toBe(2);
+        expect(concatenated.getCell(0, 'id')).toBe(1);
+        expect(concatenated.getCell(1, 'id')).toBe(2);
+      });
+    });
+
+    describe('Horizontal Concatenation (axis=1)', () => {
+      test('should concatenate DataFrames horizontally', () => {
+        const df1 = DataFrame(
+          [[1, 'Alice'], [2, 'Bob']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[25, 'NY'], [30, 'LA']],
+          ['age', 'city']
+        );
+
+        const concatenated = DataFrame.concat([df1, df2], 1);
+
+        expect(concatenated.rows).toBe(2);
+        expect(concatenated.columns).toEqual(['id', 'name', 'age', 'city']);
+        expect(concatenated.getCell(0, 'id')).toBe(1);
+        expect(concatenated.getCell(0, 'age')).toBe(25);
+        expect(concatenated.getCell(1, 'city')).toBe('LA');
+      });
+
+      test('should concatenate multiple DataFrames horizontally', () => {
+        const df1 = DataFrame([[1, 'A']], ['id', 'letter']);
+        const df2 = DataFrame([[25]], ['age']);
+        const df3 = DataFrame([['NY']], ['city']);
+
+        const concatenated = DataFrame.concat([df1, df2, df3], 1);
+
+        expect(concatenated.rows).toBe(1);
+        expect(concatenated.columns).toEqual(['id', 'letter', 'age', 'city']);
+        expect(concatenated.getCell(0, 'id')).toBe(1);
+        expect(concatenated.getCell(0, 'age')).toBe(25);
+        expect(concatenated.getCell(0, 'city')).toBe('NY');
+      });
+
+      test('should handle empty DataFrames in horizontal concat', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([]);
+        const df3 = DataFrame([[25]], ['age']);
+
+        const concatenated = DataFrame.concat([df1, df2, df3], 1);
+
+        expect(concatenated.rows).toBe(1);
+        expect(concatenated.columns).toEqual(['id', 'name', 'age']);
+      });
+    });
+
+    describe('Error Handling', () => {
+      test('should throw error if dataFrames is not an array', () => {
+        expect(() => DataFrame.concat('not an array')).toThrow(ValidationError);
+      });
+
+      test('should throw error if any element is not a DataFrame', () => {
+        const df = DataFrame([[1, 'Alice']], ['id', 'name']);
+
+        expect(() => DataFrame.concat([df, [1, 2]])).toThrow(ValidationError);
+      });
+
+      test('should throw error for invalid axis', () => {
+        const df = DataFrame([[1, 'Alice']], ['id', 'name']);
+
+        expect(() => DataFrame.concat([df], 2)).toThrow(ValidationError);
+      });
+
+      test('should throw error for mismatched row counts in horizontal concat', () => {
+        const df1 = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+        const df2 = DataFrame([[25]], ['age']);
+
+        expect(() => DataFrame.concat([df1, df2], 1)).toThrow(ValidationError);
+      });
+    });
+
+    describe('Edge Cases', () => {
+      test('should handle empty array of DataFrames', () => {
+        const concatenated = DataFrame.concat([], 0);
+
+        expect(concatenated.rows).toBe(0);
+        expect(concatenated.cols).toBe(0);
+      });
+
+      test('should handle single DataFrame', () => {
+        const df = DataFrame([[1, 'Alice']], ['id', 'name']);
+
+        const concatenated = DataFrame.concat([df], 0);
+
+        expect(concatenated.rows).toBe(1);
+        expect(concatenated.columns).toEqual(['id', 'name']);
+      });
+
+      test('should handle DataFrames with null values', () => {
+        const df1 = DataFrame([[1, null]], ['id', 'name']);
+        const df2 = DataFrame([[2, 'Bob']], ['id', 'name']);
+
+        const concatenated = DataFrame.concat([df1, df2], 0);
+
+        expect(concatenated.rows).toBe(2);
+        expect(concatenated.getCell(0, 'name')).toBeNull();
+        expect(concatenated.getCell(1, 'name')).toBe('Bob');
+      });
+
+      test('should preserve data types in vertical concat', () => {
+        const df1 = DataFrame([[1, 'Alice', 25]], ['id', 'name', 'age']);
+        const df2 = DataFrame([[2, 'Bob', 30]], ['id', 'name', 'age']);
+
+        const concatenated = DataFrame.concat([df1, df2], 0);
+
+        expect(typeof concatenated.getCell(0, 'id')).toBe('number');
+        expect(typeof concatenated.getCell(0, 'name')).toBe('string');
+        expect(typeof concatenated.getCell(0, 'age')).toBe('number');
+      });
+
+      test('should preserve data types in horizontal concat', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([[25]], ['age']);
+
+        const concatenated = DataFrame.concat([df1, df2], 1);
+
+        expect(typeof concatenated.getCell(0, 'id')).toBe('number');
+        expect(typeof concatenated.getCell(0, 'name')).toBe('string');
+        expect(typeof concatenated.getCell(0, 'age')).toBe('number');
+      });
+    });
+  });
+});
