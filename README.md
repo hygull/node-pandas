@@ -8,15 +8,56 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
 >
 > **Note:** Currently, this package is in development. More methods/functions/attributes will be added with time. 
 >
-> For now, you can 
+> ## What node-pandas v2.0.0 Can Do
 >
-> + create Series(using 1D array), DataFrame(using 2D array or file `readCsv()`)
-> + access Series object using exactly an array like syntax (indexing, looping etc.)
-> + view columns, index
-> + save DataFrame in a CSV file `toCsv()`
-> + access elements using indices/column names
-> + view contents in pretty tabular form on console
-> + access DataFrame's columns using column names
+> node-pandas brings pandas-like data manipulation to Node.js. Here's what you can do:
+>
+> **Create and manipulate data structures:**
+> - Create Series from 1D arrays and DataFrames from 2D arrays or CSV files
+> - Access data using array-like syntax (indexing, looping, slicing)
+> - View data in beautiful tabular format on console
+>
+> **Work with columns and rows:**
+> - Select specific columns with `select()`
+> - Filter rows with conditions using `filter()`
+> - Access columns by name or index
+>
+> **Analyze and aggregate data:**
+> - Group data by columns with `groupBy()` and aggregate using `mean()`, `sum()`, `count()`, `min()`, `max()`
+> - Perform statistical analysis on Series and DataFrames
+>
+> **Import and export:**
+> - Read CSV files with `readCsv()`
+> - Save DataFrames to CSV with `toCsv()`
+>
+> **Quick Examples:**
+>
+> ```javascript
+> const pd = require("node-pandas")
+>
+> // Create a Series
+> const ages = pd.Series([32, 30, 28])
+> console.log(ages[0]) // 32
+>
+> // Create a DataFrame
+> const df = pd.DataFrame([
+>     ['Rishikesh Agrawani', 32, 'Engineering'],
+>     ['Hemkesh Agrawani', 30, 'Marketing'],
+>     ['Malinikesh Agrawani', 28, 'Sales']
+> ], ['name', 'age', 'department'])
+>
+> // Select columns
+> const names = df.select(['name'])
+>
+> // Filter rows
+> const over30 = df.filter(row => row.age > 30)
+>
+> // Group and aggregate
+> const avgByDept = df.groupBy('department').mean('age')
+>
+> // Save to CSV
+> df.toCsv('./output.csv')
+> ```
 
 ## Installation
 
