@@ -1137,5 +1137,471 @@ describe('DataFrame Class', () => {
       expect(group1.id).toBe(2); // (1 + 3) / 2
     });
   });
+
+  describe('Apply Method', () => {
+    let df;
+
+    beforeEach(() => {
+      const data = [
+        [1, 'Rishikesh Agrawani', 25],
+        [2, 'Hemkesh Agrawani', 30],
+        [3, 'Malinikesh Agrawani', 35]
+      ];
+      const columns = ['id', 'name', 'age'];
+      df = DataFrame(data, columns);
+    });
+
+    test('should apply transformation to numeric column', () => {
+      const result = df.apply('age', (value) => value + 5);
+
+      expect(result.rows).toBe(3);
+      expect(result.cols).toBe(3);
+      expect(result.getCell(0, 'age')).toBe(30);
+      expect(result.getCell(1, 'age')).toBe(35);
+      expect(result.getCell(2, 'age')).toBe(40);
+    });
+
+    test('should apply transformation to string column', () => {
+      const result = df.apply('name', (value) => value.toUpperCase());
+
+      expect(result.getCell(0, 'name')).toBe('RISHIKESH AGRAWANI');
+      expect(result.getCell(1, 'name')).toBe('HEMKESH AGRAWANI');
+      expect(result.getCell(2, 'name')).toBe('MALINIKESH AGRAWANI');
+    });
+
+    test('should preserve other columns unchanged', () => {
+      const result = df.apply('age', (value) => value * 2);
+
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(0, 'name')).toBe('Rishikesh Agrawani');
+      expect(result.getCell(1, 'id')).toBe(2);
+      expect(result.getCell(1, 'name')).toBe('Hemkesh Agrawani');
+    });
+
+    test('should use row index in transformation', () => {
+      const result = df.apply('id', (value, rowIndex) => value + rowIndex * 100);
+
+      expect(result.getCell(0, 'id')).toBe(1); // 1 + 0 * 100
+      expect(result.getCell(1, 'id')).toBe(102); // 2 + 1 * 100
+      expect(result.getCell(2, 'id')).toBe(203); // 3 + 2 * 100
+    });
+
+    test('should throw ColumnError for non-existent column', () => {
+      expect(() => df.apply('nonexistent', (v) => v)).toThrow(ColumnError);
+    });
+
+    test('should throw ValidationError for non-function transformation', () => {
+      expect(() => df.apply('age', 'not a function')).toThrow(ValidationError);
+    });
+
+    test('should throw ValidationError for null transformation', () => {
+      expect(() => df.apply('age', null)).toThrow(ValidationError);
+    });
+
+    test('should throw error when transformation function throws', () => {
+      expect(() => {
+        df.apply('age', (value) => {
+          throw new Error('Transformation failed');
+        });
+      }).toThrow();
+    });
+
+    test('should return new DataFrame instance', () => {
+      const result = df.apply('age', (v) => v + 1);
+
+      expect(result).not.toBe(df);
+      expect(result instanceof Array).toBe(true);
+    });
+
+    test('should preserve DataFrame structure', () => {
+      const result = df.apply('age', (v) => v * 2);
+
+      expect(result.rows).toBe(3);
+      expect(result.cols).toBe(3);
+      expect(result.columns).toEqual(['id', 'name', 'age']);
+    });
+
+    test('should support method chaining', () => {
+      const result = df
+        .apply('age', (v) => v + 5)
+        .apply('id', (v) => v * 10);
+
+      expect(result.getCell(0, 'age')).toBe(30);
+      expect(result.getCell(0, 'id')).toBe(10);
+      expect(result.getCell(1, 'age')).toBe(35);
+      expect(result.getCell(1, 'id')).toBe(20);
+    });
+
+    test('should handle transformation with null values', () => {
+      const data = [[1, 'Alice', null], [2, 'Bob', 30]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.apply('age', (v) => v === null ? 0 : v + 5);
+
+      expect(result.getCell(0, 'age')).toBe(0);
+      expect(result.getCell(1, 'age')).toBe(35);
+    });
+
+    test('should handle transformation with undefined values', () => {
+      const data = [[1, 'Alice', undefined], [2, 'Bob', 30]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.apply('age', (v) => v === undefined ? -1 : v + 5);
+
+      expect(result.getCell(0, 'age')).toBe(-1);
+      expect(result.getCell(1, 'age')).toBe(35);
+    });
+
+    test('should handle single row DataFrame', () => {
+      const data = [[1, 'Alice', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.apply('age', (v) => v + 10);
+
+      expect(result.rows).toBe(1);
+      expect(result.getCell(0, 'age')).toBe(35);
+    });
+
+    test('should handle transformation returning different types', () => {
+      const result = df.apply('age', (v) => String(v));
+
+      expect(typeof result.getCell(0, 'age')).toBe('string');
+      expect(result.getCell(0, 'age')).toBe('25');
+      expect(result.getCell(1, 'age')).toBe('30');
+    });
+
+    test('should handle transformation with complex logic', () => {
+      const result = df.apply('age', (v) => {
+        if (v < 30) return 'young';
+        if (v < 35) return 'middle';
+        return 'senior';
+      });
+
+      expect(result.getCell(0, 'age')).toBe('young');
+      expect(result.getCell(1, 'age')).toBe('middle');
+      expect(result.getCell(2, 'age')).toBe('senior');
+    });
+  });
+
+  describe('Map Method', () => {
+    let df;
+
+    beforeEach(() => {
+      const data = [
+        [1, 'Rishikesh Agrawani', 25],
+        [2, 'Hemkesh Agrawani', 30],
+        [3, 'Malinikesh Agrawani', 35]
+      ];
+      const columns = ['id', 'name', 'age'];
+      df = DataFrame(data, columns);
+    });
+
+    test('should transform all values to strings', () => {
+      const result = df.map((value) => String(value));
+
+      expect(typeof result.getCell(0, 'id')).toBe('string');
+      expect(typeof result.getCell(0, 'name')).toBe('string');
+      expect(typeof result.getCell(0, 'age')).toBe('string');
+      expect(result.getCell(0, 'id')).toBe('1');
+      expect(result.getCell(0, 'age')).toBe('25');
+    });
+
+    test('should use row index in transformation', () => {
+      const result = df.map((value, rowIndex) => `${rowIndex}:${value}`);
+
+      expect(result.getCell(0, 'id')).toBe('0:1');
+      expect(result.getCell(1, 'id')).toBe('1:2');
+      expect(result.getCell(2, 'id')).toBe('2:3');
+    });
+
+    test('should use column name in transformation', () => {
+      const result = df.map((value, rowIndex, colName) => `${colName}=${value}`);
+
+      expect(result.getCell(0, 'id')).toBe('id=1');
+      expect(result.getCell(0, 'name')).toBe('name=Rishikesh Agrawani');
+      expect(result.getCell(0, 'age')).toBe('age=25');
+    });
+
+    test('should preserve DataFrame structure', () => {
+      const result = df.map((v) => v);
+
+      expect(result.rows).toBe(3);
+      expect(result.cols).toBe(3);
+      expect(result.columns).toEqual(['id', 'name', 'age']);
+    });
+
+    test('should throw ValidationError for non-function', () => {
+      expect(() => df.map('not a function')).toThrow(ValidationError);
+    });
+
+    test('should throw ValidationError for null', () => {
+      expect(() => df.map(null)).toThrow(ValidationError);
+    });
+
+    test('should throw error when transformation function throws', () => {
+      expect(() => {
+        df.map((value) => {
+          throw new Error('Map failed');
+        });
+      }).toThrow();
+    });
+
+    test('should return new DataFrame instance', () => {
+      const result = df.map((v) => v);
+
+      expect(result).not.toBe(df);
+      expect(result instanceof Array).toBe(true);
+    });
+
+    test('should support method chaining', () => {
+      const result = df
+        .map((v) => v)
+        .map((v) => typeof v === 'number' ? v * 2 : v);
+
+      expect(result.getCell(0, 'id')).toBe(2);
+      expect(result.getCell(0, 'age')).toBe(50);
+      expect(result.getCell(0, 'name')).toBe('Rishikesh Agrawani');
+    });
+
+    test('should handle null values', () => {
+      const data = [[1, null, 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.map((v) => v === null ? 'NULL' : v);
+
+      expect(result.getCell(0, 'name')).toBe('NULL');
+    });
+
+    test('should handle undefined values', () => {
+      const data = [[1, undefined, 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.map((v) => v === undefined ? 'UNDEF' : v);
+
+      expect(result.getCell(0, 'name')).toBe('UNDEF');
+    });
+
+    test('should handle single row DataFrame', () => {
+      const data = [[1, 'Alice', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.map((v) => String(v).toUpperCase());
+
+      expect(result.rows).toBe(1);
+      expect(result.getCell(0, 'id')).toBe('1');
+      expect(result.getCell(0, 'name')).toBe('ALICE');
+    });
+
+    test('should handle conditional transformations', () => {
+      const result = df.map((value) => {
+        if (typeof value === 'number') return value * 2;
+        if (typeof value === 'string') return value.length;
+        return value;
+      });
+
+      expect(result.getCell(0, 'id')).toBe(2);
+      expect(result.getCell(0, 'age')).toBe(50);
+      expect(result.getCell(0, 'name')).toBe(18); // Length of 'Rishikesh Agrawani'
+    });
+
+    test('should preserve all column names', () => {
+      const result = df.map((v) => v);
+
+      expect(result.columns).toEqual(['id', 'name', 'age']);
+    });
+
+    test('should handle mixed data types', () => {
+      const data = [[1, 'text', true], [2, 'more', false]];
+      const columns = ['num', 'str', 'bool'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.map((v) => typeof v);
+
+      expect(result.getCell(0, 'num')).toBe('number');
+      expect(result.getCell(0, 'str')).toBe('string');
+      expect(result.getCell(0, 'bool')).toBe('boolean');
+    });
+  });
+
+  describe('Replace Method', () => {
+    let df;
+
+    beforeEach(() => {
+      const data = [
+        [1, 'Rishikesh Agrawani', 25],
+        [2, 'Hemkesh Agrawani', null],
+        [3, 'Malinikesh Agrawani', 35]
+      ];
+      const columns = ['id', 'name', 'age'];
+      df = DataFrame(data, columns);
+    });
+
+    test('should replace null values in entire DataFrame', () => {
+      const result = df.replace(null, 0);
+
+      expect(result.getCell(1, 'age')).toBe(0);
+      expect(result.getCell(0, 'age')).toBe(25);
+      expect(result.getCell(2, 'age')).toBe(35);
+    });
+
+    test('should replace values in specific column only', () => {
+      const result = df.replace(null, 30, 'age');
+
+      expect(result.getCell(1, 'age')).toBe(30);
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(1, 'id')).toBe(2);
+    });
+
+    test('should replace using function predicate', () => {
+      const result = df.replace((v) => typeof v === 'number' && v < 30, 999);
+
+      expect(result.getCell(0, 'age')).toBe(999);
+      expect(result.getCell(1, 'age')).toBe(null); // null doesn't match the predicate
+      expect(result.getCell(2, 'age')).toBe(35);
+    });
+
+    test('should replace undefined values', () => {
+      const data = [[1, undefined, 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.replace(undefined, 'N/A');
+
+      expect(result.getCell(0, 'name')).toBe('N/A');
+    });
+
+    test('should replace string values', () => {
+      const result = df.replace('Rishikesh Agrawani', 'REPLACED');
+
+      expect(result.getCell(0, 'name')).toBe('REPLACED');
+      expect(result.getCell(1, 'name')).toBe('Hemkesh Agrawani');
+    });
+
+    test('should replace numeric values', () => {
+      const result = df.replace(1, 999);
+
+      expect(result.getCell(0, 'id')).toBe(999);
+      expect(result.getCell(1, 'id')).toBe(2);
+    });
+
+    test('should preserve DataFrame structure', () => {
+      const result = df.replace(null, 0);
+
+      expect(result.rows).toBe(3);
+      expect(result.cols).toBe(3);
+      expect(result.columns).toEqual(['id', 'name', 'age']);
+    });
+
+    test('should throw ColumnError for non-existent column', () => {
+      expect(() => df.replace(null, 0, 'nonexistent')).toThrow(ColumnError);
+    });
+
+    test('should return new DataFrame instance', () => {
+      const result = df.replace(null, 0);
+
+      expect(result).not.toBe(df);
+      expect(result instanceof Array).toBe(true);
+    });
+
+    test('should support method chaining', () => {
+      const result = df
+        .replace(null, 0)
+        .replace(1, 999);
+
+      expect(result.getCell(0, 'id')).toBe(999);
+      expect(result.getCell(1, 'age')).toBe(0);
+    });
+
+    test('should handle function predicate with column context', () => {
+      const result = df.replace((v) => typeof v === 'number' && v > 30, 'HIGH');
+
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(2, 'age')).toBe('HIGH');
+    });
+
+    test('should replace in specific column with function predicate', () => {
+      const result = df.replace((v) => v > 30, 'OVER_30', 'age');
+
+      expect(result.getCell(2, 'age')).toBe('OVER_30');
+      expect(result.getCell(0, 'age')).toBe(25);
+      expect(result.getCell(1, 'age')).toBeNull();
+    });
+
+    test('should handle single row DataFrame', () => {
+      const data = [[1, 'Alice', null]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.replace(null, 0);
+
+      expect(result.rows).toBe(1);
+      expect(result.getCell(0, 'age')).toBe(0);
+    });
+
+    test('should handle replacing with null', () => {
+      const data = [[1, 'Alice', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.replace(25, null);
+
+      expect(result.getCell(0, 'age')).toBeNull();
+    });
+
+    test('should handle replacing with undefined', () => {
+      const data = [[1, 'Alice', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.replace(25, undefined);
+
+      expect(result.getCell(0, 'age')).toBeUndefined();
+    });
+
+    test('should not replace values outside specified column', () => {
+      const data = [[1, 'Alice', 25], [2, 'Bob', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.replace(25, 99, 'age');
+
+      expect(result.getCell(0, 'age')).toBe(99);
+      expect(result.getCell(1, 'age')).toBe(99);
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(1, 'id')).toBe(2);
+    });
+
+    test('should handle boolean values', () => {
+      const data = [[true, false], [false, true]];
+      const columns = ['col1', 'col2'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.replace(true, 'YES');
+
+      expect(result.getCell(0, 'col1')).toBe('YES');
+      expect(result.getCell(0, 'col2')).toBe(false);
+      expect(result.getCell(1, 'col1')).toBe(false);
+      expect(result.getCell(1, 'col2')).toBe('YES');
+    });
+
+    test('should handle complex function predicates', () => {
+      const data = [[1, 'Alice', 25], [2, 'Bob', 30], [3, 'Charlie', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.replace((v) => typeof v === 'number' && v % 2 === 0, 'EVEN');
+
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(1, 'id')).toBe('EVEN');
+      expect(result.getCell(1, 'age')).toBe('EVEN');
+      expect(result.getCell(2, 'age')).toBe(35);
+    });
+  });
 });
 

@@ -565,6 +565,264 @@ class NodeDataFrame extends Array {
     return new GroupBy(this, columns);
   }
 
+  /**
+   * Applies a transformation function to a specific column and returns a new DataFrame.
+   *
+   * Creates a new DataFrame where the specified column has been transformed by applying
+   * the provided function to each value in that column. All other columns remain unchanged.
+   * The function receives the value and its row index as parameters.
+   *
+   * @param {string} columnName - The name of the column to transform
+   * @param {Function} fn - Transformation function that receives (value, rowIndex) and returns transformed value
+   * @returns {NodeDataFrame} A new DataFrame with the transformed column
+   *
+   * @throws {ColumnError} If columnName doesn't exist in the DataFrame
+   * @throws {ValidationError} If fn is not a function
+   * @throws {Error} If the transformation function throws an error for any value
+   *
+   * @example
+   * const df = DataFrame(
+   *   [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]],
+   *   ['id', 'name', 'age']
+   * );
+   *
+   * // Transform age column by adding 5 to each value
+   * const transformed = df.apply('age', (value) => value + 5);
+   * // Returns DataFrame with ages [30, 35, 40]
+   *
+   * // Transform name column to uppercase
+   * const upperNames = df.apply('name', (value) => value.toUpperCase());
+   * // Returns DataFrame with names in uppercase
+   *
+   * // Use row index in transformation
+   * const withRowIndex = df.apply('id', (value, rowIndex) => value + rowIndex * 100);
+   * // Returns DataFrame with transformed id values
+   *
+   * @example
+   * // Error handling
+   * try {
+   *   df.apply('nonexistent', (v) => v); // Column doesn't exist
+   * } catch (error) {
+   *   console.error(error.message); // "Column 'nonexistent' does not exist"
+   * }
+   */
+  apply(columnName, fn) {
+    // Validate column exists
+    const colIndex = this.columns.indexOf(columnName);
+    if (colIndex === -1) {
+      throw new ColumnError(`Column '${columnName}' does not exist`, {
+        operation: 'apply',
+        column: columnName,
+        value: this.columns
+      });
+    }
+
+    // Validate function
+    try {
+      validation.validateFunction(fn, 'fn');
+    } catch (error) {
+      throw new ValidationError(`Invalid transformation function: ${error.message}`, {
+        operation: 'apply',
+        value: fn
+      });
+    }
+
+    // Transform the column
+    const transformedData = this.data.map((row, rowIndex) => {
+      const newRow = { ...row };
+      try {
+        const currentValue = row[columnName];
+        const transformedValue = fn(currentValue, rowIndex);
+        newRow[columnName] = transformedValue;
+      } catch (error) {
+        throw new Error(
+          `Transformation function failed at row ${rowIndex}, column '${columnName}': ${error.message}`
+        );
+      }
+      return newRow;
+    });
+
+    // Convert to array format
+    const arrayData = transformedData.map((row) => {
+      return this.columns.map(col => row[col]);
+    });
+
+    // Create and return new DataFrame
+    return new NodeDataFrame(arrayData, this.columns);
+  }
+
+  /**
+   * Applies an element-wise transformation function across all cells in the DataFrame.
+   *
+   * Creates a new DataFrame where every value has been transformed by applying the provided
+   * function to each cell. The function receives the value, row index, and column name as parameters.
+   * The structure and column names are preserved.
+   *
+   * @param {Function} fn - Transformation function that receives (value, rowIndex, columnName) and returns transformed value
+   * @returns {NodeDataFrame} A new DataFrame with all values transformed
+   *
+   * @throws {ValidationError} If fn is not a function
+   * @throws {Error} If the transformation function throws an error for any value
+   *
+   * @example
+   * const df = DataFrame(
+   *   [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30]],
+   *   ['id', 'name', 'age']
+   * );
+   *
+   * // Convert all values to strings
+   * const allStrings = df.map((value) => String(value));
+   * // Returns DataFrame with all values as strings
+   *
+   * // Add row and column info to each value
+   * const withInfo = df.map((value, rowIndex, colName) => `${colName}[${rowIndex}]=${value}`);
+   * // Returns DataFrame with formatted strings
+   *
+   * // Multiply numeric values by 2, keep others unchanged
+   * const doubled = df.map((value) => typeof value === 'number' ? value * 2 : value);
+   * // Returns DataFrame with numeric values doubled
+   *
+   * @example
+   * // Error handling
+   * try {
+   *   df.map('not a function'); // Invalid function
+   * } catch (error) {
+   *   console.error(error.message); // "fn must be a function"
+   * }
+   */
+  map(fn) {
+    // Validate function
+    try {
+      validation.validateFunction(fn, 'fn');
+    } catch (error) {
+      throw new ValidationError(`Invalid transformation function: ${error.message}`, {
+        operation: 'map',
+        value: fn
+      });
+    }
+
+    // Transform all cells
+    const transformedData = this.data.map((row, rowIndex) => {
+      const newRow = {};
+
+      try {
+        for (const columnName of this.columns) {
+          const value = row[columnName];
+          newRow[columnName] = fn(value, rowIndex, columnName);
+        }
+      } catch (error) {
+        throw new Error(
+          `Transformation function failed at row ${rowIndex}: ${error.message}`
+        );
+      }
+
+      return newRow;
+    });
+
+    // Convert to array format
+    const arrayData = transformedData.map((row) => {
+      return this.columns.map(col => row[col]);
+    });
+
+    // Create and return new DataFrame
+    return new NodeDataFrame(arrayData, this.columns);
+  }
+
+  /**
+   * Replaces values in the DataFrame and returns a new DataFrame.
+   *
+   * Replaces all occurrences of oldValue with newValue. If columnName is specified,
+   * only replaces values in that column. Otherwise, replaces across the entire DataFrame.
+   * Supports both exact value matching and function-based matching.
+   *
+   * @param {*|Function} oldValue - Value to replace or function that returns true for values to replace
+   * @param {*} newValue - Value to replace with
+   * @param {string} [columnName] - Optional column name to limit replacement to that column only
+   * @returns {NodeDataFrame} A new DataFrame with replacements made
+   *
+   * @throws {ColumnError} If columnName is provided but doesn't exist
+   * @throws {ValidationError} If oldValue is neither a value nor a function
+   *
+   * @example
+   * const df = DataFrame(
+   *   [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', null], [3, 'Malinikesh Agrawani', 35]],
+   *   ['id', 'name', 'age']
+   * );
+   *
+   * // Replace null values with 0 in entire DataFrame
+   * const noNulls = df.replace(null, 0);
+   * // Returns DataFrame with null replaced by 0
+   *
+   * // Replace in specific column only
+   * const fixedAge = df.replace(null, 30, 'age');
+   * // Returns DataFrame with null in age column replaced by 30
+   *
+   * // Replace using a function
+   * const noSmallIds = df.replace((v) => v < 2, 999);
+   * // Returns DataFrame with values < 2 replaced by 999
+   *
+   * // Replace undefined values
+   * const noUndefined = df.replace(undefined, 'N/A');
+   * // Returns DataFrame with undefined replaced by 'N/A'
+   *
+   * @example
+   * // Error handling
+   * try {
+   *   df.replace(1, 2, 'nonexistent'); // Column doesn't exist
+   * } catch (error) {
+   *   console.error(error.message); // "Column 'nonexistent' does not exist"
+   * }
+   */
+  replace(oldValue, newValue, columnName) {
+    // Validate columnName if provided
+    if (columnName !== undefined) {
+      const colIndex = this.columns.indexOf(columnName);
+      if (colIndex === -1) {
+        throw new ColumnError(`Column '${columnName}' does not exist`, {
+          operation: 'replace',
+          column: columnName,
+          value: this.columns
+        });
+      }
+    }
+
+    // Determine if oldValue is a function
+    const isFunction = typeof oldValue === 'function';
+
+    // Transform data
+    const transformedData = this.data.map((row) => {
+      const newRow = { ...row };
+
+      if (columnName !== undefined) {
+        // Replace in specific column only
+        const currentValue = row[columnName];
+        const shouldReplace = isFunction ? oldValue(currentValue) : currentValue === oldValue;
+
+        if (shouldReplace) {
+          newRow[columnName] = newValue;
+        }
+      } else {
+        // Replace across entire row
+        for (const col of this.columns) {
+          const shouldReplace = isFunction ? oldValue(newRow[col]) : newRow[col] === oldValue;
+          if (shouldReplace) {
+            newRow[col] = newValue;
+          }
+        }
+      }
+
+      return newRow;
+    });
+
+    // Convert to array format
+    const arrayData = transformedData.map((row) => {
+      return this.columns.map(col => row[col]);
+    });
+
+    // Create and return new DataFrame
+    return new NodeDataFrame(arrayData, this.columns);
+  }
+
 
 }
 
