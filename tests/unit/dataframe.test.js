@@ -1603,5 +1603,376 @@ describe('DataFrame Class', () => {
       expect(result.getCell(2, 'age')).toBe(35);
     });
   });
+
+  describe('Describe Method', () => {
+    test('should return statistics DataFrame for numeric columns', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+
+      expect(stats).toBeDefined();
+      expect(stats instanceof Array).toBe(true);
+      expect(stats.columns).toEqual(['id', 'name', 'age']);
+      expect(stats.rows).toBe(11); // count, mean, std, min, 25%, 50%, 75%, max, unique, top, freq
+    });
+
+    test('should calculate count correctly', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const countRow = stats.getRow(0);
+
+      expect(countRow.id).toBe(3);
+      expect(countRow.name).toBe(3);
+      expect(countRow.age).toBe(3);
+    });
+
+    test('should calculate mean correctly for numeric columns', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const meanRow = stats.getRow(1);
+
+      expect(meanRow.id).toBe(2);
+      expect(isNaN(meanRow.name)).toBe(true); // NaN for non-numeric
+      expect(meanRow.age).toBe(30);
+    });
+
+    test('should calculate std correctly for numeric columns', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const stdRow = stats.getRow(2);
+
+      expect(stdRow.id).toBe(1);
+      expect(isNaN(stdRow.name)).toBe(true); // NaN for non-numeric
+      expect(stdRow.age).toBe(5);
+    });
+
+    test('should calculate min correctly', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const minRow = stats.getRow(3);
+
+      expect(minRow.id).toBe(1);
+      expect(minRow.name).toBe('Rishikesh Agrawani'); // Alphabetically first
+      expect(minRow.age).toBe(25);
+    });
+
+    test('should calculate percentiles correctly', () => {
+      const data = [[1, 'A', 10], [2, 'B', 20], [3, 'C', 30], [4, 'D', 40], [5, 'E', 50]];
+      const columns = ['id', 'name', 'value'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const p25Row = stats.getRow(4);
+      const p50Row = stats.getRow(5);
+      const p75Row = stats.getRow(6);
+
+      expect(p25Row.value).toBe(20);
+      expect(p50Row.value).toBe(30);
+      expect(p75Row.value).toBe(40);
+    });
+
+    test('should calculate max correctly', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const maxRow = stats.getRow(7);
+
+      expect(maxRow.id).toBe(3);
+      expect(maxRow.name).toBe('Malinikesh Agrawani'); // Alphabetically last
+      expect(maxRow.age).toBe(35);
+    });
+
+    test('should calculate unique count for non-numeric columns', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const uniqueRow = stats.getRow(8);
+
+      expect(isNaN(uniqueRow.id)).toBe(true); // NaN for numeric
+      expect(uniqueRow.name).toBe(3);
+      expect(isNaN(uniqueRow.age)).toBe(true); // NaN for numeric
+    });
+
+    test('should calculate top (mode) for non-numeric columns', () => {
+      const data = [[1, 'Alice', 25], [2, 'Alice', 30], [3, 'Bob', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const topRow = stats.getRow(9);
+
+      expect(isNaN(topRow.id)).toBe(true); // NaN for numeric
+      expect(topRow.name).toBe('Alice'); // Most frequent
+      expect(isNaN(topRow.age)).toBe(true); // NaN for numeric
+    });
+
+    test('should calculate freq (mode frequency) for non-numeric columns', () => {
+      const data = [[1, 'Alice', 25], [2, 'Alice', 30], [3, 'Bob', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const freqRow = stats.getRow(10);
+
+      expect(isNaN(freqRow.id)).toBe(true); // NaN for numeric
+      expect(freqRow.name).toBe(2); // Frequency of 'Alice'
+      expect(isNaN(freqRow.age)).toBe(true); // NaN for numeric
+    });
+
+    test('should handle null values by excluding them', () => {
+      const data = [[1, 'Alice', 25], [2, null, 30], [3, 'Charlie', null]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const countRow = stats.getRow(0);
+
+      expect(countRow.id).toBe(3);
+      expect(countRow.name).toBe(2); // Null excluded
+      expect(countRow.age).toBe(2); // Null excluded
+    });
+
+    test('should handle undefined values by excluding them', () => {
+      const data = [[1, 'Alice', 25], [2, undefined, 30], [3, 'Charlie', undefined]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const countRow = stats.getRow(0);
+
+      expect(countRow.id).toBe(3);
+      expect(countRow.name).toBe(2); // Undefined excluded
+      expect(countRow.age).toBe(2); // Undefined excluded
+    });
+
+    test('should handle empty DataFrame', () => {
+      const df = DataFrame([]);
+
+      const stats = df.describe();
+
+      expect(stats.rows).toBe(0);
+      expect(stats.cols).toBe(0);
+    });
+
+    test('should handle single row DataFrame', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+
+      expect(stats.rows).toBe(11);
+      expect(stats.columns).toEqual(['id', 'name', 'age']);
+      const countRow = stats.getRow(0);
+      expect(countRow.id).toBe(1);
+      expect(countRow.name).toBe(1);
+      expect(countRow.age).toBe(1);
+    });
+
+    test('should handle single column DataFrame', () => {
+      const data = [[1], [2], [3]];
+      const columns = ['id'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+
+      expect(stats.rows).toBe(11);
+      expect(stats.columns).toEqual(['id']);
+      const meanRow = stats.getRow(1);
+      expect(meanRow.id).toBe(2);
+    });
+
+    test('should handle DataFrame with all null values in a column', () => {
+      const data = [[1, null, 25], [2, null, 30], [3, null, 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const countRow = stats.getRow(0);
+      const meanRow = stats.getRow(1);
+
+      expect(countRow.name).toBe(0);
+      expect(isNaN(meanRow.name)).toBe(true);
+    });
+
+    test('should handle mixed numeric and string columns', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+
+      // Numeric columns should have mean, std, etc.
+      const meanRow = stats.getRow(1);
+      expect(typeof meanRow.id).toBe('number');
+      expect(typeof meanRow.age).toBe('number');
+      expect(isNaN(meanRow.name)).toBe(true);
+
+      // String column should have unique, top, freq
+      const uniqueRow = stats.getRow(8);
+      expect(uniqueRow.name).toBe(3);
+      expect(typeof uniqueRow.name).toBe('number');
+    });
+
+    test('should have correct index property with statistic names', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+
+      expect(stats.index).toEqual(['count', 'mean', 'std', 'min', '25%', '50%', '75%', 'max', 'unique', 'top', 'freq']);
+    });
+
+    test('should return new DataFrame instance', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+
+      expect(stats).not.toBe(df);
+      expect(stats instanceof Array).toBe(true);
+    });
+
+    test('should handle DataFrame with duplicate values', () => {
+      const data = [[1, 'Alice', 25], [1, 'Alice', 25], [1, 'Alice', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const uniqueRow = stats.getRow(8);
+      const topRow = stats.getRow(9);
+      const freqRow = stats.getRow(10);
+
+      expect(uniqueRow.name).toBe(1); // Only one unique value
+      expect(topRow.name).toBe('Alice');
+      expect(freqRow.name).toBe(3); // Frequency is 3
+    });
+
+    test('should handle DataFrame with floating point numbers', () => {
+      const data = [[1.5, 'A', 2.5], [2.5, 'B', 3.5], [3.5, 'C', 4.5]];
+      const columns = ['float1', 'name', 'float2'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const meanRow = stats.getRow(1);
+
+      expect(meanRow.float1).toBe(2.5);
+      expect(meanRow.float2).toBe(3.5);
+    });
+
+    test('should handle DataFrame with negative numbers', () => {
+      const data = [[-1, 'A', -10], [-2, 'B', -20], [-3, 'C', -30]];
+      const columns = ['id', 'name', 'value'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const meanRow = stats.getRow(1);
+      const minRow = stats.getRow(3);
+      const maxRow = stats.getRow(7);
+
+      expect(meanRow.id).toBe(-2);
+      expect(minRow.id).toBe(-3);
+      expect(maxRow.id).toBe(-1);
+    });
+
+    test('should handle DataFrame with zero values', () => {
+      const data = [[0, 'A', 0], [0, 'B', 0], [0, 'C', 0]];
+      const columns = ['id', 'name', 'value'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const meanRow = stats.getRow(1);
+      const stdRow = stats.getRow(2);
+
+      expect(meanRow.id).toBe(0);
+      expect(stdRow.id).toBe(0);
+    });
+
+    test('should handle DataFrame with boolean values', () => {
+      const data = [[true, 'A', 1], [false, 'B', 2], [true, 'C', 3]];
+      const columns = ['bool', 'name', 'num'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const countRow = stats.getRow(0);
+
+      // Boolean values are not numeric, so they should be treated as non-numeric
+      expect(countRow.bool).toBe(3);
+      expect(countRow.name).toBe(3);
+      expect(countRow.num).toBe(3);
+    });
+
+    test('should handle large DataFrame', () => {
+      const data = [];
+      for (let i = 0; i < 1000; i++) {
+        data.push([i, `Name${i}`, i * 2]);
+      }
+      const columns = ['id', 'name', 'value'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+
+      expect(stats.rows).toBe(11);
+      expect(stats.columns).toEqual(['id', 'name', 'value']);
+      const countRow = stats.getRow(0);
+      expect(countRow.id).toBe(1000);
+    });
+
+    test('should handle DataFrame with special characters in strings', () => {
+      const data = [[1, 'Alice@123', 25], [2, 'Bob#456', 30], [3, 'Charlie$789', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const uniqueRow = stats.getRow(8);
+
+      expect(uniqueRow.name).toBe(3);
+    });
+
+    test('should handle DataFrame with very large and very small numbers', () => {
+      const data = [[1e10, 'A', 1e-10], [2e10, 'B', 2e-10], [3e10, 'C', 3e-10]];
+      const columns = ['large', 'name', 'small'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const meanRow = stats.getRow(1);
+
+      expect(meanRow.large).toBe(2e10);
+      expect(meanRow.small).toBe(2e-10);
+    });
+
+    test('should support method chaining', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      // describe() should return a DataFrame that supports other operations
+      const stats = df.describe();
+      const filtered = stats.filter(row => row.id > 1);
+
+      expect(filtered).toBeDefined();
+      expect(filtered instanceof Array).toBe(true);
+    });
+  });
 });
 
