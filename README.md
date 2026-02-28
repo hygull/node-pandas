@@ -62,7 +62,7 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
 ## Installation
 
 | Installation type | command |
-| --- | --- |
+| :--- | :--- |
 | Local | `npm install node-pandas --save` |
 | Local as dev dependency | `npm install node-pandas --save-dev` |
 | Global | `npm install node-pandas` |
@@ -124,16 +124,16 @@ NodeSeries [
 ┌─────────┬────────┐
 │ (index) │ Values │
 ├─────────┼────────┤
-│    0    │   1    │
-│    1    │   9    │
-│    2    │   2    │
-│    3    │   6    │
-│    4    │   7    │
-│    5    │   -8   │
-│    6    │   4    │
-│    7    │   -3   │
-│    8    │   0    │
-│    9    │   5    │
+│ 0       │ 1      │
+│ 1       │ 9      │
+│ 2       │ 2      │
+│ 3       │ 6      │
+│ 4       │ 7      │
+│ 5       │ -8     │
+│ 6       │ 4      │
+│ 7       │ -3     │
+│ 8       │ 0      │
+│ 9       │ 5      │
 └─────────┴────────┘
 undefined
 > 
@@ -179,13 +179,13 @@ NodeDataFrame [
 > 
 > df.show
 ┌─────────┬────────────────────┬─────────┬──────────────┐
-│ (index) │     full_name      │ user_id │  technology  │
+│ (index) │ full_name          │ user_id │ technology   │
 ├─────────┼────────────────────┼─────────┼──────────────┤
-│    0    │ 'Guido Van Rossum' │    6    │   'Python'   │
-│    1    │    'Ryan Dahl'     │    5    │  'Node.js'   │
-│    2    │ 'Anders Hezlsberg' │    7    │ 'TypeScript' │
-│    3    │   'Wes McKinney'   │    3    │   'Pandas'   │
-│    4    │   'Ken Thompson'   │    1    │ 'B language' │
+│ 0       │ 'Guido Van Rossum' │ 6       │ 'Python'     │
+│ 1       │ 'Ryan Dahl'        │ 5       │ 'Node.js'    │
+│ 2       │ 'Anders Hezlsberg' │ 7       │ 'TypeScript' │
+│ 3       │ 'Wes McKinney'     │ 3       │ 'Pandas'     │
+│ 4       │ 'Ken Thompson'     │ 1       │ 'B language' │
 └─────────┴────────────────────┴─────────┴──────────────┘
 undefined
 > 
@@ -283,14 +283,14 @@ NodeDataFrame [
 > 
 > df.show
 ┌─────────┬──────────────────────┬────────────────────────┬─────────────────┬───────┐
-│ (index) │       fullName       │       Profession       │    Language     │ DevId │
+│ (index) │ fullName             │ Profession             │ Language        │ DevId │
 ├─────────┼──────────────────────┼────────────────────────┼─────────────────┼───────┤
-│    0    │    'Ken Thompson'    │     'C developer'      │       'C'       │ 1122  │
-│    1    │     'Ron Wilson'     │    'Ruby developer'    │     'Ruby'      │ 4433  │
-│    2    │    'Jeff Thomas'     │    'Java developer'    │     'Java'      │ 8899  │
-│    3    │ 'Rishikesh Agrawani' │   'Python developer'   │    'Python'     │ 6677  │
-│    4    │    'Kylie Dwine'     │         'C++'          │ 'C++ Developer' │  11   │
-│    5    │   'Briella Brown'    │ 'JavaScript developer' │  'JavaScript'   │ 8844  │
+│ 0       │ 'Ken Thompson'       │ 'C developer'          │ 'C'             │ 1122  │
+│ 1       │ 'Ron Wilson'         │ 'Ruby developer'       │ 'Ruby'          │ 4433  │
+│ 2       │ 'Jeff Thomas'        │ 'Java developer'       │ 'Java'          │ 8899  │
+│ 3       │ 'Rishikesh Agrawani' │ 'Python developer'     │ 'Python'        │ 6677  │
+│ 4       │ 'Kylie Dwine'        │ 'C++'                  │ 'C++ Developer' │ 11    │
+│ 5       │ 'Briella Brown'      │ 'JavaScript developer' │ 'JavaScript'    │ 8844  │
 └─────────┴──────────────────────┴────────────────────────┴─────────────────┴───────┘
 undefined
 > 
@@ -404,14 +404,14 @@ df = pd.readCsv("./docs/csvs/devs.csv") // Node DataFrame object
 df.show // View DataFrame in tabular form
 /*
 ┌─────────┬──────────────────────┬────────────────────────┬─────────────────┬───────┐
-│ (index) │       fullName       │       Profession       │    Language     │ DevId │
+│ (index) │ fullName             │ Profession             │ Language        │ DevId │
 ├─────────┼──────────────────────┼────────────────────────┼─────────────────┼───────┤
-│    0    │    'Ken Thompson'    │     'C developer'      │       'C'       │ 1122  │
-│    1    │     'Ron Wilson'     │    'Ruby developer'    │     'Ruby'      │ 4433  │
-│    2    │    'Jeff Thomas'     │    'Java developer'    │     'Java'      │ 8899  │
-│    3    │ 'Rishikesh Agrawani' │   'Python developer'   │    'Python'     │ 6677  │
-│    4    │    'Kylie Dwine'     │         'C++'          │ 'C++ Developer' │  11   │
-│    5    │   'Briella Brown'    │ 'JavaScirpt developer' │  'JavaScript'   │ 8844  │
+│ 0       │ 'Ken Thompson'       │ 'C developer'          │ 'C'             │ 1122  │
+│ 1       │ 'Ron Wilson'         │ 'Ruby developer'       │ 'Ruby'          │ 4433  │
+│ 2       │ 'Jeff Thomas'        │ 'Java developer'       │ 'Java'          │ 8899  │
+│ 3       │ 'Rishikesh Agrawani' │ 'Python developer'     │ 'Python'        │ 6677  │
+│ 4       │ 'Kylie Dwine'        │ 'C++'                  │ 'C++ Developer' │ 11    │
+│ 5       │ 'Briella Brown'      │ 'JavaScirpt developer' │ 'JavaScript'    │ 8844  │
 └─────────┴──────────────────────┴────────────────────────┴─────────────────┴───────┘
 */
 
@@ -494,11 +494,11 @@ const df = pd.DataFrame([
 df.show
 /*
 ┌─────────┬──────────────────────┬─────┬──────────────┐
-│ (index) │        name          │ age │  department  │
+│ (index) │ name                 │ age │ department   │
 ├─────────┼──────────────────────┼─────┼──────────────┤
-│    0    │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│
-│    1    │  'Hemkesh Agrawani'  │ 30  │  'Marketing' │
-│    2    │ 'Malinikesh Agrawani'│ 28  │   'Sales'    │
+│ 0       │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│
+│ 1       │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing'  │
+│ 2       │ 'Malinikesh Agrawani'│ 28  │ 'Sales'      │
 └─────────┴──────────────────────┴─────┴──────────────┘
 */
 
@@ -507,11 +507,11 @@ const nameOnly = df.select(['name'])
 nameOnly.show
 /*
 ┌─────────┬──────────────────────┐
-│ (index) │        name          │
+│ (index) │ name                 │
 ├─────────┼──────────────────────┤
-│    0    │ 'Rishikesh Agrawani' │
-│    1    │  'Hemkesh Agrawani'  │
-│    2    │ 'Malinikesh Agrawani'│
+│ 0       │ 'Rishikesh Agrawani' │
+│ 1       │ 'Hemkesh Agrawani'   │
+│ 2       │ 'Malinikesh Agrawani'│
 └─────────┴──────────────────────┘
 */
 
@@ -520,11 +520,11 @@ const nameAndAge = df.select(['name', 'age'])
 nameAndAge.show
 /*
 ┌─────────┬──────────────────────┬─────┐
-│ (index) │        name          │ age │
+│ (index) │ name                 │ age │
 ├─────────┼──────────────────────┼─────┤
-│    0    │ 'Rishikesh Agrawani' │ 32  │
-│    1    │  'Hemkesh Agrawani'  │ 30  │
-│    2    │ 'Malinikesh Agrawani'│ 28  │
+│ 0       │ 'Rishikesh Agrawani' │ 32  │
+│ 1       │ 'Hemkesh Agrawani'   │ 30  │
+│ 2       │ 'Malinikesh Agrawani'│ 28  │
 └─────────┴──────────────────────┴─────┘
 */
 
@@ -551,11 +551,11 @@ const df = pd.DataFrame([
 df.show
 /*
 ┌─────────┬──────────────────────┬─────┬──────────────┐
-│ (index) │        name          │ age │  department  │
+│ (index) │ name                 │ age │ department   │
 ├─────────┼──────────────────────┼─────┼──────────────┤
-│    0    │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│
-│    1    │  'Hemkesh Agrawani'  │ 30  │  'Marketing' │
-│    2    │ 'Malinikesh Agrawani'│ 28  │   'Sales'    │
+│ 0       │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│
+│ 1       │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing'  │
+│ 2       │ 'Malinikesh Agrawani'│ 28  │ 'Sales'      │
 └─────────┴──────────────────────┴─────┴──────────────┘
 */
 
@@ -564,10 +564,10 @@ const over28 = df.filter(row => row.age > 28)
 over28.show
 /*
 ┌─────────┬──────────────────────┬─────┬──────────────┐
-│ (index) │        name          │ age │  department  │
+│ (index) │ name                 │ age │ department   │
 ├─────────┼──────────────────────┼─────┼──────────────┤
-│    0    │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│
-│    1    │  'Hemkesh Agrawani'  │ 30  │  'Marketing' │
+│ 0       │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│
+│ 1       │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing'  │
 └─────────┴──────────────────────┴─────┴──────────────┘
 */
 
@@ -576,9 +576,9 @@ const engineering = df.filter(row => row.department === 'Engineering')
 engineering.show
 /*
 ┌─────────┬──────────────────────┬─────┬──────────────┐
-│ (index) │        name          │ age │  department  │
+│ (index) │ name                 │ age │ department   │
 ├─────────┼──────────────────────┼─────┼──────────────┤
-│    0    │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│
+│ 0       │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│
 └─────────┴──────────────────────┴─────┴──────────────┘
 */
 
@@ -589,10 +589,10 @@ const result = df
 result.show
 /*
 ┌─────────┬──────────────────────┬─────┬──────────────┐
-│ (index) │        name          │ age │  department  │
+│ (index) │ name                 │ age │ department   │
 ├─────────┼──────────────────────┼─────┼──────────────┤
-│    0    │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│
-│    1    │  'Hemkesh Agrawani'  │ 30  │  'Marketing' │
+│ 0       │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│
+│ 1       │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing'  │
 └─────────┴──────────────────────┴─────┴──────────────┘
 */
 ```
@@ -619,14 +619,14 @@ const df = pd.DataFrame([
 df.show
 /*
 ┌─────────┬──────────────────────┬─────┬──────────────┬────────┐
-│ (index) │        name          │ age │  department  │ salary │
+│ (index) │ name                 │ age │ department   │ salary │
 ├─────────┼──────────────────────┼─────┼──────────────┼────────┤
-│    0    │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│ 95000  │
-│    1    │  'Hemkesh Agrawani'  │ 30  │  'Marketing' │ 75000  │
-│    2    │ 'Malinikesh Agrawani'│ 28  │   'Sales'    │ 65000  │
-│    3    │   'Alice Johnson'    │ 29  │ 'Engineering'│ 92000  │
-│    4    │    'Bob Smith'       │ 31  │  'Marketing' │ 78000  │
-│    5    │    'Carol White'     │ 27  │   'Sales'    │ 62000  │
+│ 0       │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│ 95000  │
+│ 1       │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing'  │ 75000  │
+│ 2       │ 'Malinikesh Agrawani'│ 28  │ 'Sales'      │ 65000  │
+│ 3       │ 'Alice Johnson'      │ 29  │ 'Engineering'│ 92000  │
+│ 4       │ 'Bob Smith'          │ 31  │ 'Marketing'  │ 78000  │
+│ 5       │ 'Carol White'        │ 27  │ 'Sales'      │ 62000  │
 └─────────┴──────────────────────┴─────┴──────────────┴────────┘
 */
 
@@ -635,11 +635,11 @@ const avgSalaryByDept = df.groupBy('department').mean('salary')
 avgSalaryByDept.show
 /*
 ┌─────────┬──────────────┬──────────────┐
-│ (index) │  department  │ salary_mean  │
+│ (index) │ department   │ salary_mean  │
 ├─────────┼──────────────┼──────────────┤
-│    0    │ 'Engineering'│   93500      │
-│    1    │  'Marketing' │   76500      │
-│    2    │   'Sales'    │   63500      │
+│ 0       │ 'Engineering'│ 93500        │
+│ 1       │ 'Marketing'  │ 76500        │
+│ 2       │ 'Sales'      │ 63500        │
 └─────────┴──────────────┴──────────────┘
 */
 
@@ -648,11 +648,11 @@ const totalSalaryByDept = df.groupBy('department').sum('salary')
 totalSalaryByDept.show
 /*
 ┌─────────┬──────────────┬──────────────┐
-│ (index) │  department  │ salary_sum   │
+│ (index) │ department   │ salary_sum   │
 ├─────────┼──────────────┼──────────────┤
-│    0    │ 'Engineering'│   187000     │
-│    1    │  'Marketing' │   153000     │
-│    2    │   'Sales'    │   127000     │
+│ 0       │ 'Engineering'│ 187000       │
+│ 1       │ 'Marketing'  │ 153000       │
+│ 2       │ 'Sales'      │ 127000       │
 └─────────┴──────────────┴──────────────┘
 */
 
@@ -661,11 +661,11 @@ const countByDept = df.groupBy('department').count()
 countByDept.show
 /*
 ┌─────────┬──────────────┬───────┐
-│ (index) │  department  │ count │
+│ (index) │ department   │ count │
 ├─────────┼──────────────┼───────┤
-│    0    │ 'Engineering'│   2   │
-│    1    │  'Marketing' │   2   │
-│    2    │   'Sales'    │   2   │
+│ 0       │ 'Engineering'│ 2     │
+│ 1       │ 'Marketing'  │ 2     │
+│ 2       │ 'Sales'      │ 2     │
 └─────────┴──────────────┴───────┘
 */
 
@@ -674,11 +674,11 @@ const minAgeByDept = df.groupBy('department').min('age')
 minAgeByDept.show
 /*
 ┌─────────┬──────────────┬──────────┐
-│ (index) │  department  │ age_min  │
+│ (index) │ department   │ age_min  │
 ├─────────┼──────────────┼──────────┤
-│    0    │ 'Engineering'│   29     │
-│    1    │  'Marketing' │   30     │
-│    2    │   'Sales'    │   27     │
+│ 0       │ 'Engineering'│ 29       │
+│ 1       │ 'Marketing'  │ 30       │
+│ 2       │ 'Sales'      │ 27       │
 └─────────┴──────────────┴──────────┘
 */
 
@@ -687,11 +687,11 @@ const maxAgeByDept = df.groupBy('department').max('age')
 maxAgeByDept.show
 /*
 ┌─────────┬──────────────┬──────────┐
-│ (index) │  department  │ age_max  │
+│ (index) │ department   │ age_max  │
 ├─────────┼──────────────┼──────────┤
-│    0    │ 'Engineering'│   32     │
-│    1    │  'Marketing' │   31     │
-│    2    │   'Sales'    │   28     │
+│ 0       │ 'Engineering'│ 32       │
+│ 1       │ 'Marketing'  │ 31       │
+│ 2       │ 'Sales'      │ 28       │
 └─────────┴──────────────┴──────────┘
 */
 
@@ -700,14 +700,14 @@ const groupedByDeptAndAge = df.groupBy(['department', 'age']).count()
 groupedByDeptAndAge.show
 /*
 ┌─────────┬──────────────┬─────┬───────┐
-│ (index) │  department  │ age │ count │
+│ (index) │ department   │ age │ count │
 ├─────────┼──────────────┼─────┼───────┤
-│    0    │ 'Engineering'│ 29  │   1   │
-│    1    │ 'Engineering'│ 32  │   1   │
-│    2    │  'Marketing' │ 30  │   1   │
-│    3    │  'Marketing' │ 31  │   1   │
-│    4    │   'Sales'    │ 27  │   1   │
-│    5    │   'Sales'    │ 28  │   1   │
+│ 0       │ 'Engineering'│ 29  │ 1     │
+│ 1       │ 'Engineering'│ 32  │ 1     │
+│ 2       │ 'Marketing'  │ 30  │ 1     │
+│ 3       │ 'Marketing'  │ 31  │ 1     │
+│ 4       │ 'Sales'      │ 27  │ 1     │
+│ 5       │ 'Sales'      │ 28  │ 1     │
 └─────────┴──────────────┴─────┴───────┘
 */
 ```
@@ -739,11 +739,11 @@ const merged = df1.merge(df2, 'id', 'inner')
 merged.show
 /*
 ┌─────────┬────┬──────────────────────┬─────┐
-│ (index) │ id │        name          │ age │
+│ (index) │ id │ name                 │ age │
 ├─────────┼────┼──────────────────────┼─────┤
-│    0    │ 1  │ 'Rishikesh Agrawani' │ 25  │
-│    1    │ 2  │  'Hemkesh Agrawani'  │ 30  │
-│    2    │ 3  │ 'Malinikesh Agrawani'│ 35  │
+│ 0       │ 1  │ 'Rishikesh Agrawani' │ 25  │
+│ 1       │ 2  │ 'Hemkesh Agrawani'   │ 30  │
+│ 2       │ 3  │ 'Malinikesh Agrawani'│ 35  │
 └─────────┴────┴──────────────────────┴─────┘
 */
 
@@ -752,11 +752,11 @@ const leftMerged = df1.merge(df2, 'id', 'left')
 leftMerged.show
 /*
 ┌─────────┬────┬──────────────────────┬─────┐
-│ (index) │ id │        name          │ age │
+│ (index) │ id │ name                 │ age │
 ├─────────┼────┼──────────────────────┼─────┤
-│    0    │ 1  │ 'Rishikesh Agrawani' │ 25  │
-│    1    │ 2  │  'Hemkesh Agrawani'  │ 30  │
-│    2    │ 3  │ 'Malinikesh Agrawani'│ 35  │
+│ 0       │ 1  │ 'Rishikesh Agrawani' │ 25  │
+│ 1       │ 2  │ 'Hemkesh Agrawani'   │ 30  │
+│ 2       │ 3  │ 'Malinikesh Agrawani'│ 35  │
 └─────────┴────┴──────────────────────┴─────┘
 */
 ```
@@ -785,11 +785,11 @@ const verticalConcat = pd.DataFrame.concat([df1, df2], 0)
 verticalConcat.show
 /*
 ┌─────────┬────┬──────────────────────┐
-│ (index) │ id │        name          │
+│ (index) │ id │ name                 │
 ├─────────┼────┼──────────────────────┤
-│    0    │ 1  │ 'Rishikesh Agrawani' │
-│    1    │ 2  │  'Hemkesh Agrawani'  │
-│    2    │ 3  │ 'Malinikesh Agrawani'│
+│ 0       │ 1  │ 'Rishikesh Agrawani' │
+│ 1       │ 2  │ 'Hemkesh Agrawani'   │
+│ 2       │ 3  │ 'Malinikesh Agrawani'│
 └─────────┴────┴──────────────────────┘
 */
 
@@ -803,10 +803,10 @@ const horizontalConcat = pd.DataFrame.concat([df1, df3], 1)
 horizontalConcat.show
 /*
 ┌─────────┬────┬──────────────────────┬─────┬──────────────┐
-│ (index) │ id │        name          │ age │  department  │
+│ (index) │ id │ name                 │ age │ department   │
 ├─────────┼────┼──────────────────────┼─────┼──────────────┤
-│    0    │ 1  │ 'Rishikesh Agrawani' │ 25  │ 'Engineering'│
-│    1    │ 2  │  'Hemkesh Agrawani'  │ 30  │  'Marketing' │
+│ 0       │ 1  │ 'Rishikesh Agrawani' │ 25  │ 'Engineering'│
+│ 1       │ 2  │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing'  │
 └─────────┴────┴──────────────────────┴─────┴──────────────┘
 */
 ```
