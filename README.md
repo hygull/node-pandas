@@ -90,6 +90,10 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
 
 7.  [Example 7 - Grouping and aggregating data using groupBy()](#df-ex7)
 
+8.  [Example 8 - Merging DataFrames using merge()](#df-ex8)
+
+9.  [Example 9 - Concatenating DataFrames using concat()](#df-ex9)
+
 <hr>
 
 ## Getting started
@@ -705,6 +709,105 @@ groupedByDeptAndAge.show
 │    4    │   'Sales'    │ 27  │   1   │
 │    5    │   'Sales'    │ 28  │   1   │
 └─────────┴──────────────┴─────┴───────┘
+*/
+```
+
+<hr>
+
+<h3 id='df-ex8'><code>Example 8 - Merging DataFrames using merge()</code></h3>
+
+> **Note:** The `merge()` method combines two DataFrames based on a join key, supporting inner, left, right, and outer joins.
+
+```javascript
+const pd = require("node-pandas")
+
+// Create two DataFrames to merge
+const df1 = pd.DataFrame([
+    [1, 'Rishikesh Agrawani'],
+    [2, 'Hemkesh Agrawani'],
+    [3, 'Malinikesh Agrawani']
+], ['id', 'name'])
+
+const df2 = pd.DataFrame([
+    [1, 25],
+    [2, 30],
+    [3, 35]
+], ['id', 'age'])
+
+// Inner join on id column
+const merged = df1.merge(df2, 'id', 'inner')
+merged.show
+/*
+┌─────────┬────┬──────────────────────┬─────┐
+│ (index) │ id │        name          │ age │
+├─────────┼────┼──────────────────────┼─────┤
+│    0    │ 1  │ 'Rishikesh Agrawani' │ 25  │
+│    1    │ 2  │  'Hemkesh Agrawani'  │ 30  │
+│    2    │ 3  │ 'Malinikesh Agrawani'│ 35  │
+└─────────┴────┴──────────────────────┴─────┘
+*/
+
+// Left join - keeps all rows from left DataFrame
+const leftMerged = df1.merge(df2, 'id', 'left')
+leftMerged.show
+/*
+┌─────────┬────┬──────────────────────┬─────┐
+│ (index) │ id │        name          │ age │
+├─────────┼────┼──────────────────────┼─────┤
+│    0    │ 1  │ 'Rishikesh Agrawani' │ 25  │
+│    1    │ 2  │  'Hemkesh Agrawani'  │ 30  │
+│    2    │ 3  │ 'Malinikesh Agrawani'│ 35  │
+└─────────┴────┴──────────────────────┴─────┘
+*/
+```
+
+<hr>
+
+<h3 id='df-ex9'><code>Example 9 - Concatenating DataFrames using concat()</code></h3>
+
+> **Note:** The `concat()` method stacks DataFrames vertically (axis=0) or horizontally (axis=1).
+
+```javascript
+const pd = require("node-pandas")
+
+// Create DataFrames to concatenate
+const df1 = pd.DataFrame([
+    [1, 'Rishikesh Agrawani'],
+    [2, 'Hemkesh Agrawani']
+], ['id', 'name'])
+
+const df2 = pd.DataFrame([
+    [3, 'Malinikesh Agrawani']
+], ['id', 'name'])
+
+// Vertical concatenation (stack rows)
+const verticalConcat = pd.DataFrame.concat([df1, df2], 0)
+verticalConcat.show
+/*
+┌─────────┬────┬──────────────────────┐
+│ (index) │ id │        name          │
+├─────────┼────┼──────────────────────┤
+│    0    │ 1  │ 'Rishikesh Agrawani' │
+│    1    │ 2  │  'Hemkesh Agrawani'  │
+│    2    │ 3  │ 'Malinikesh Agrawani'│
+└─────────┴────┴──────────────────────┘
+*/
+
+// Horizontal concatenation (stack columns)
+const df3 = pd.DataFrame([
+    [25, 'Engineering'],
+    [30, 'Marketing']
+], ['age', 'department'])
+
+const horizontalConcat = pd.DataFrame.concat([df1, df3], 1)
+horizontalConcat.show
+/*
+┌─────────┬────┬──────────────────────┬─────┬──────────────┐
+│ (index) │ id │        name          │ age │  department  │
+├─────────┼────┼──────────────────────┼─────┼──────────────┤
+│    0    │ 1  │ 'Rishikesh Agrawani' │ 25  │ 'Engineering'│
+│    1    │ 2  │  'Hemkesh Agrawani'  │ 30  │  'Marketing' │
+└─────────┴────┴──────────────────────┴─────┴──────────────┘
 */
 ```
 

@@ -1137,5 +1137,1314 @@ describe('DataFrame Class', () => {
       expect(group1.id).toBe(2); // (1 + 3) / 2
     });
   });
-});
 
+  describe('Apply Method', () => {
+    let df;
+
+    beforeEach(() => {
+      const data = [
+        [1, 'Rishikesh Agrawani', 25],
+        [2, 'Hemkesh Agrawani', 30],
+        [3, 'Malinikesh Agrawani', 35]
+      ];
+      const columns = ['id', 'name', 'age'];
+      df = DataFrame(data, columns);
+    });
+
+    test('should apply transformation to numeric column', () => {
+      const result = df.apply('age', (value) => value + 5);
+
+      expect(result.rows).toBe(3);
+      expect(result.cols).toBe(3);
+      expect(result.getCell(0, 'age')).toBe(30);
+      expect(result.getCell(1, 'age')).toBe(35);
+      expect(result.getCell(2, 'age')).toBe(40);
+    });
+
+    test('should apply transformation to string column', () => {
+      const result = df.apply('name', (value) => value.toUpperCase());
+
+      expect(result.getCell(0, 'name')).toBe('RISHIKESH AGRAWANI');
+      expect(result.getCell(1, 'name')).toBe('HEMKESH AGRAWANI');
+      expect(result.getCell(2, 'name')).toBe('MALINIKESH AGRAWANI');
+    });
+
+    test('should preserve other columns unchanged', () => {
+      const result = df.apply('age', (value) => value * 2);
+
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(0, 'name')).toBe('Rishikesh Agrawani');
+      expect(result.getCell(1, 'id')).toBe(2);
+      expect(result.getCell(1, 'name')).toBe('Hemkesh Agrawani');
+    });
+
+    test('should use row index in transformation', () => {
+      const result = df.apply('id', (value, rowIndex) => value + rowIndex * 100);
+
+      expect(result.getCell(0, 'id')).toBe(1); // 1 + 0 * 100
+      expect(result.getCell(1, 'id')).toBe(102); // 2 + 1 * 100
+      expect(result.getCell(2, 'id')).toBe(203); // 3 + 2 * 100
+    });
+
+    test('should throw ColumnError for non-existent column', () => {
+      expect(() => df.apply('nonexistent', (v) => v)).toThrow(ColumnError);
+    });
+
+    test('should throw ValidationError for non-function transformation', () => {
+      expect(() => df.apply('age', 'not a function')).toThrow(ValidationError);
+    });
+
+    test('should throw ValidationError for null transformation', () => {
+      expect(() => df.apply('age', null)).toThrow(ValidationError);
+    });
+
+    test('should throw error when transformation function throws', () => {
+      expect(() => {
+        df.apply('age', (value) => {
+          throw new Error('Transformation failed');
+        });
+      }).toThrow();
+    });
+
+    test('should return new DataFrame instance', () => {
+      const result = df.apply('age', (v) => v + 1);
+
+      expect(result).not.toBe(df);
+      expect(result instanceof Array).toBe(true);
+    });
+
+    test('should preserve DataFrame structure', () => {
+      const result = df.apply('age', (v) => v * 2);
+
+      expect(result.rows).toBe(3);
+      expect(result.cols).toBe(3);
+      expect(result.columns).toEqual(['id', 'name', 'age']);
+    });
+
+    test('should support method chaining', () => {
+      const result = df
+        .apply('age', (v) => v + 5)
+        .apply('id', (v) => v * 10);
+
+      expect(result.getCell(0, 'age')).toBe(30);
+      expect(result.getCell(0, 'id')).toBe(10);
+      expect(result.getCell(1, 'age')).toBe(35);
+      expect(result.getCell(1, 'id')).toBe(20);
+    });
+
+    test('should handle transformation with null values', () => {
+      const data = [[1, 'Alice', null], [2, 'Bob', 30]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.apply('age', (v) => v === null ? 0 : v + 5);
+
+      expect(result.getCell(0, 'age')).toBe(0);
+      expect(result.getCell(1, 'age')).toBe(35);
+    });
+
+    test('should handle transformation with undefined values', () => {
+      const data = [[1, 'Alice', undefined], [2, 'Bob', 30]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.apply('age', (v) => v === undefined ? -1 : v + 5);
+
+      expect(result.getCell(0, 'age')).toBe(-1);
+      expect(result.getCell(1, 'age')).toBe(35);
+    });
+
+    test('should handle single row DataFrame', () => {
+      const data = [[1, 'Alice', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.apply('age', (v) => v + 10);
+
+      expect(result.rows).toBe(1);
+      expect(result.getCell(0, 'age')).toBe(35);
+    });
+
+    test('should handle transformation returning different types', () => {
+      const result = df.apply('age', (v) => String(v));
+
+      expect(typeof result.getCell(0, 'age')).toBe('string');
+      expect(result.getCell(0, 'age')).toBe('25');
+      expect(result.getCell(1, 'age')).toBe('30');
+    });
+
+    test('should handle transformation with complex logic', () => {
+      const result = df.apply('age', (v) => {
+        if (v < 30) return 'young';
+        if (v < 35) return 'middle';
+        return 'senior';
+      });
+
+      expect(result.getCell(0, 'age')).toBe('young');
+      expect(result.getCell(1, 'age')).toBe('middle');
+      expect(result.getCell(2, 'age')).toBe('senior');
+    });
+  });
+
+  describe('Map Method', () => {
+    let df;
+
+    beforeEach(() => {
+      const data = [
+        [1, 'Rishikesh Agrawani', 25],
+        [2, 'Hemkesh Agrawani', 30],
+        [3, 'Malinikesh Agrawani', 35]
+      ];
+      const columns = ['id', 'name', 'age'];
+      df = DataFrame(data, columns);
+    });
+
+    test('should transform all values to strings', () => {
+      const result = df.map((value) => String(value));
+
+      expect(typeof result.getCell(0, 'id')).toBe('string');
+      expect(typeof result.getCell(0, 'name')).toBe('string');
+      expect(typeof result.getCell(0, 'age')).toBe('string');
+      expect(result.getCell(0, 'id')).toBe('1');
+      expect(result.getCell(0, 'age')).toBe('25');
+    });
+
+    test('should use row index in transformation', () => {
+      const result = df.map((value, rowIndex) => `${rowIndex}:${value}`);
+
+      expect(result.getCell(0, 'id')).toBe('0:1');
+      expect(result.getCell(1, 'id')).toBe('1:2');
+      expect(result.getCell(2, 'id')).toBe('2:3');
+    });
+
+    test('should use column name in transformation', () => {
+      const result = df.map((value, rowIndex, colName) => `${colName}=${value}`);
+
+      expect(result.getCell(0, 'id')).toBe('id=1');
+      expect(result.getCell(0, 'name')).toBe('name=Rishikesh Agrawani');
+      expect(result.getCell(0, 'age')).toBe('age=25');
+    });
+
+    test('should preserve DataFrame structure', () => {
+      const result = df.map((v) => v);
+
+      expect(result.rows).toBe(3);
+      expect(result.cols).toBe(3);
+      expect(result.columns).toEqual(['id', 'name', 'age']);
+    });
+
+    test('should throw ValidationError for non-function', () => {
+      expect(() => df.map('not a function')).toThrow(ValidationError);
+    });
+
+    test('should throw ValidationError for null', () => {
+      expect(() => df.map(null)).toThrow(ValidationError);
+    });
+
+    test('should throw error when transformation function throws', () => {
+      expect(() => {
+        df.map((value) => {
+          throw new Error('Map failed');
+        });
+      }).toThrow();
+    });
+
+    test('should return new DataFrame instance', () => {
+      const result = df.map((v) => v);
+
+      expect(result).not.toBe(df);
+      expect(result instanceof Array).toBe(true);
+    });
+
+    test('should support method chaining', () => {
+      const result = df
+        .map((v) => v)
+        .map((v) => typeof v === 'number' ? v * 2 : v);
+
+      expect(result.getCell(0, 'id')).toBe(2);
+      expect(result.getCell(0, 'age')).toBe(50);
+      expect(result.getCell(0, 'name')).toBe('Rishikesh Agrawani');
+    });
+
+    test('should handle null values', () => {
+      const data = [[1, null, 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.map((v) => v === null ? 'NULL' : v);
+
+      expect(result.getCell(0, 'name')).toBe('NULL');
+    });
+
+    test('should handle undefined values', () => {
+      const data = [[1, undefined, 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.map((v) => v === undefined ? 'UNDEF' : v);
+
+      expect(result.getCell(0, 'name')).toBe('UNDEF');
+    });
+
+    test('should handle single row DataFrame', () => {
+      const data = [[1, 'Alice', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.map((v) => String(v).toUpperCase());
+
+      expect(result.rows).toBe(1);
+      expect(result.getCell(0, 'id')).toBe('1');
+      expect(result.getCell(0, 'name')).toBe('ALICE');
+    });
+
+    test('should handle conditional transformations', () => {
+      const result = df.map((value) => {
+        if (typeof value === 'number') return value * 2;
+        if (typeof value === 'string') return value.length;
+        return value;
+      });
+
+      expect(result.getCell(0, 'id')).toBe(2);
+      expect(result.getCell(0, 'age')).toBe(50);
+      expect(result.getCell(0, 'name')).toBe(18); // Length of 'Rishikesh Agrawani'
+    });
+
+    test('should preserve all column names', () => {
+      const result = df.map((v) => v);
+
+      expect(result.columns).toEqual(['id', 'name', 'age']);
+    });
+
+    test('should handle mixed data types', () => {
+      const data = [[1, 'text', true], [2, 'more', false]];
+      const columns = ['num', 'str', 'bool'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.map((v) => typeof v);
+
+      expect(result.getCell(0, 'num')).toBe('number');
+      expect(result.getCell(0, 'str')).toBe('string');
+      expect(result.getCell(0, 'bool')).toBe('boolean');
+    });
+  });
+
+  describe('Replace Method', () => {
+    let df;
+
+    beforeEach(() => {
+      const data = [
+        [1, 'Rishikesh Agrawani', 25],
+        [2, 'Hemkesh Agrawani', null],
+        [3, 'Malinikesh Agrawani', 35]
+      ];
+      const columns = ['id', 'name', 'age'];
+      df = DataFrame(data, columns);
+    });
+
+    test('should replace null values in entire DataFrame', () => {
+      const result = df.replace(null, 0);
+
+      expect(result.getCell(1, 'age')).toBe(0);
+      expect(result.getCell(0, 'age')).toBe(25);
+      expect(result.getCell(2, 'age')).toBe(35);
+    });
+
+    test('should replace values in specific column only', () => {
+      const result = df.replace(null, 30, 'age');
+
+      expect(result.getCell(1, 'age')).toBe(30);
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(1, 'id')).toBe(2);
+    });
+
+    test('should replace using function predicate', () => {
+      const result = df.replace((v) => typeof v === 'number' && v < 30, 999);
+
+      expect(result.getCell(0, 'age')).toBe(999);
+      expect(result.getCell(1, 'age')).toBe(null); // null doesn't match the predicate
+      expect(result.getCell(2, 'age')).toBe(35);
+    });
+
+    test('should replace undefined values', () => {
+      const data = [[1, undefined, 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.replace(undefined, 'N/A');
+
+      expect(result.getCell(0, 'name')).toBe('N/A');
+    });
+
+    test('should replace string values', () => {
+      const result = df.replace('Rishikesh Agrawani', 'REPLACED');
+
+      expect(result.getCell(0, 'name')).toBe('REPLACED');
+      expect(result.getCell(1, 'name')).toBe('Hemkesh Agrawani');
+    });
+
+    test('should replace numeric values', () => {
+      const result = df.replace(1, 999);
+
+      expect(result.getCell(0, 'id')).toBe(999);
+      expect(result.getCell(1, 'id')).toBe(2);
+    });
+
+    test('should preserve DataFrame structure', () => {
+      const result = df.replace(null, 0);
+
+      expect(result.rows).toBe(3);
+      expect(result.cols).toBe(3);
+      expect(result.columns).toEqual(['id', 'name', 'age']);
+    });
+
+    test('should throw ColumnError for non-existent column', () => {
+      expect(() => df.replace(null, 0, 'nonexistent')).toThrow(ColumnError);
+    });
+
+    test('should return new DataFrame instance', () => {
+      const result = df.replace(null, 0);
+
+      expect(result).not.toBe(df);
+      expect(result instanceof Array).toBe(true);
+    });
+
+    test('should support method chaining', () => {
+      const result = df
+        .replace(null, 0)
+        .replace(1, 999);
+
+      expect(result.getCell(0, 'id')).toBe(999);
+      expect(result.getCell(1, 'age')).toBe(0);
+    });
+
+    test('should handle function predicate with column context', () => {
+      const result = df.replace((v) => typeof v === 'number' && v > 30, 'HIGH');
+
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(2, 'age')).toBe('HIGH');
+    });
+
+    test('should replace in specific column with function predicate', () => {
+      const result = df.replace((v) => v > 30, 'OVER_30', 'age');
+
+      expect(result.getCell(2, 'age')).toBe('OVER_30');
+      expect(result.getCell(0, 'age')).toBe(25);
+      expect(result.getCell(1, 'age')).toBeNull();
+    });
+
+    test('should handle single row DataFrame', () => {
+      const data = [[1, 'Alice', null]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.replace(null, 0);
+
+      expect(result.rows).toBe(1);
+      expect(result.getCell(0, 'age')).toBe(0);
+    });
+
+    test('should handle replacing with null', () => {
+      const data = [[1, 'Alice', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.replace(25, null);
+
+      expect(result.getCell(0, 'age')).toBeNull();
+    });
+
+    test('should handle replacing with undefined', () => {
+      const data = [[1, 'Alice', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.replace(25, undefined);
+
+      expect(result.getCell(0, 'age')).toBeUndefined();
+    });
+
+    test('should not replace values outside specified column', () => {
+      const data = [[1, 'Alice', 25], [2, 'Bob', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.replace(25, 99, 'age');
+
+      expect(result.getCell(0, 'age')).toBe(99);
+      expect(result.getCell(1, 'age')).toBe(99);
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(1, 'id')).toBe(2);
+    });
+
+    test('should handle boolean values', () => {
+      const data = [[true, false], [false, true]];
+      const columns = ['col1', 'col2'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.replace(true, 'YES');
+
+      expect(result.getCell(0, 'col1')).toBe('YES');
+      expect(result.getCell(0, 'col2')).toBe(false);
+      expect(result.getCell(1, 'col1')).toBe(false);
+      expect(result.getCell(1, 'col2')).toBe('YES');
+    });
+
+    test('should handle complex function predicates', () => {
+      const data = [[1, 'Alice', 25], [2, 'Bob', 30], [3, 'Charlie', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df2 = DataFrame(data, columns);
+
+      const result = df2.replace((v) => typeof v === 'number' && v % 2 === 0, 'EVEN');
+
+      expect(result.getCell(0, 'id')).toBe(1);
+      expect(result.getCell(1, 'id')).toBe('EVEN');
+      expect(result.getCell(1, 'age')).toBe('EVEN');
+      expect(result.getCell(2, 'age')).toBe(35);
+    });
+  });
+
+  describe('Describe Method', () => {
+    test('should return statistics DataFrame for numeric columns', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+
+      expect(stats).toBeDefined();
+      expect(stats instanceof Array).toBe(true);
+      expect(stats.columns).toEqual(['id', 'name', 'age']);
+      expect(stats.rows).toBe(11); // count, mean, std, min, 25%, 50%, 75%, max, unique, top, freq
+    });
+
+    test('should calculate count correctly', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const countRow = stats.getRow(0);
+
+      expect(countRow.id).toBe(3);
+      expect(countRow.name).toBe(3);
+      expect(countRow.age).toBe(3);
+    });
+
+    test('should calculate mean correctly for numeric columns', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const meanRow = stats.getRow(1);
+
+      expect(meanRow.id).toBe(2);
+      expect(isNaN(meanRow.name)).toBe(true); // NaN for non-numeric
+      expect(meanRow.age).toBe(30);
+    });
+
+    test('should calculate std correctly for numeric columns', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const stdRow = stats.getRow(2);
+
+      expect(stdRow.id).toBe(1);
+      expect(isNaN(stdRow.name)).toBe(true); // NaN for non-numeric
+      expect(stdRow.age).toBe(5);
+    });
+
+    test('should calculate min correctly', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const minRow = stats.getRow(3);
+
+      expect(minRow.id).toBe(1);
+      expect(minRow.name).toBe('Rishikesh Agrawani'); // Alphabetically first
+      expect(minRow.age).toBe(25);
+    });
+
+    test('should calculate percentiles correctly', () => {
+      const data = [[1, 'A', 10], [2, 'B', 20], [3, 'C', 30], [4, 'D', 40], [5, 'E', 50]];
+      const columns = ['id', 'name', 'value'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const p25Row = stats.getRow(4);
+      const p50Row = stats.getRow(5);
+      const p75Row = stats.getRow(6);
+
+      expect(p25Row.value).toBe(20);
+      expect(p50Row.value).toBe(30);
+      expect(p75Row.value).toBe(40);
+    });
+
+    test('should calculate max correctly', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const maxRow = stats.getRow(7);
+
+      expect(maxRow.id).toBe(3);
+      expect(maxRow.name).toBe('Malinikesh Agrawani'); // Alphabetically last
+      expect(maxRow.age).toBe(35);
+    });
+
+    test('should calculate unique count for non-numeric columns', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const uniqueRow = stats.getRow(8);
+
+      expect(isNaN(uniqueRow.id)).toBe(true); // NaN for numeric
+      expect(uniqueRow.name).toBe(3);
+      expect(isNaN(uniqueRow.age)).toBe(true); // NaN for numeric
+    });
+
+    test('should calculate top (mode) for non-numeric columns', () => {
+      const data = [[1, 'Alice', 25], [2, 'Alice', 30], [3, 'Bob', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const topRow = stats.getRow(9);
+
+      expect(isNaN(topRow.id)).toBe(true); // NaN for numeric
+      expect(topRow.name).toBe('Alice'); // Most frequent
+      expect(isNaN(topRow.age)).toBe(true); // NaN for numeric
+    });
+
+    test('should calculate freq (mode frequency) for non-numeric columns', () => {
+      const data = [[1, 'Alice', 25], [2, 'Alice', 30], [3, 'Bob', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const freqRow = stats.getRow(10);
+
+      expect(isNaN(freqRow.id)).toBe(true); // NaN for numeric
+      expect(freqRow.name).toBe(2); // Frequency of 'Alice'
+      expect(isNaN(freqRow.age)).toBe(true); // NaN for numeric
+    });
+
+    test('should handle null values by excluding them', () => {
+      const data = [[1, 'Alice', 25], [2, null, 30], [3, 'Charlie', null]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const countRow = stats.getRow(0);
+
+      expect(countRow.id).toBe(3);
+      expect(countRow.name).toBe(2); // Null excluded
+      expect(countRow.age).toBe(2); // Null excluded
+    });
+
+    test('should handle undefined values by excluding them', () => {
+      const data = [[1, 'Alice', 25], [2, undefined, 30], [3, 'Charlie', undefined]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const countRow = stats.getRow(0);
+
+      expect(countRow.id).toBe(3);
+      expect(countRow.name).toBe(2); // Undefined excluded
+      expect(countRow.age).toBe(2); // Undefined excluded
+    });
+
+    test('should handle empty DataFrame', () => {
+      const df = DataFrame([]);
+
+      const stats = df.describe();
+
+      expect(stats.rows).toBe(0);
+      expect(stats.cols).toBe(0);
+    });
+
+    test('should handle single row DataFrame', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+
+      expect(stats.rows).toBe(11);
+      expect(stats.columns).toEqual(['id', 'name', 'age']);
+      const countRow = stats.getRow(0);
+      expect(countRow.id).toBe(1);
+      expect(countRow.name).toBe(1);
+      expect(countRow.age).toBe(1);
+    });
+
+    test('should handle single column DataFrame', () => {
+      const data = [[1], [2], [3]];
+      const columns = ['id'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+
+      expect(stats.rows).toBe(11);
+      expect(stats.columns).toEqual(['id']);
+      const meanRow = stats.getRow(1);
+      expect(meanRow.id).toBe(2);
+    });
+
+    test('should handle DataFrame with all null values in a column', () => {
+      const data = [[1, null, 25], [2, null, 30], [3, null, 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const countRow = stats.getRow(0);
+      const meanRow = stats.getRow(1);
+
+      expect(countRow.name).toBe(0);
+      expect(isNaN(meanRow.name)).toBe(true);
+    });
+
+    test('should handle mixed numeric and string columns', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30], [3, 'Malinikesh Agrawani', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+
+      // Numeric columns should have mean, std, etc.
+      const meanRow = stats.getRow(1);
+      expect(typeof meanRow.id).toBe('number');
+      expect(typeof meanRow.age).toBe('number');
+      expect(isNaN(meanRow.name)).toBe(true);
+
+      // String column should have unique, top, freq
+      const uniqueRow = stats.getRow(8);
+      expect(uniqueRow.name).toBe(3);
+      expect(typeof uniqueRow.name).toBe('number');
+    });
+
+    test('should have correct index property with statistic names', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+
+      expect(stats.index).toEqual(['count', 'mean', 'std', 'min', '25%', '50%', '75%', 'max', 'unique', 'top', 'freq']);
+    });
+
+    test('should return new DataFrame instance', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+
+      expect(stats).not.toBe(df);
+      expect(stats instanceof Array).toBe(true);
+    });
+
+    test('should handle DataFrame with duplicate values', () => {
+      const data = [[1, 'Alice', 25], [1, 'Alice', 25], [1, 'Alice', 25]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const uniqueRow = stats.getRow(8);
+      const topRow = stats.getRow(9);
+      const freqRow = stats.getRow(10);
+
+      expect(uniqueRow.name).toBe(1); // Only one unique value
+      expect(topRow.name).toBe('Alice');
+      expect(freqRow.name).toBe(3); // Frequency is 3
+    });
+
+    test('should handle DataFrame with floating point numbers', () => {
+      const data = [[1.5, 'A', 2.5], [2.5, 'B', 3.5], [3.5, 'C', 4.5]];
+      const columns = ['float1', 'name', 'float2'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const meanRow = stats.getRow(1);
+
+      expect(meanRow.float1).toBe(2.5);
+      expect(meanRow.float2).toBe(3.5);
+    });
+
+    test('should handle DataFrame with negative numbers', () => {
+      const data = [[-1, 'A', -10], [-2, 'B', -20], [-3, 'C', -30]];
+      const columns = ['id', 'name', 'value'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const meanRow = stats.getRow(1);
+      const minRow = stats.getRow(3);
+      const maxRow = stats.getRow(7);
+
+      expect(meanRow.id).toBe(-2);
+      expect(minRow.id).toBe(-3);
+      expect(maxRow.id).toBe(-1);
+    });
+
+    test('should handle DataFrame with zero values', () => {
+      const data = [[0, 'A', 0], [0, 'B', 0], [0, 'C', 0]];
+      const columns = ['id', 'name', 'value'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const meanRow = stats.getRow(1);
+      const stdRow = stats.getRow(2);
+
+      expect(meanRow.id).toBe(0);
+      expect(stdRow.id).toBe(0);
+    });
+
+    test('should handle DataFrame with boolean values', () => {
+      const data = [[true, 'A', 1], [false, 'B', 2], [true, 'C', 3]];
+      const columns = ['bool', 'name', 'num'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const countRow = stats.getRow(0);
+
+      // Boolean values are not numeric, so they should be treated as non-numeric
+      expect(countRow.bool).toBe(3);
+      expect(countRow.name).toBe(3);
+      expect(countRow.num).toBe(3);
+    });
+
+    test('should handle large DataFrame', () => {
+      const data = [];
+      for (let i = 0; i < 1000; i++) {
+        data.push([i, `Name${i}`, i * 2]);
+      }
+      const columns = ['id', 'name', 'value'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+
+      expect(stats.rows).toBe(11);
+      expect(stats.columns).toEqual(['id', 'name', 'value']);
+      const countRow = stats.getRow(0);
+      expect(countRow.id).toBe(1000);
+    });
+
+    test('should handle DataFrame with special characters in strings', () => {
+      const data = [[1, 'Alice@123', 25], [2, 'Bob#456', 30], [3, 'Charlie$789', 35]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const uniqueRow = stats.getRow(8);
+
+      expect(uniqueRow.name).toBe(3);
+    });
+
+    test('should handle DataFrame with very large and very small numbers', () => {
+      const data = [[1e10, 'A', 1e-10], [2e10, 'B', 2e-10], [3e10, 'C', 3e-10]];
+      const columns = ['large', 'name', 'small'];
+      const df = DataFrame(data, columns);
+
+      const stats = df.describe();
+      const meanRow = stats.getRow(1);
+
+      expect(meanRow.large).toBe(2e10);
+      expect(meanRow.small).toBe(2e-10);
+    });
+
+    test('should support method chaining', () => {
+      const data = [[1, 'Rishikesh Agrawani', 25], [2, 'Hemkesh Agrawani', 30]];
+      const columns = ['id', 'name', 'age'];
+      const df = DataFrame(data, columns);
+
+      // describe() should return a DataFrame that supports other operations
+      const stats = df.describe();
+      const filtered = stats.filter(row => row.id > 1);
+
+      expect(filtered).toBeDefined();
+      expect(filtered instanceof Array).toBe(true);
+    });
+  });
+
+  describe('Merge Operations', () => {
+    describe('Single Column Join', () => {
+      test('should perform inner join on single column', () => {
+        const df1 = DataFrame(
+          [[1, 'Rishikesh Agrawani'], [2, 'Hemkesh Agrawani'], [3, 'Malinikesh Agrawani']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[1, 25], [2, 30]],
+          ['id', 'age']
+        );
+
+        const merged = df1.merge(df2, 'id', 'inner');
+
+        expect(merged.rows).toBe(2);
+        expect(merged.columns).toEqual(['id', 'name', 'age']);
+        expect(merged.getCell(0, 'id')).toBe(1);
+        expect(merged.getCell(0, 'name')).toBe('Rishikesh Agrawani');
+        expect(merged.getCell(0, 'age')).toBe(25);
+        expect(merged.getCell(1, 'id')).toBe(2);
+        expect(merged.getCell(1, 'age')).toBe(30);
+      });
+
+      test('should perform left join on single column', () => {
+        const df1 = DataFrame(
+          [[1, 'Rishikesh Agrawani'], [2, 'Hemkesh Agrawani'], [3, 'Malinikesh Agrawani']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[1, 25], [2, 30]],
+          ['id', 'age']
+        );
+
+        const merged = df1.merge(df2, 'id', 'left');
+
+        expect(merged.rows).toBe(3);
+        expect(merged.columns).toEqual(['id', 'name', 'age']);
+        expect(merged.getCell(0, 'age')).toBe(25);
+        expect(merged.getCell(1, 'age')).toBe(30);
+        expect(merged.getCell(2, 'age')).toBeNull();
+      });
+
+      test('should perform right join on single column', () => {
+        const df1 = DataFrame(
+          [[1, 'Rishikesh Agrawani'], [2, 'Hemkesh Agrawani']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[1, 25], [2, 30], [3, 35]],
+          ['id', 'age']
+        );
+
+        const merged = df1.merge(df2, 'id', 'right');
+
+        expect(merged.rows).toBe(3);
+        expect(merged.columns).toEqual(['id', 'name', 'age']);
+        expect(merged.getCell(0, 'name')).toBe('Rishikesh Agrawani');
+        expect(merged.getCell(1, 'name')).toBe('Hemkesh Agrawani');
+        expect(merged.getCell(2, 'name')).toBeNull();
+        expect(merged.getCell(2, 'age')).toBe(35);
+      });
+
+      test('should perform outer join on single column', () => {
+        const df1 = DataFrame(
+          [[1, 'Rishikesh Agrawani'], [2, 'Hemkesh Agrawani']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[2, 30], [3, 35]],
+          ['id', 'age']
+        );
+
+        const merged = df1.merge(df2, 'id', 'outer');
+
+        expect(merged.rows).toBe(3);
+        expect(merged.columns).toEqual(['id', 'name', 'age']);
+        expect(merged.getCell(0, 'id')).toBe(1);
+        expect(merged.getCell(0, 'age')).toBeNull();
+        expect(merged.getCell(1, 'id')).toBe(2);
+        expect(merged.getCell(1, 'age')).toBe(30);
+        expect(merged.getCell(2, 'id')).toBe(3);
+        expect(merged.getCell(2, 'name')).toBeNull();
+      });
+    });
+
+    describe('Multi-Column Join', () => {
+      test('should perform inner join on multiple columns', () => {
+        const df1 = DataFrame(
+          [[1, 'A', 100], [1, 'B', 200], [2, 'A', 300]],
+          ['id', 'type', 'value']
+        );
+        const df2 = DataFrame(
+          [[1, 'A', 'X'], [1, 'B', 'Y'], [2, 'B', 'Z']],
+          ['id', 'type', 'category']
+        );
+
+        const merged = df1.merge(df2, ['id', 'type'], 'inner');
+
+        expect(merged.rows).toBe(2);
+        expect(merged.columns).toEqual(['id', 'type', 'value', 'category']);
+        expect(merged.getCell(0, 'category')).toBe('X');
+        expect(merged.getCell(1, 'category')).toBe('Y');
+      });
+
+      test('should perform left join on multiple columns', () => {
+        const df1 = DataFrame(
+          [[1, 'A', 100], [1, 'B', 200], [2, 'A', 300]],
+          ['id', 'type', 'value']
+        );
+        const df2 = DataFrame(
+          [[1, 'A', 'X'], [1, 'B', 'Y']],
+          ['id', 'type', 'category']
+        );
+
+        const merged = df1.merge(df2, ['id', 'type'], 'left');
+
+        expect(merged.rows).toBe(3);
+        expect(merged.getCell(0, 'category')).toBe('X');
+        expect(merged.getCell(1, 'category')).toBe('Y');
+        expect(merged.getCell(2, 'category')).toBeNull();
+      });
+    });
+
+    describe('Conflicting Column Names', () => {
+      test('should add suffixes to conflicting column names', () => {
+        const df1 = DataFrame(
+          [[1, 'Alice', 'NY'], [2, 'Bob', 'LA']],
+          ['id', 'name', 'city']
+        );
+        const df2 = DataFrame(
+          [[1, 'NYC'], [2, 'LAX']],
+          ['id', 'city']
+        );
+
+        const merged = df1.merge(df2, 'id', 'inner', ['_left', '_right']);
+
+        expect(merged.columns).toEqual(['id', 'name', 'city_left', 'city_right']);
+        expect(merged.getCell(0, 'city_left')).toBe('NY');
+        expect(merged.getCell(0, 'city_right')).toBe('NYC');
+      });
+
+      test('should use custom suffixes', () => {
+        const df1 = DataFrame(
+          [[1, 'value'], [2, 'value']],
+          ['id', 'data']
+        );
+        const df2 = DataFrame(
+          [[1, 'info'], [2, 'info']],
+          ['id', 'data']
+        );
+
+        const merged = df1.merge(df2, 'id', 'inner', ['_old', '_new']);
+
+        expect(merged.columns).toEqual(['id', 'data_old', 'data_new']);
+      });
+    });
+
+    describe('Error Handling', () => {
+      test('should throw error if otherDataFrame is not a DataFrame', () => {
+        const df = DataFrame([[1, 'Alice']], ['id', 'name']);
+
+        expect(() => df.merge([1, 2], 'id')).toThrow(ValidationError);
+      });
+
+      test('should throw error if join key does not exist in left DataFrame', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([[1, 25]], ['id', 'age']);
+
+        expect(() => df1.merge(df2, 'nonexistent')).toThrow(ColumnError);
+      });
+
+      test('should throw error if join key does not exist in right DataFrame', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([[1, 25]], ['id', 'age']);
+
+        expect(() => df1.merge(df2, 'age')).toThrow(ColumnError);
+      });
+
+      test('should throw error for invalid join type', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([[1, 25]], ['id', 'age']);
+
+        expect(() => df1.merge(df2, 'id', 'invalid')).toThrow(ValidationError);
+      });
+
+      test('should throw error for invalid suffixes', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([[1, 25]], ['id', 'age']);
+
+        expect(() => df1.merge(df2, 'id', 'inner', ['_x'])).toThrow(ValidationError);
+      });
+    });
+
+    describe('Edge Cases', () => {
+      test('should handle empty DataFrames', () => {
+        const df1 = DataFrame([]);
+        const df2 = DataFrame([[1, 25]], ['id', 'age']);
+
+        const merged = df1.merge(df2, 'id', 'inner');
+
+        expect(merged.rows).toBe(0);
+      });
+
+      test('should handle no matching keys', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([[2, 25]], ['id', 'age']);
+
+        const merged = df1.merge(df2, 'id', 'inner');
+
+        expect(merged.rows).toBe(0);
+      });
+
+      test('should handle duplicate keys in left DataFrame', () => {
+        const df1 = DataFrame(
+          [[1, 'Alice'], [1, 'Alice2']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[1, 25]],
+          ['id', 'age']
+        );
+
+        const merged = df1.merge(df2, 'id', 'inner');
+
+        expect(merged.rows).toBe(2);
+        expect(merged.getCell(0, 'age')).toBe(25);
+        expect(merged.getCell(1, 'age')).toBe(25);
+      });
+
+      test('should handle duplicate keys in right DataFrame', () => {
+        const df1 = DataFrame(
+          [[1, 'Alice']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[1, 25], [1, 26]],
+          ['id', 'age']
+        );
+
+        const merged = df1.merge(df2, 'id', 'inner');
+
+        expect(merged.rows).toBe(2);
+        expect(merged.getCell(0, 'age')).toBe(25);
+        expect(merged.getCell(1, 'age')).toBe(26);
+      });
+
+      test('should handle null values in join keys', () => {
+        const df1 = DataFrame(
+          [[1, 'Alice'], [null, 'Bob']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[1, 25], [null, 30]],
+          ['id', 'age']
+        );
+
+        const merged = df1.merge(df2, 'id', 'inner');
+
+        expect(merged.rows).toBe(2);
+        expect(merged.getCell(0, 'age')).toBe(25);
+        expect(merged.getCell(1, 'age')).toBe(30);
+      });
+    });
+  });
+
+  describe('Concat Operations', () => {
+    describe('Vertical Concatenation (axis=0)', () => {
+      test('should concatenate DataFrames vertically with same columns', () => {
+        const df1 = DataFrame(
+          [[1, 'Rishikesh Agrawani'], [2, 'Hemkesh Agrawani']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[3, 'Malinikesh Agrawani']],
+          ['id', 'name']
+        );
+
+        const concatenated = DataFrame.concat([df1, df2], 0);
+
+        expect(concatenated.rows).toBe(3);
+        expect(concatenated.columns).toEqual(['id', 'name']);
+        expect(concatenated.getCell(0, 'id')).toBe(1);
+        expect(concatenated.getCell(1, 'id')).toBe(2);
+        expect(concatenated.getCell(2, 'id')).toBe(3);
+        expect(concatenated.getCell(2, 'name')).toBe('Malinikesh Agrawani');
+      });
+
+      test('should concatenate DataFrames with different column orders', () => {
+        const df1 = DataFrame(
+          [[1, 'Alice', 25]],
+          ['id', 'name', 'age']
+        );
+        const df2 = DataFrame(
+          [[30, 'Bob', 2]],
+          ['age', 'name', 'id']
+        );
+
+        const concatenated = DataFrame.concat([df1, df2], 0);
+
+        expect(concatenated.rows).toBe(2);
+        expect(concatenated.columns).toEqual(['id', 'name', 'age']);
+        expect(concatenated.getCell(1, 'id')).toBe(2);
+        expect(concatenated.getCell(1, 'name')).toBe('Bob');
+        expect(concatenated.getCell(1, 'age')).toBe(30);
+      });
+
+      test('should concatenate DataFrames with different columns', () => {
+        const df1 = DataFrame(
+          [[1, 'Alice']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[2, 'Bob', 30]],
+          ['id', 'name', 'age']
+        );
+
+        const concatenated = DataFrame.concat([df1, df2], 0);
+
+        expect(concatenated.rows).toBe(2);
+        expect(concatenated.columns).toEqual(['id', 'name', 'age']);
+        expect(concatenated.getCell(0, 'age')).toBeNull();
+        expect(concatenated.getCell(1, 'age')).toBe(30);
+      });
+
+      test('should concatenate multiple DataFrames', () => {
+        const df1 = DataFrame([[1, 'A']], ['id', 'letter']);
+        const df2 = DataFrame([[2, 'B']], ['id', 'letter']);
+        const df3 = DataFrame([[3, 'C']], ['id', 'letter']);
+
+        const concatenated = DataFrame.concat([df1, df2, df3], 0);
+
+        expect(concatenated.rows).toBe(3);
+        expect(concatenated.getCell(0, 'id')).toBe(1);
+        expect(concatenated.getCell(1, 'id')).toBe(2);
+        expect(concatenated.getCell(2, 'id')).toBe(3);
+      });
+
+      test('should handle empty DataFrames in vertical concat', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([]);
+        const df3 = DataFrame([[2, 'Bob']], ['id', 'name']);
+
+        const concatenated = DataFrame.concat([df1, df2, df3], 0);
+
+        expect(concatenated.rows).toBe(2);
+        expect(concatenated.getCell(0, 'id')).toBe(1);
+        expect(concatenated.getCell(1, 'id')).toBe(2);
+      });
+    });
+
+    describe('Horizontal Concatenation (axis=1)', () => {
+      test('should concatenate DataFrames horizontally', () => {
+        const df1 = DataFrame(
+          [[1, 'Alice'], [2, 'Bob']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[25, 'NY'], [30, 'LA']],
+          ['age', 'city']
+        );
+
+        const concatenated = DataFrame.concat([df1, df2], 1);
+
+        expect(concatenated.rows).toBe(2);
+        expect(concatenated.columns).toEqual(['id', 'name', 'age', 'city']);
+        expect(concatenated.getCell(0, 'id')).toBe(1);
+        expect(concatenated.getCell(0, 'age')).toBe(25);
+        expect(concatenated.getCell(1, 'city')).toBe('LA');
+      });
+
+      test('should concatenate multiple DataFrames horizontally', () => {
+        const df1 = DataFrame([[1, 'A']], ['id', 'letter']);
+        const df2 = DataFrame([[25]], ['age']);
+        const df3 = DataFrame([['NY']], ['city']);
+
+        const concatenated = DataFrame.concat([df1, df2, df3], 1);
+
+        expect(concatenated.rows).toBe(1);
+        expect(concatenated.columns).toEqual(['id', 'letter', 'age', 'city']);
+        expect(concatenated.getCell(0, 'id')).toBe(1);
+        expect(concatenated.getCell(0, 'age')).toBe(25);
+        expect(concatenated.getCell(0, 'city')).toBe('NY');
+      });
+
+      test('should handle empty DataFrames in horizontal concat', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([]);
+        const df3 = DataFrame([[25]], ['age']);
+
+        const concatenated = DataFrame.concat([df1, df2, df3], 1);
+
+        expect(concatenated.rows).toBe(1);
+        expect(concatenated.columns).toEqual(['id', 'name', 'age']);
+      });
+    });
+
+    describe('Error Handling', () => {
+      test('should throw error if dataFrames is not an array', () => {
+        expect(() => DataFrame.concat('not an array')).toThrow(ValidationError);
+      });
+
+      test('should throw error if any element is not a DataFrame', () => {
+        const df = DataFrame([[1, 'Alice']], ['id', 'name']);
+
+        expect(() => DataFrame.concat([df, [1, 2]])).toThrow(ValidationError);
+      });
+
+      test('should throw error for invalid axis', () => {
+        const df = DataFrame([[1, 'Alice']], ['id', 'name']);
+
+        expect(() => DataFrame.concat([df], 2)).toThrow(ValidationError);
+      });
+
+      test('should throw error for mismatched row counts in horizontal concat', () => {
+        const df1 = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+        const df2 = DataFrame([[25]], ['age']);
+
+        expect(() => DataFrame.concat([df1, df2], 1)).toThrow(ValidationError);
+      });
+    });
+
+    describe('Edge Cases', () => {
+      test('should handle empty array of DataFrames', () => {
+        const concatenated = DataFrame.concat([], 0);
+
+        expect(concatenated.rows).toBe(0);
+        expect(concatenated.cols).toBe(0);
+      });
+
+      test('should handle single DataFrame', () => {
+        const df = DataFrame([[1, 'Alice']], ['id', 'name']);
+
+        const concatenated = DataFrame.concat([df], 0);
+
+        expect(concatenated.rows).toBe(1);
+        expect(concatenated.columns).toEqual(['id', 'name']);
+      });
+
+      test('should handle DataFrames with null values', () => {
+        const df1 = DataFrame([[1, null]], ['id', 'name']);
+        const df2 = DataFrame([[2, 'Bob']], ['id', 'name']);
+
+        const concatenated = DataFrame.concat([df1, df2], 0);
+
+        expect(concatenated.rows).toBe(2);
+        expect(concatenated.getCell(0, 'name')).toBeNull();
+        expect(concatenated.getCell(1, 'name')).toBe('Bob');
+      });
+
+      test('should preserve data types in vertical concat', () => {
+        const df1 = DataFrame([[1, 'Alice', 25]], ['id', 'name', 'age']);
+        const df2 = DataFrame([[2, 'Bob', 30]], ['id', 'name', 'age']);
+
+        const concatenated = DataFrame.concat([df1, df2], 0);
+
+        expect(typeof concatenated.getCell(0, 'id')).toBe('number');
+        expect(typeof concatenated.getCell(0, 'name')).toBe('string');
+        expect(typeof concatenated.getCell(0, 'age')).toBe('number');
+      });
+
+      test('should preserve data types in horizontal concat', () => {
+        const df1 = DataFrame([[1, 'Alice']], ['id', 'name']);
+        const df2 = DataFrame([[25]], ['age']);
+
+        const concatenated = DataFrame.concat([df1, df2], 1);
+
+        expect(typeof concatenated.getCell(0, 'id')).toBe('number');
+        expect(typeof concatenated.getCell(0, 'name')).toBe('string');
+        expect(typeof concatenated.getCell(0, 'age')).toBe('number');
+      });
+    });
+  });
+});
