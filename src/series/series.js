@@ -33,6 +33,240 @@ const { getLogger } = require('../utils/logger');
 const logger = getLogger();
 
 /**
+ * StringAccessor class - Provides string manipulation methods for Series.
+ * Accessed via the Series.str property, this class offers pandas-like string operations
+ * that return new Series with transformed values while preserving null values.
+ * 
+ * @class StringAccessor
+ * 
+ * @example
+ * const series = new Series(['hello', 'WORLD', null, 'Test']);
+ * const upper = series.str.upper(); // ['HELLO', 'WORLD', null, 'TEST']
+ * const contains = series.str.contains('o'); // [true, true, null, false]
+ */
+class StringAccessor {
+  /**
+   * Creates a new StringAccessor instance.
+   * 
+   * @param {Series} series - The Series instance to operate on
+   * 
+   * @example
+   * // Typically accessed via series.str, not instantiated directly
+   * const accessor = new StringAccessor(series);
+   */
+  constructor(series) {
+    this._series = series;
+  }
+
+  /**
+   * Convert all strings to uppercase.
+   * 
+   * @returns {Series} A new Series with uppercase strings
+   * 
+   * @example
+   * const series = new Series(['hello', 'world', null]);
+   * const result = series.str.upper();
+   * console.log(result); // ['HELLO', 'WORLD', null]
+   */
+  upper() {
+    const data = this._series._data.map(val => 
+      isNull(val) ? val : String(val).toUpperCase()
+    );
+    return new Series(data, { 
+      index: this._series._index, 
+      name: this._series._name 
+    });
+  }
+
+  /**
+   * Convert all strings to lowercase.
+   * 
+   * @returns {Series} A new Series with lowercase strings
+   * 
+   * @example
+   * const series = new Series(['HELLO', 'WORLD', null]);
+   * const result = series.str.lower();
+   * console.log(result); // ['hello', 'world', null]
+   */
+  lower() {
+    const data = this._series._data.map(val => 
+      isNull(val) ? val : String(val).toLowerCase()
+    );
+    return new Series(data, { 
+      index: this._series._index, 
+      name: this._series._name 
+    });
+  }
+
+  /**
+   * Check if strings contain a substring.
+   * 
+   * @param {string} substring - The substring to search for
+   * @param {boolean} [caseSensitive=true] - Whether the search is case-sensitive
+   * @returns {Series} A new Series with boolean values indicating if substring is present
+   * 
+   * @example
+   * const series = new Series(['hello', 'world', null, 'HELLO']);
+   * const result = series.str.contains('ell');
+   * console.log(result); // [true, false, null, false]
+   * 
+   * @example
+   * const result = series.str.contains('ell', false);
+   * console.log(result); // [true, false, null, true]
+   */
+  contains(substring, caseSensitive = true) {
+    const data = this._series._data.map(val => {
+      if (isNull(val)) return val;
+      const str = String(val);
+      const sub = String(substring);
+      if (caseSensitive) {
+        return str.includes(sub);
+      } else {
+        return str.toLowerCase().includes(sub.toLowerCase());
+      }
+    });
+    return new Series(data, { 
+      index: this._series._index, 
+      name: this._series._name 
+    });
+  }
+
+  /**
+   * Replace occurrences of pattern with replacement string.
+   * 
+   * @param {string|RegExp} pattern - The pattern to search for (string or regex)
+   * @param {string} replacement - The replacement string
+   * @returns {Series} A new Series with replaced strings
+   * 
+   * @example
+   * const series = new Series(['hello world', 'hello there', null]);
+   * const result = series.str.replace('hello', 'hi');
+   * console.log(result); // ['hi world', 'hi there', null]
+   * 
+   * @example
+   * const result = series.str.replace(/hello/g, 'hi');
+   * console.log(result); // ['hi world', 'hi there', null]
+   */
+  replace(pattern, replacement) {
+    const data = this._series._data.map(val => {
+      if (isNull(val)) return val;
+      return String(val).replace(pattern, String(replacement));
+    });
+    return new Series(data, { 
+      index: this._series._index, 
+      name: this._series._name 
+    });
+  }
+
+  /**
+   * Split strings by separator and return Series of arrays.
+   * 
+   * @param {string|RegExp} separator - The separator to split on
+   * @returns {Series} A new Series with arrays of split strings
+   * 
+   * @example
+   * const series = new Series(['a,b,c', 'd,e,f', null]);
+   * const result = series.str.split(',');
+   * console.log(result); // [['a','b','c'], ['d','e','f'], null]
+   */
+  split(separator) {
+    const data = this._series._data.map(val => {
+      if (isNull(val)) return val;
+      return String(val).split(separator);
+    });
+    return new Series(data, { 
+      index: this._series._index, 
+      name: this._series._name 
+    });
+  }
+
+  /**
+   * Remove leading and trailing whitespace from strings.
+   * 
+   * @returns {Series} A new Series with trimmed strings
+   * 
+   * @example
+   * const series = new Series(['  hello  ', '  world', null, 'test  ']);
+   * const result = series.str.strip();
+   * console.log(result); // ['hello', 'world', null, 'test']
+   */
+  strip() {
+    const data = this._series._data.map(val => 
+      isNull(val) ? val : String(val).trim()
+    );
+    return new Series(data, { 
+      index: this._series._index, 
+      name: this._series._name 
+    });
+  }
+
+  /**
+   * Check if strings start with a prefix.
+   * 
+   * @param {string} prefix - The prefix to check for
+   * @returns {Series} A new Series with boolean values
+   * 
+   * @example
+   * const series = new Series(['hello', 'world', null, 'help']);
+   * const result = series.str.startswith('hel');
+   * console.log(result); // [true, false, null, true]
+   */
+  startswith(prefix) {
+    const data = this._series._data.map(val => {
+      if (isNull(val)) return val;
+      return String(val).startsWith(String(prefix));
+    });
+    return new Series(data, { 
+      index: this._series._index, 
+      name: this._series._name 
+    });
+  }
+
+  /**
+   * Check if strings end with a suffix.
+   * 
+   * @param {string} suffix - The suffix to check for
+   * @returns {Series} A new Series with boolean values
+   * 
+   * @example
+   * const series = new Series(['hello', 'world', null, 'test']);
+   * const result = series.str.endswith('ld');
+   * console.log(result); // [false, true, null, false]
+   */
+  endswith(suffix) {
+    const data = this._series._data.map(val => {
+      if (isNull(val)) return val;
+      return String(val).endsWith(String(suffix));
+    });
+    return new Series(data, { 
+      index: this._series._index, 
+      name: this._series._name 
+    });
+  }
+
+  /**
+   * Get the length of each string.
+   * 
+   * @returns {Series} A new Series with string lengths
+   * 
+   * @example
+   * const series = new Series(['hello', 'world', null, 'test']);
+   * const result = series.str.len();
+   * console.log(result); // [5, 5, null, 4]
+   */
+  len() {
+    const data = this._series._data.map(val => {
+      if (isNull(val)) return val;
+      return String(val).length;
+    });
+    return new Series(data, { 
+      index: this._series._index, 
+      name: this._series._name 
+    });
+  }
+}
+
+/**
  * Series class - A one-dimensional labeled array with pandas-like functionality.
  * Extends JavaScript's native Array class to provide array-like behavior while
  * adding statistical operations, transformations, and data manipulation methods.
@@ -163,6 +397,26 @@ class Series extends Array {
    */
   get dtype() {
     return this._type;
+  }
+
+  /**
+   * Gets a StringAccessor for string operations on the Series.
+   * Provides pandas-like string manipulation methods that return new Series.
+   * 
+   * @type {StringAccessor}
+   * @readonly
+   * 
+   * @example
+   * const series = new Series(['hello', 'WORLD', null]);
+   * const upper = series.str.upper();
+   * console.log(upper); // ['HELLO', 'WORLD', null]
+   * 
+   * @example
+   * const contains = series.str.contains('o');
+   * console.log(contains); // [true, true, null]
+   */
+  get str() {
+    return new StringAccessor(this);
   }
 
   /**
