@@ -1220,6 +1220,284 @@ class Series extends Array {
     });
   }
 
+  /**
+   * Element-wise equality comparison (==).
+   * Compares each element in the Series with a scalar value or corresponding elements in another Series.
+   *
+   * @param {*|Series} other - Value or Series to compare with
+   * @returns {Series} A new Series of boolean values indicating equality
+   *
+   * @example
+   * const s = new Series([1, 2, 3, 4, 5]);
+   * s.eq(3);
+   * // Returns: Series([false, false, true, false, false])
+   *
+   * @example
+   * const s1 = new Series([1, 2, 3]);
+   * const s2 = new Series([1, 0, 3]);
+   * s1.eq(s2);
+   * // Returns: Series([true, false, true])
+   */
+  eq(other) {
+    if (other instanceof Series) {
+      if (this._data.length !== other._data.length) {
+        throw new OperationError('Series must have the same length for comparison');
+      }
+      const resultData = this._data.map((val, i) => val === other._data[i]);
+      return new Series(resultData, {
+        index: this._index,
+        name: this._name
+      });
+    } else {
+      const resultData = this._data.map(val => val === other);
+      return new Series(resultData, {
+        index: this._index,
+        name: this._name
+      });
+    }
+  }
+
+  /**
+   * Element-wise not equal comparison (!=).
+   * Compares each element in the Series with a scalar value or corresponding elements in another Series.
+   *
+   * @param {*|Series} other - Value or Series to compare with
+   * @returns {Series} A new Series of boolean values indicating inequality
+   *
+   * @example
+   * const s = new Series([1, 2, 3, 4, 5]);
+   * s.ne(3);
+   * // Returns: Series([true, true, false, true, true])
+   *
+   * @example
+   * const s1 = new Series([1, 2, 3]);
+   * const s2 = new Series([1, 0, 3]);
+   * s1.ne(s2);
+   * // Returns: Series([false, true, false])
+   */
+  ne(other) {
+    if (other instanceof Series) {
+      if (this._data.length !== other._data.length) {
+        throw new OperationError('Series must have the same length for comparison');
+      }
+      const resultData = this._data.map((val, i) => val !== other._data[i]);
+      return new Series(resultData, {
+        index: this._index,
+        name: this._name
+      });
+    } else {
+      const resultData = this._data.map(val => val !== other);
+      return new Series(resultData, {
+        index: this._index,
+        name: this._name
+      });
+    }
+  }
+
+  /**
+   * Element-wise greater than comparison (>).
+   * Compares each element in the Series with a scalar value or corresponding elements in another Series.
+   *
+   * @param {*|Series} other - Value or Series to compare with
+   * @returns {Series} A new Series of boolean values indicating greater than
+   *
+   * @example
+   * const s = new Series([1, 2, 3, 4, 5]);
+   * s.gt(3);
+   * // Returns: Series([false, false, false, true, true])
+   *
+   * @example
+   * const s1 = new Series([1, 2, 3]);
+   * const s2 = new Series([0, 2, 4]);
+   * s1.gt(s2);
+   * // Returns: Series([true, false, false])
+   */
+  gt(other) {
+    if (other instanceof Series) {
+      if (this._data.length !== other._data.length) {
+        throw new OperationError('Series must have the same length for comparison');
+      }
+      const resultData = this._data.map((val, i) => val > other._data[i]);
+      return new Series(resultData, {
+        index: this._index,
+        name: this._name
+      });
+    } else {
+      const resultData = this._data.map(val => val > other);
+      return new Series(resultData, {
+        index: this._index,
+        name: this._name
+      });
+    }
+  }
+
+  /**
+   * Element-wise less than comparison (<).
+   * Compares each element in the Series with a scalar value or corresponding elements in another Series.
+   *
+   * @param {*|Series} other - Value or Series to compare with
+   * @returns {Series} A new Series of boolean values indicating less than
+   *
+   * @example
+   * const s = new Series([1, 2, 3, 4, 5]);
+   * s.lt(3);
+   * // Returns: Series([true, true, false, false, false])
+   *
+   * @example
+   * const s1 = new Series([1, 2, 3]);
+   * const s2 = new Series([0, 2, 4]);
+   * s1.lt(s2);
+   * // Returns: Series([false, false, true])
+   */
+  lt(other) {
+    if (other instanceof Series) {
+      if (this._data.length !== other._data.length) {
+        throw new OperationError('Series must have the same length for comparison');
+      }
+      const resultData = this._data.map((val, i) => val < other._data[i]);
+      return new Series(resultData, {
+        index: this._index,
+        name: this._name
+      });
+    } else {
+      const resultData = this._data.map(val => val < other);
+      return new Series(resultData, {
+        index: this._index,
+        name: this._name
+      });
+    }
+  }
+
+  /**
+   * Element-wise greater than or equal comparison (>=).
+   * Compares each element in the Series with a scalar value or corresponding elements in another Series.
+   *
+   * @param {*|Series} other - Value or Series to compare with
+   * @returns {Series} A new Series of boolean values indicating greater than or equal
+   *
+   * @example
+   * const s = new Series([1, 2, 3, 4, 5]);
+   * s.ge(3);
+   * // Returns: Series([false, false, true, true, true])
+   *
+   * @example
+   * const s1 = new Series([1, 2, 3]);
+   * const s2 = new Series([0, 2, 4]);
+   * s1.ge(s2);
+   * // Returns: Series([true, true, false])
+   */
+  ge(other) {
+    if (other instanceof Series) {
+      if (this._data.length !== other._data.length) {
+        throw new OperationError('Series must have the same length for comparison');
+      }
+      const resultData = this._data.map((val, i) => val >= other._data[i]);
+      return new Series(resultData, {
+        index: this._index,
+        name: this._name
+      });
+    } else {
+      const resultData = this._data.map(val => val >= other);
+      return new Series(resultData, {
+        index: this._index,
+        name: this._name
+      });
+    }
+  }
+
+  /**
+   * Element-wise less than or equal comparison (<=).
+   * Compares each element in the Series with a scalar value or corresponding elements in another Series.
+   *
+   * @param {*|Series} other - Value or Series to compare with
+   * @returns {Series} A new Series of boolean values indicating less than or equal
+   *
+   * @example
+   * const s = new Series([1, 2, 3, 4, 5]);
+   * s.le(3);
+   * // Returns: Series([true, true, true, false, false])
+   *
+   * @example
+   * const s1 = new Series([1, 2, 3]);
+   * const s2 = new Series([0, 2, 4]);
+   * s1.le(s2);
+   * // Returns: Series([false, true, true])
+   */
+  le(other) {
+    if (other instanceof Series) {
+      if (this._data.length !== other._data.length) {
+        throw new OperationError('Series must have the same length for comparison');
+      }
+      const resultData = this._data.map((val, i) => val <= other._data[i]);
+      return new Series(resultData, {
+        index: this._index,
+        name: this._name
+      });
+    } else {
+      const resultData = this._data.map(val => val <= other);
+      return new Series(resultData, {
+        index: this._index,
+        name: this._name
+      });
+    }
+  }
+
+  /**
+   * Check if values are between left and right bounds.
+   * Returns a boolean Series indicating whether each element falls within the specified range.
+   *
+   * @param {number} left - Lower bound value
+   * @param {number} right - Upper bound value
+   * @param {string} [inclusive='both'] - Include boundaries. Options: 'both', 'neither', 'left', 'right'
+   * @returns {Series} A new Series of boolean values indicating if values are within bounds
+   *
+   * @example
+   * const s = new Series([1, 2, 3, 4, 5]);
+   * s.between(2, 4);
+   * // Returns: Series([false, true, true, true, false])
+   *
+   * @example
+   * const s = new Series([1, 2, 3, 4, 5]);
+   * s.between(2, 4, 'neither');
+   * // Returns: Series([false, false, true, false, false])
+   *
+   * @example
+   * const s = new Series([1, 2, 3, 4, 5]);
+   * s.between(2, 4, 'left');
+   * // Returns: Series([false, true, true, false, false])
+   *
+   * @example
+   * const s = new Series([1, 2, 3, 4, 5]);
+   * s.between(2, 4, 'right');
+   * // Returns: Series([false, false, true, true, false])
+   */
+  between(left, right, inclusive = 'both') {
+    const validInclusive = ['both', 'neither', 'left', 'right'];
+    if (!validInclusive.includes(inclusive)) {
+      throw new OperationError(
+        `Invalid value for 'inclusive' parameter: ${inclusive}. Must be one of: ${validInclusive.join(', ')}`
+      );
+    }
+
+    let resultData;
+
+    if (inclusive === 'both') {
+      resultData = this._data.map(val => val >= left && val <= right);
+    } else if (inclusive === 'neither') {
+      resultData = this._data.map(val => val > left && val < right);
+    } else if (inclusive === 'left') {
+      resultData = this._data.map(val => val >= left && val < right);
+    } else if (inclusive === 'right') {
+      resultData = this._data.map(val => val > left && val <= right);
+    }
+
+    return new Series(resultData, {
+      index: this._index,
+      name: this._name
+    });
+  }
+
+
 
 }
 
