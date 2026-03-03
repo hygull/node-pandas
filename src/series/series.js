@@ -667,6 +667,146 @@ class Series extends Array {
     const variance = numericValues.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / (numericValues.length - 1);
     return variance;
   }
+
+  /**
+   * Sort Series by values.
+   * Returns a new Series with sorted values and reordered index.
+   * Null values are placed at the end regardless of sort order.
+   * 
+   * @param {boolean} [ascending=true] - Sort order. If true, sort in ascending order; if false, descending.
+   * @returns {Series} A new Series with sorted values and reordered index.
+   * 
+   * @example
+   * // Sort numeric values in ascending order
+   * const series = new Series([3, 1, 2], { index: ['a', 'b', 'c'] });
+   * const sorted = series.sort_values();
+   * console.log(sorted.values); // [1, 2, 3]
+   * console.log(sorted.index); // ['b', 'c', 'a']
+   * 
+   * @example
+   * // Sort numeric values in descending order
+   * const series = new Series([3, 1, 2], { index: ['a', 'b', 'c'] });
+   * const sorted = series.sort_values(false);
+   * console.log(sorted.values); // [3, 2, 1]
+   * console.log(sorted.index); // ['a', 'c', 'b']
+   * 
+   * @example
+   * // Sort string values
+   * const series = new Series(['banana', 'apple', 'cherry'], { index: [0, 1, 2] });
+   * const sorted = series.sort_values();
+   * console.log(sorted.values); // ['apple', 'banana', 'cherry']
+   * 
+   * @example
+   * // Null values are placed at the end
+   * const series = new Series([3, null, 1, 2], { index: ['a', 'b', 'c', 'd'] });
+   * const sorted = series.sort_values();
+   * console.log(sorted.values); // [1, 2, 3, null]
+   * console.log(sorted.index); // ['c', 'd', 'a', 'b']
+   */
+  sort_values(ascending = true) {
+    // Create array of [value, index, originalPosition] tuples
+    const tuples = this._data.map((value, idx) => [value, this._index[idx], idx]);
+
+    // Separate null and non-null values
+    const nullTuples = tuples.filter(([value]) => isNull(value));
+    const nonNullTuples = tuples.filter(([value]) => !isNull(value));
+
+    // Sort non-null values
+    nonNullTuples.sort((a, b) => {
+      const valA = a[0];
+      const valB = b[0];
+
+      // Handle numeric comparison
+      if (typeof valA === 'number' && typeof valB === 'number') {
+        return ascending ? valA - valB : valB - valA;
+      }
+
+      // Handle string comparison
+      const strA = String(valA);
+      const strB = String(valB);
+
+      if (ascending) {
+        return strA < strB ? -1 : strA > strB ? 1 : 0;
+      } else {
+        return strA > strB ? -1 : strA < strB ? 1 : 0;
+      }
+    });
+
+    // Combine sorted non-null values with null values at the end
+    const sortedTuples = [...nonNullTuples, ...nullTuples];
+
+    // Extract sorted values and indices
+    const sortedValues = sortedTuples.map(([value]) => value);
+    const sortedIndex = sortedTuples.map(([, index]) => index);
+
+    return new Series(sortedValues, {
+      index: sortedIndex,
+      name: this._name
+    });
+  }
+
+  /**
+   * Sort Series by index labels.
+   * Returns a new Series with values reordered according to sorted index.
+   * 
+   * @param {boolean} [ascending=true] - Sort order. If true, sort in ascending order; if false, descending.
+   * @returns {Series} A new Series with values reordered according to sorted index.
+   * 
+   * @example
+   * // Sort by numeric index
+   * const series = new Series([30, 10, 20], { index: [2, 0, 1] });
+   * const sorted = series.sort_index();
+   * console.log(sorted.values); // [10, 20, 30]
+   * console.log(sorted.index); // [0, 1, 2]
+   * 
+   * @example
+   * // Sort by string index in descending order
+   * const series = new Series([1, 2, 3], { index: ['c', 'a', 'b'] });
+   * const sorted = series.sort_index(false);
+   * console.log(sorted.values); // [1, 3, 2]
+   * console.log(sorted.index); // ['c', 'b', 'a']
+   * 
+   * @example
+   * // Sort by string index in ascending order
+   * const series = new Series([100, 200, 300], { index: ['zebra', 'apple', 'mango'] });
+   * const sorted = series.sort_index();
+   * console.log(sorted.values); // [200, 300, 100]
+   * console.log(sorted.index); // ['apple', 'mango', 'zebra']
+   */
+  sort_index(ascending = true) {
+    // Create array of [index, value, originalPosition] tuples
+    const tuples = this._index.map((index, idx) => [index, this._data[idx], idx]);
+
+    // Sort by index
+    tuples.sort((a, b) => {
+      const idxA = a[0];
+      const idxB = b[0];
+
+      // Handle numeric comparison
+      if (typeof idxA === 'number' && typeof idxB === 'number') {
+        return ascending ? idxA - idxB : idxB - idxA;
+      }
+
+      // Handle string comparison
+      const strA = String(idxA);
+      const strB = String(idxB);
+
+      if (ascending) {
+        return strA < strB ? -1 : strA > strB ? 1 : 0;
+      } else {
+        return strA > strB ? -1 : strA < strB ? 1 : 0;
+      }
+    });
+
+    // Extract sorted indices and values
+    const sortedIndex = tuples.map(([index]) => index);
+    const sortedValues = tuples.map(([, value]) => value);
+
+    return new Series(sortedValues, {
+      index: sortedIndex,
+      name: this._name
+    });
+  }
 }
 
 /**
