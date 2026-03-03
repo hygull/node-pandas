@@ -1497,6 +1497,191 @@ class Series extends Array {
     });
   }
 
+  /**
+   * Returns a Series with cumulative sum of values.
+   *
+   * Computes the cumulative sum of the Series values, propagating the sum
+   * at each position. Null values are skipped in the calculation but preserved
+   * in the output at their original positions.
+   *
+   * @returns {Series} A new Series with cumulative sum values
+   *
+   * @example
+   * const s = new Series([1, 2, 3, 4, 5]);
+   * s.cumsum();
+   * // Returns: Series([1, 3, 6, 10, 15])
+   *
+   * @example
+   * // With null values
+   * const s = new Series([1, null, 3, 4, null, 6]);
+   * s.cumsum();
+   * // Returns: Series([1, null, 4, 8, null, 14])
+   *
+   * @example
+   * // With mixed types
+   * const s = new Series([1, '2', 3, '4']);
+   * s.cumsum();
+   * // Returns: Series([1, 3, 6, 10])
+   */
+  cumsum() {
+    let cumulative = 0;
+    const resultData = this._data.map(val => {
+      if (isNull(val)) {
+        return null;
+      }
+      const numVal = toNumeric(val);
+      if (isNull(numVal)) {
+        return null;
+      }
+      cumulative += numVal;
+      return cumulative;
+    });
+
+    return new Series(resultData, {
+      index: this._index,
+      name: this._name
+    });
+  }
+
+  /**
+   * Returns a Series with cumulative product of values.
+   *
+   * Computes the cumulative product of the Series values, propagating the product
+   * at each position. Null values are skipped in the calculation but preserved
+   * in the output at their original positions.
+   *
+   * @returns {Series} A new Series with cumulative product values
+   *
+   * @example
+   * const s = new Series([1, 2, 3, 4, 5]);
+   * s.cumprod();
+   * // Returns: Series([1, 2, 6, 24, 120])
+   *
+   * @example
+   * // With null values
+   * const s = new Series([2, null, 3, 4, null, 5]);
+   * s.cumprod();
+   * // Returns: Series([2, null, 6, 24, null, 120])
+   *
+   * @example
+   * // With zeros
+   * const s = new Series([1, 2, 0, 4, 5]);
+   * s.cumprod();
+   * // Returns: Series([1, 2, 0, 0, 0])
+   */
+  cumprod() {
+    let cumulative = 1;
+    const resultData = this._data.map(val => {
+      if (isNull(val)) {
+        return null;
+      }
+      const numVal = toNumeric(val);
+      if (isNull(numVal)) {
+        return null;
+      }
+      cumulative *= numVal;
+      return cumulative;
+    });
+
+    return new Series(resultData, {
+      index: this._index,
+      name: this._name
+    });
+  }
+
+  /**
+   * Returns a Series with cumulative maximum of values.
+   *
+   * Computes the cumulative maximum of the Series values, propagating the maximum
+   * value seen so far at each position. Null values are skipped in the calculation
+   * but preserved in the output at their original positions.
+   *
+   * @returns {Series} A new Series with cumulative maximum values
+   *
+   * @example
+   * const s = new Series([3, 1, 4, 1, 5, 9, 2]);
+   * s.cummax();
+   * // Returns: Series([3, 3, 4, 4, 5, 9, 9])
+   *
+   * @example
+   * // With null values
+   * const s = new Series([3, null, 4, 1, null, 9]);
+   * s.cummax();
+   * // Returns: Series([3, null, 4, 4, null, 9])
+   *
+   * @example
+   * // With negative numbers
+   * const s = new Series([-5, -2, -8, -1, -3]);
+   * s.cummax();
+   * // Returns: Series([-5, -2, -2, -1, -1])
+   */
+  cummax() {
+    let cumulative = -Infinity;
+    const resultData = this._data.map(val => {
+      if (isNull(val)) {
+        return null;
+      }
+      const numVal = toNumeric(val);
+      if (isNull(numVal)) {
+        return null;
+      }
+      cumulative = Math.max(cumulative, numVal);
+      return cumulative;
+    });
+
+    return new Series(resultData, {
+      index: this._index,
+      name: this._name
+    });
+  }
+
+  /**
+   * Returns a Series with cumulative minimum of values.
+   *
+   * Computes the cumulative minimum of the Series values, propagating the minimum
+   * value seen so far at each position. Null values are skipped in the calculation
+   * but preserved in the output at their original positions.
+   *
+   * @returns {Series} A new Series with cumulative minimum values
+   *
+   * @example
+   * const s = new Series([3, 1, 4, 1, 5, 9, 2]);
+   * s.cummin();
+   * // Returns: Series([3, 1, 1, 1, 1, 1, 1])
+   *
+   * @example
+   * // With null values
+   * const s = new Series([3, null, 1, 4, null, 0]);
+   * s.cummin();
+   * // Returns: Series([3, null, 1, 1, null, 0])
+   *
+   * @example
+   * // With negative numbers
+   * const s = new Series([-5, -2, -8, -1, -3]);
+   * s.cummin();
+   * // Returns: Series([-5, -5, -8, -8, -8])
+   */
+  cummin() {
+    let cumulative = Infinity;
+    const resultData = this._data.map(val => {
+      if (isNull(val)) {
+        return null;
+      }
+      const numVal = toNumeric(val);
+      if (isNull(numVal)) {
+        return null;
+      }
+      cumulative = Math.min(cumulative, numVal);
+      return cumulative;
+    });
+
+    return new Series(resultData, {
+      index: this._index,
+      name: this._name
+    });
+  }
+
+
 
 
 }
