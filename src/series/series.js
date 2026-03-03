@@ -924,6 +924,303 @@ class Series extends Array {
     });
   }
 
+  /**
+   * Return unique values in the Series.
+   * Returns a new Series with only unique values, preserving the order of first occurrence.
+   * Handles null values by treating them as unique values.
+   *
+   * @returns {Series} A new Series with unique values only
+   *
+   * @example
+   * const series = new Series([1, 2, 2, 3, 1, 4]);
+   * const unique = series.unique();
+   * console.log(unique._data); // [1, 2, 3, 4]
+   *
+   * @example
+   * const series = new Series(['a', 'b', 'a', null, 'b', null, 'c']);
+   * const unique = series.unique();
+   * console.log(unique._data); // ['a', 'b', null, 'c']
+   *
+   * @example
+   * const series = new Series([1, 2, 2, 3], { index: ['w', 'x', 'y', 'z'], name: 'values' });
+   * const unique = series.unique();
+   * console.log(unique._data); // [1, 2, 3]
+   * console.log(unique._index); // [0, 1, 2]
+   */
+  unique() {
+    const uniqueData = [];
+    const seen = new Set();
+
+    for (let i = 0; i < this._data.length; i++) {
+      const val = this._data[i];
+      // Handle null values specially since Set treats null as a unique value
+      const key = isNull(val) ? '__NULL__' : val;
+
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniqueData.push(val);
+      }
+    }
+
+    return new Series(uniqueData, {
+      index: Array.from({ length: uniqueData.length }, (_, i) => i),
+      name: this._name
+    });
+  }
+
+  /**
+   * Count occurrences of each unique value in the Series.
+   * Returns a new Series with unique values as the index and their counts as values.
+   * By default, results are sorted by count in descending order.
+   * Handles null values by counting them as a separate category.
+   *
+   * @returns {Series} A new Series with unique values as index and counts as values
+   *
+   * @example
+   * const series = new Series([1, 2, 2, 3, 1, 1, 4]);
+   * const counts = series.value_counts();
+   * console.log(counts._index); // [1, 2, 3, 4]
+   * console.log(counts._data); // [3, 2, 1, 1]
+   *
+   * @example
+   * const series = new Series(['a', 'b', 'a', null, 'b', null, 'c']);
+   * const counts = series.value_counts();
+   * console.log(counts._index); // ['a', 'b', null, 'c']
+   * console.log(counts._data); // [2, 2, 2, 1]
+   *
+   * @example
+   * const series = new Series([1, 1, 2, 2, 2, 3], { name: 'numbers' });
+   * const counts = series.value_counts();
+   * console.log(counts.name); // 'numbers'
+   * console.log(counts._index); // [2, 1, 3]
+   * console.log(counts._data); // [3, 2, 1]
+   */
+  value_counts() {
+    const countMap = new Map();
+
+    // Count occurrences
+    for (let i = 0; i < this._data.length; i++) {
+      const val = this._data[i];
+      // Use a special key for null values
+      const key = isNull(val) ? '__NULL__' : val;
+
+      if (countMap.has(key)) {
+        countMap.set(key, countMap.get(key) + 1);
+      } else {
+        countMap.set(key, 1);
+      }
+    }
+
+    // Convert to arrays and sort by count (descending)
+    const entries = Array.from(countMap.entries());
+    entries.sort((a, b) => b[1] - a[1]);
+
+    const indexData = entries.map(([key, _]) => key === '__NULL__' ? null : key);
+    const countData = entries.map(([_, count]) => count);
+
+    return new Series(countData, {
+      index: indexData,
+      name: this._name
+    });
+  }
+
+  /**
+   * Return boolean Series marking duplicate values.
+   * Returns a new Series of booleans where true indicates a duplicate value
+   * and false indicates the first (or last, or all) occurrence based on the keep parameter.
+   * The original index is preserved.
+   *
+   * @param {string|boolean} [keep='first'] - Which duplicates to mark:
+   *   - 'first': Mark all duplicates except the first occurrence as true
+   *   - 'last': Mark all duplicates except the last occurrence as true
+   *   - false: Mark all duplicates (including first occurrence) as true
+   * @returns {Series} A new Series of boolean values indicating duplicates
+   *
+   * @example
+   * const series = new Series([1, 2, 2, 3, 1, 4]);
+   * const dups = series.duplicated();
+   * console.log(dups._data); // [false, false, true, false, true, false]
+   *
+   * @example
+   * const series = new Series([1, 2, 2, 3, 1, 4]);
+   * const dups = series.duplicated('last');
+   * console.log(dups._data); // [true, false, true, false, false, false]
+   *
+   * @example
+   * const series = new Series([1, 2, 2, 3, 1, 4]);
+   * const dups = series.duplicated(false);
+   * console.log(dups._data); // [true, true, true, false, true, false]
+   *
+   * @example
+   * const series = new Series(['a', 'b', 'a', null, 'b', null], { index: ['x', 'y', 'z', 'w', 'v', 'u'] });
+   * const dups = series.duplicated();
+   * console.log(dups._data); // [false, false, true, false, true, true]
+   * console.log(dups._index); // ['x', 'y', 'z', 'w', 'v', 'u']
+   */
+  duplicated(keep = 'first') {
+    const booleanData = new Array(this._data.length);
+    const seen = new Map();
+
+    if (keep === 'first') {
+      // Mark all duplicates except first occurrence
+      for (let i = 0; i < this._data.length; i++) {
+        const val = this._data[i];
+        const key = isNull(val) ? '__NULL__' : val;
+
+        if (seen.has(key)) {
+          booleanData[i] = true;
+        } else {
+          booleanData[i] = false;
+          seen.set(key, i);
+        }
+      }
+    } else if (keep === 'last') {
+      // Mark all duplicates except last occurrence
+      // First pass: find last occurrence of each value
+      const lastOccurrence = new Map();
+      for (let i = 0; i < this._data.length; i++) {
+        const val = this._data[i];
+        const key = isNull(val) ? '__NULL__' : val;
+        lastOccurrence.set(key, i);
+      }
+
+      // Second pass: mark duplicates
+      for (let i = 0; i < this._data.length; i++) {
+        const val = this._data[i];
+        const key = isNull(val) ? '__NULL__' : val;
+        booleanData[i] = (lastOccurrence.get(key) !== i);
+      }
+    } else if (keep === false) {
+      // Mark all duplicates (including first occurrence)
+      const countMap = new Map();
+
+      // First pass: count occurrences
+      for (let i = 0; i < this._data.length; i++) {
+        const val = this._data[i];
+        const key = isNull(val) ? '__NULL__' : val;
+        countMap.set(key, (countMap.get(key) || 0) + 1);
+      }
+
+      // Second pass: mark all values that appear more than once
+      for (let i = 0; i < this._data.length; i++) {
+        const val = this._data[i];
+        const key = isNull(val) ? '__NULL__' : val;
+        booleanData[i] = countMap.get(key) > 1;
+      }
+    } else {
+      throw new OperationError(`Invalid value for 'keep' parameter: ${keep}. Must be 'first', 'last', or false.`);
+    }
+
+    return new Series(booleanData, {
+      index: this._index.slice(),
+      name: this._name
+    });
+  }
+
+  /**
+   * Remove duplicate values from the Series.
+   * Returns a new Series with duplicate values removed based on the keep parameter.
+   * The index is adjusted to match the kept values.
+   *
+   * @param {string|boolean} [keep='first'] - Which duplicates to keep:
+   *   - 'first': Keep the first occurrence of each value
+   *   - 'last': Keep the last occurrence of each value
+   *   - false: Remove all duplicates (keep only unique values that appear once)
+   * @returns {Series} A new Series with duplicates removed
+   *
+   * @example
+   * const series = new Series([1, 2, 2, 3, 1, 4]);
+   * const unique = series.drop_duplicates();
+   * console.log(unique._data); // [1, 2, 3, 4]
+   * console.log(unique._index); // [0, 1, 3, 5]
+   *
+   * @example
+   * const series = new Series([1, 2, 2, 3, 1, 4]);
+   * const unique = series.drop_duplicates('last');
+   * console.log(unique._data); // [2, 3, 1, 4]
+   * console.log(unique._index); // [2, 3, 4, 5]
+   *
+   * @example
+   * const series = new Series([1, 2, 2, 3, 1, 4]);
+   * const unique = series.drop_duplicates(false);
+   * console.log(unique._data); // [3, 4]
+   * console.log(unique._index); // [3, 5]
+   *
+   * @example
+   * const series = new Series(['a', 'b', 'a', null, 'b', null, 'c'], { index: ['x', 'y', 'z', 'w', 'v', 'u', 't'] });
+   * const unique = series.drop_duplicates();
+   * console.log(unique._data); // ['a', 'b', null, 'c']
+   * console.log(unique._index); // ['x', 'y', 'w', 't']
+   */
+  drop_duplicates(keep = 'first') {
+    const resultData = [];
+    const resultIndex = [];
+    const seen = new Map();
+
+    if (keep === 'first') {
+      // Keep first occurrence of each value
+      for (let i = 0; i < this._data.length; i++) {
+        const val = this._data[i];
+        const key = isNull(val) ? '__NULL__' : val;
+
+        if (!seen.has(key)) {
+          seen.set(key, true);
+          resultData.push(val);
+          resultIndex.push(this._index[i]);
+        }
+      }
+    } else if (keep === 'last') {
+      // Keep last occurrence of each value
+      // First pass: find last occurrence of each value
+      const lastOccurrence = new Map();
+      for (let i = 0; i < this._data.length; i++) {
+        const val = this._data[i];
+        const key = isNull(val) ? '__NULL__' : val;
+        lastOccurrence.set(key, i);
+      }
+
+      // Second pass: keep only last occurrences
+      for (let i = 0; i < this._data.length; i++) {
+        const val = this._data[i];
+        const key = isNull(val) ? '__NULL__' : val;
+
+        if (lastOccurrence.get(key) === i) {
+          resultData.push(val);
+          resultIndex.push(this._index[i]);
+        }
+      }
+    } else if (keep === false) {
+      // Keep only values that appear exactly once
+      const countMap = new Map();
+
+      // First pass: count occurrences
+      for (let i = 0; i < this._data.length; i++) {
+        const val = this._data[i];
+        const key = isNull(val) ? '__NULL__' : val;
+        countMap.set(key, (countMap.get(key) || 0) + 1);
+      }
+
+      // Second pass: keep only values that appear once
+      for (let i = 0; i < this._data.length; i++) {
+        const val = this._data[i];
+        const key = isNull(val) ? '__NULL__' : val;
+
+        if (countMap.get(key) === 1) {
+          resultData.push(val);
+          resultIndex.push(this._index[i]);
+        }
+      }
+    } else {
+      throw new OperationError(`Invalid value for 'keep' parameter: ${keep}. Must be 'first', 'last', or false.`);
+    }
+
+    return new Series(resultData, {
+      index: resultIndex,
+      name: this._name
+    });
+  }
+
+
 }
 
 /**
