@@ -74,6 +74,11 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
 
 1.  [Example 1 - Creating Series using 1D array/list](#s-ex1)
 
+2.  [Series Methods](#series-methods)
+    - [Sorting Methods](#sorting-methods) - sort_values(), sort_index()
+    - [Missing Data Handling](#missing-data-handling) - fillna(), dropna(), isna(), notna()
+    - [Value Operations](#value-operations) - unique(), value_counts(), duplicated(), drop_duplicates()
+
 > ### `DataFrame`
 
 1.  [Example 1 - Creating DataFrame using 2D array/list](#df-ex1)
@@ -142,6 +147,231 @@ undefined
 > s.length // Total number of elements 
 10
 > 
+```
+
+## Series Methods
+
+### Sorting Methods
+
+#### sort_values()
+
+Sorts Series values in ascending or descending order.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([5, 2, 8, 1, 9], { name: 'numbers' })
+console.log(s)
+// NodeSeries [ 5, 2, 8, 1, 9 ]
+
+// Sort in ascending order (default)
+const sorted_asc = s.sort_values()
+console.log(sorted_asc)
+// NodeSeries [ 1, 2, 5, 8, 9 ]
+
+// Sort in descending order
+const sorted_desc = s.sort_values(false)
+console.log(sorted_desc)
+// NodeSeries [ 9, 8, 5, 2, 1 ]
+```
+
+#### sort_index()
+
+Sorts Series by index labels in ascending or descending order.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([10, 20, 30], { index: ['c', 'a', 'b'], name: 'values' })
+console.log(s)
+// NodeSeries [ 10, 20, 30 ]
+// index: ['c', 'a', 'b']
+
+// Sort by index in ascending order
+const sorted_asc = s.sort_index()
+console.log(sorted_asc)
+// NodeSeries [ 20, 30, 10 ]
+// index: ['a', 'b', 'c']
+
+// Sort by index in descending order
+const sorted_desc = s.sort_index(false)
+console.log(sorted_desc)
+// NodeSeries [ 10, 30, 20 ]
+// index: ['c', 'b', 'a']
+```
+
+### Missing Data Handling
+
+#### fillna()
+
+Fills missing values (null, undefined, NaN) with a specified value.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, null, 3, NaN, 5, undefined])
+console.log(s)
+// NodeSeries [ 1, null, 3, NaN, 5, undefined ]
+
+// Fill missing values with 0
+const filled = s.fillna(0)
+console.log(filled)
+// NodeSeries [ 1, 0, 3, 0, 5, 0 ]
+```
+
+#### dropna()
+
+Removes all missing values (null, undefined, NaN) from the Series.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, null, 3, NaN, 5, undefined])
+console.log(s)
+// NodeSeries [ 1, null, 3, NaN, 5, undefined ]
+
+// Drop missing values
+const cleaned = s.dropna()
+console.log(cleaned)
+// NodeSeries [ 1, 3, 5 ]
+```
+
+#### isna()
+
+Returns a boolean Series indicating which values are missing (null, undefined, NaN).
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, null, 3, NaN, 5])
+console.log(s)
+// NodeSeries [ 1, null, 3, NaN, 5 ]
+
+// Check for missing values
+const missing = s.isna()
+console.log(missing)
+// NodeSeries [ false, true, false, true, false ]
+```
+
+#### notna()
+
+Returns a boolean Series indicating which values are not missing.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, null, 3, NaN, 5])
+console.log(s)
+// NodeSeries [ 1, null, 3, NaN, 5 ]
+
+// Check for non-missing values
+const notMissing = s.notna()
+console.log(notMissing)
+// NodeSeries [ true, false, true, false, true ]
+```
+
+### Value Operations
+
+#### unique()
+
+Returns a new Series with unique values, preserving order of first appearance.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, 2, 2, 3, 1, 4, 3, 5])
+console.log(s)
+// NodeSeries [ 1, 2, 2, 3, 1, 4, 3, 5 ]
+
+// Get unique values
+const uniqueValues = s.unique()
+console.log(uniqueValues)
+// NodeSeries [ 1, 2, 3, 4, 5 ]
+```
+
+#### value_counts()
+
+Returns a Series containing counts of unique values, sorted by frequency in descending order.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series(['apple', 'banana', 'apple', 'orange', 'banana', 'apple'])
+console.log(s)
+// NodeSeries [ 'apple', 'banana', 'apple', 'orange', 'banana', 'apple' ]
+
+// Count occurrences of each value
+const counts = s.value_counts()
+counts.show
+/*
+┌─────────┬──────────┬────────┐
+│ (index) │ value    │ count  │
+├─────────┼──────────┼────────┤
+│ 0       │ 'apple'  │ 3      │
+│ 1       │ 'banana' │ 2      │
+│ 2       │ 'orange' │ 1      │
+└─────────┴──────────┴────────┘
+*/
+```
+
+#### duplicated()
+
+Returns a boolean Series indicating duplicate values. The `keep` parameter controls which duplicates are marked:
+- `'first'` (default): Mark duplicates as true except for the first occurrence
+- `'last'`: Mark duplicates as true except for the last occurrence
+- `false`: Mark all duplicates as true
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, 2, 2, 3, 1, 4])
+console.log(s)
+// NodeSeries [ 1, 2, 2, 3, 1, 4 ]
+
+// Mark duplicates (keep first occurrence)
+const isDup = s.duplicated('first')
+console.log(isDup)
+// NodeSeries [ false, false, true, false, true, false ]
+
+// Mark duplicates (keep last occurrence)
+const isDupLast = s.duplicated('last')
+console.log(isDupLast)
+// NodeSeries [ true, false, true, false, false, false ]
+
+// Mark all duplicates
+const isDupAll = s.duplicated(false)
+console.log(isDupAll)
+// NodeSeries [ true, true, true, false, true, false ]
+```
+
+#### drop_duplicates()
+
+Returns a new Series with duplicate values removed. The `keep` parameter controls which duplicates to keep:
+- `'first'` (default): Keep the first occurrence
+- `'last'`: Keep the last occurrence
+- `false`: Remove all duplicates
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, 2, 2, 3, 1, 4])
+console.log(s)
+// NodeSeries [ 1, 2, 2, 3, 1, 4 ]
+
+// Keep first occurrence of duplicates
+const uniqueFirst = s.drop_duplicates('first')
+console.log(uniqueFirst)
+// NodeSeries [ 1, 2, 3, 4 ]
+
+// Keep last occurrence of duplicates
+const uniqueLast = s.drop_duplicates('last')
+console.log(uniqueLast)
+// NodeSeries [ 2, 3, 1, 4 ]
+
+// Remove all duplicates
+const noDuplicates = s.drop_duplicates(false)
+console.log(noDuplicates)
+// NodeSeries [ 3, 4 ]
 ```
 
 <hr>
