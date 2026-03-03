@@ -78,6 +78,9 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
     - [Sorting Methods](#sorting-methods) - sort_values(), sort_index()
     - [Missing Data Handling](#missing-data-handling) - fillna(), dropna(), isna(), notna()
     - [Value Operations](#value-operations) - unique(), value_counts(), duplicated(), drop_duplicates()
+    - [Comparison Operations](#comparison-operations) - eq(), ne(), gt(), lt(), ge(), le(), between()
+    - [Cumulative Operations](#cumulative-operations) - cumsum(), cumprod(), cummax(), cummin()
+    - [String Methods](#string-methods) - str.upper(), str.lower(), str.contains(), str.replace(), str.split(), str.strip(), str.startswith(), str.endswith(), str.len()
 
 > ### `DataFrame`
 
@@ -372,6 +375,319 @@ console.log(uniqueLast)
 const noDuplicates = s.drop_duplicates(false)
 console.log(noDuplicates)
 // NodeSeries [ 3, 4 ]
+```
+
+### Comparison Operations
+
+#### eq()
+
+Element-wise equality comparison. Compares Series values with a scalar or another Series.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, 2, 3, 4, 5])
+const result = s.eq(3)
+console.log(result)
+// NodeSeries [ false, false, true, false, false ]
+
+// Compare with another Series
+const s1 = pd.Series([1, 2, 3])
+const s2 = pd.Series([1, 0, 3])
+const result2 = s1.eq(s2)
+console.log(result2)
+// NodeSeries [ true, false, true ]
+```
+
+#### ne()
+
+Element-wise not-equal comparison.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, 2, 3, 4, 5])
+const result = s.ne(3)
+console.log(result)
+// NodeSeries [ true, true, false, true, true ]
+```
+
+#### gt()
+
+Element-wise greater-than comparison.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, 2, 3, 4, 5])
+const result = s.gt(3)
+console.log(result)
+// NodeSeries [ false, false, false, true, true ]
+```
+
+#### lt()
+
+Element-wise less-than comparison.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, 2, 3, 4, 5])
+const result = s.lt(3)
+console.log(result)
+// NodeSeries [ true, true, false, false, false ]
+```
+
+#### ge()
+
+Element-wise greater-than-or-equal comparison.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, 2, 3, 4, 5])
+const result = s.ge(3)
+console.log(result)
+// NodeSeries [ false, false, true, true, true ]
+```
+
+#### le()
+
+Element-wise less-than-or-equal comparison.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, 2, 3, 4, 5])
+const result = s.le(3)
+console.log(result)
+// NodeSeries [ true, true, true, false, false ]
+```
+
+#### between()
+
+Check if values fall within a specified range. The `inclusive` parameter controls boundary inclusion:
+- `'both'` (default): Include both boundaries
+- `'neither'`: Exclude both boundaries
+- `'left'`: Include left boundary only
+- `'right'`: Include right boundary only
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, 2, 3, 4, 5])
+const result = s.between(2, 4)
+console.log(result)
+// NodeSeries [ false, true, true, true, false ]
+
+// Exclude boundaries
+const result2 = s.between(2, 4, 'neither')
+console.log(result2)
+// NodeSeries [ false, false, true, false, false ]
+```
+
+### Cumulative Operations
+
+#### cumsum()
+
+Returns cumulative sum of values. Null values are preserved and skip accumulation.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, 2, 3, 4, 5])
+const result = s.cumsum()
+console.log(result)
+// NodeSeries [ 1, 3, 6, 10, 15 ]
+
+// With null values
+const s2 = pd.Series([1, null, 3, 4, null, 6])
+const result2 = s2.cumsum()
+console.log(result2)
+// NodeSeries [ 1, null, 4, 8, null, 14 ]
+```
+
+#### cumprod()
+
+Returns cumulative product of values. Null values are preserved and skip accumulation.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, 2, 3, 4, 5])
+const result = s.cumprod()
+console.log(result)
+// NodeSeries [ 1, 2, 6, 24, 120 ]
+
+// With zeros
+const s2 = pd.Series([1, 2, 0, 4, 5])
+const result2 = s2.cumprod()
+console.log(result2)
+// NodeSeries [ 1, 2, 0, 0, 0 ]
+```
+
+#### cummax()
+
+Returns cumulative maximum of values. Null values are preserved and skip accumulation.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([3, 1, 4, 1, 5, 9, 2])
+const result = s.cummax()
+console.log(result)
+// NodeSeries [ 3, 3, 4, 4, 5, 9, 9 ]
+
+// With negative numbers
+const s2 = pd.Series([-5, -2, -8, -1, -3])
+const result2 = s2.cummax()
+console.log(result2)
+// NodeSeries [ -5, -2, -2, -1, -1 ]
+```
+
+#### cummin()
+
+Returns cumulative minimum of values. Null values are preserved and skip accumulation.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([3, 1, 4, 1, 5, 9, 2])
+const result = s.cummin()
+console.log(result)
+// NodeSeries [ 3, 1, 1, 1, 1, 1, 1 ]
+
+// With negative numbers
+const s2 = pd.Series([-5, -2, -8, -1, -3])
+const result2 = s2.cummin()
+console.log(result2)
+// NodeSeries [ -5, -5, -8, -8, -8 ]
+```
+
+### String Methods
+
+The `str` accessor provides string manipulation methods that work element-wise on Series values. All methods preserve null values.
+
+#### str.upper()
+
+Convert strings to uppercase.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series(['hello', 'world', null])
+const result = s.str.upper()
+console.log(result)
+// NodeSeries [ 'HELLO', 'WORLD', null ]
+```
+
+#### str.lower()
+
+Convert strings to lowercase.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series(['HELLO', 'WORLD', null])
+const result = s.str.lower()
+console.log(result)
+// NodeSeries [ 'hello', 'world', null ]
+```
+
+#### str.contains()
+
+Check if strings contain a substring. Optional case-insensitive matching.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series(['hello', 'world', null, 'HELLO'])
+const result = s.str.contains('ell')
+console.log(result)
+// NodeSeries [ true, false, null, false ]
+
+// Case-insensitive
+const result2 = s.str.contains('ell', false)
+console.log(result2)
+// NodeSeries [ true, false, null, true ]
+```
+
+#### str.replace()
+
+Replace occurrences of pattern with replacement string. Supports regex patterns.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series(['hello world', 'hello there', null])
+const result = s.str.replace('hello', 'hi')
+console.log(result)
+// NodeSeries [ 'hi world', 'hi there', null ]
+```
+
+#### str.split()
+
+Split strings by separator and return arrays.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series(['a,b,c', 'd,e,f', null])
+const result = s.str.split(',')
+console.log(result)
+// NodeSeries [ ['a','b','c'], ['d','e','f'], null ]
+```
+
+#### str.strip()
+
+Remove leading and trailing whitespace.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series(['  hello  ', '  world', null, 'test  '])
+const result = s.str.strip()
+console.log(result)
+// NodeSeries [ 'hello', 'world', null, 'test' ]
+```
+
+#### str.startswith()
+
+Check if strings start with a prefix.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series(['hello', 'world', null, 'help'])
+const result = s.str.startswith('hel')
+console.log(result)
+// NodeSeries [ true, false, null, true ]
+```
+
+#### str.endswith()
+
+Check if strings end with a suffix.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series(['hello', 'world', null, 'test'])
+const result = s.str.endswith('ld')
+console.log(result)
+// NodeSeries [ false, true, null, false ]
+```
+
+#### str.len()
+
+Get the length of each string.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series(['hello', 'world', null, 'test'])
+const result = s.str.len()
+console.log(result)
+// NodeSeries [ 5, 5, null, 4 ]
 ```
 
 <hr>
