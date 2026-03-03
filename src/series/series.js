@@ -807,6 +807,123 @@ class Series extends Array {
       name: this._name
     });
   }
+
+  /**
+   * Fill null/undefined values with a specified value.
+   * Returns a new Series with null values replaced by the provided value.
+   *
+   * @param {*} value - The value to use for filling null/undefined values
+   * @returns {Series} A new Series with null values filled
+   *
+   * @example
+   * const series = new Series([1, null, 3, undefined, 5]);
+   * const filled = series.fillna(0);
+   * console.log(filled._data); // [1, 0, 3, 0, 5]
+   *
+   * @example
+   * const series = new Series(['a', null, 'c'], { index: ['x', 'y', 'z'] });
+   * const filled = series.fillna('missing');
+   * console.log(filled._data); // ['a', 'missing', 'c']
+   * console.log(filled._index); // ['x', 'y', 'z']
+   */
+  fillna(value) {
+    const filledData = this._data.map(val => isNull(val) ? value : val);
+
+    return new Series(filledData, {
+      index: this._index.slice(),
+      name: this._name
+    });
+  }
+
+  /**
+   * Remove null/undefined values from the Series.
+   * Returns a new Series with null values removed and index adjusted accordingly.
+   *
+   * @returns {Series} A new Series with null values removed
+   *
+   * @example
+   * const series = new Series([1, null, 3, undefined, 5]);
+   * const cleaned = series.dropna();
+   * console.log(cleaned._data); // [1, 3, 5]
+   * console.log(cleaned._index); // [0, 2, 4]
+   *
+   * @example
+   * const series = new Series(['a', null, 'c'], { index: ['x', 'y', 'z'] });
+   * const cleaned = series.dropna();
+   * console.log(cleaned._data); // ['a', 'c']
+   * console.log(cleaned._index); // ['x', 'z']
+   */
+  dropna() {
+    const filteredData = [];
+    const filteredIndex = [];
+
+    for (let i = 0; i < this._data.length; i++) {
+      if (!isNull(this._data[i])) {
+        filteredData.push(this._data[i]);
+        filteredIndex.push(this._index[i]);
+      }
+    }
+
+    return new Series(filteredData, {
+      index: filteredIndex,
+      name: this._name
+    });
+  }
+
+  /**
+   * Return a boolean Series indicating null values.
+   * Returns a new Series of booleans where true indicates null/undefined values
+   * and false indicates non-null values. The index is preserved.
+   *
+   * @returns {Series} A new Series of boolean values
+   *
+   * @example
+   * const series = new Series([1, null, 3, undefined, 5]);
+   * const nullMask = series.isna();
+   * console.log(nullMask._data); // [false, true, false, true, false]
+   *
+   * @example
+   * const series = new Series(['a', null, 'c'], { index: ['x', 'y', 'z'] });
+   * const nullMask = series.isna();
+   * console.log(nullMask._data); // [false, true, false]
+   * console.log(nullMask._index); // ['x', 'y', 'z']
+   */
+  isna() {
+    const booleanData = this._data.map(val => isNull(val));
+
+    return new Series(booleanData, {
+      index: this._index.slice(),
+      name: this._name
+    });
+  }
+
+  /**
+   * Return a boolean Series indicating non-null values.
+   * Returns a new Series of booleans where false indicates null/undefined values
+   * and true indicates non-null values. The index is preserved.
+   *
+   * @returns {Series} A new Series of boolean values
+   *
+   * @example
+   * const series = new Series([1, null, 3, undefined, 5]);
+   * const notNullMask = series.notna();
+   * console.log(notNullMask._data); // [true, false, true, false, true]
+   *
+   * @example
+   * const series = new Series(['a', null, 'c'], { index: ['x', 'y', 'z'] });
+   * const notNullMask = series.notna();
+   * console.log(notNullMask._data); // [true, false, true]
+   * console.log(notNullMask._index); // ['x', 'y', 'z']
+   */
+  notna() {
+    const booleanData = this._data.map(val => !isNull(val));
+
+    return new Series(booleanData, {
+      index: this._index.slice(),
+      name: this._name
+    });
+  }
+
 }
 
 /**
