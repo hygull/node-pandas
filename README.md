@@ -8,7 +8,7 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
 >
 > **Note:** Currently, this package is in development. More methods/functions/attributes will be added with time. 
 >
-> ## What node-pandas v2.0.0 Can Do
+> ## What node-pandas v2.2.0 Can Do
 >
 > node-pandas brings pandas-like data manipulation to Node.js. Here's what you can do:
 >
@@ -16,15 +16,37 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
 > - Create Series from 1D arrays and DataFrames from 2D arrays or CSV files
 > - Access data using array-like syntax (indexing, looping, slicing)
 > - View data in beautiful tabular format on console
+> - Advanced indexing with loc (label-based) and iloc (position-based)
 >
 > **Work with columns and rows:**
 > - Select specific columns with `select()`
 > - Filter rows with conditions using `filter()`
 > - Access columns by name or index
+> - Sort data with `sort_values()` and `sort_index()`
 >
 > **Analyze and aggregate data:**
 > - Group data by columns with `groupBy()` and aggregate using `mean()`, `sum()`, `count()`, `min()`, `max()`
 > - Perform statistical analysis on Series and DataFrames
+> - Compute cumulative statistics with `cumsum()`, `cumprod()`, `cummax()`, `cummin()`
+> - Calculate rolling and expanding window statistics
+>
+> **Handle missing data:**
+> - Fill missing values with `fillna()`
+> - Drop missing values with `dropna()`
+> - Detect missing values with `isna()` and `notna()`
+>
+> **String operations:**
+> - Manipulate string data with the `str` accessor
+> - Methods include `upper()`, `lower()`, `contains()`, `replace()`, `split()`, and more
+>
+> **Value operations:**
+> - Get unique values with `unique()`
+> - Count value occurrences with `value_counts()`
+> - Detect and remove duplicates with `duplicated()` and `drop_duplicates()`
+>
+> **Comparison operations:**
+> - Element-wise comparisons with `eq()`, `ne()`, `gt()`, `lt()`, `ge()`, `le()`
+> - Range checking with `between()`
 >
 > **Import and export:**
 > - Read CSV files with `readCsv()`

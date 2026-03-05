@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-03-05
+
+### Added
+- Series sorting methods: sort_values() and sort_index() with ascending/descending support
+- Series missing data handling: fillna(), dropna(), isna(), notna()
+- Series value operations: unique(), value_counts(), duplicated(), drop_duplicates()
+- Series comparison operations: eq(), ne(), gt(), lt(), ge(), le(), between()
+- Series cumulative operations: cumsum(), cumprod(), cummax(), cummin()
+- Series string accessor (str) with 9 methods: upper(), lower(), contains(), replace(), split(), strip(), startswith(), endswith(), len()
+- Series indexing accessors: loc (label-based) and iloc (position-based) with get() and set() methods
+- Series window operations: rolling(window) and expanding() with mean(), sum(), min(), max(), std()
+- Comprehensive documentation for all new Series methods in README
+
+### Changed
+- Enhanced Series class with 40+ new methods for data manipulation
+- Improved null value handling across all new methods
+- Updated README with extensive examples for all new features
+
 ## [2.1.0] - 2026-02-28
 
 ### Added
