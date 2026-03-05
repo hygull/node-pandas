@@ -81,6 +81,8 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
     - [Comparison Operations](#comparison-operations) - eq(), ne(), gt(), lt(), ge(), le(), between()
     - [Cumulative Operations](#cumulative-operations) - cumsum(), cumprod(), cummax(), cummin()
     - [String Methods](#string-methods) - str.upper(), str.lower(), str.contains(), str.replace(), str.split(), str.strip(), str.startswith(), str.endswith(), str.len()
+    - [Indexing Methods](#indexing-methods) - loc.get(), loc.set(), iloc.get(), iloc.set()
+    - [Window Operations](#window-operations) - rolling(), expanding()
 
 > ### `DataFrame`
 
@@ -688,6 +690,170 @@ const s = pd.Series(['hello', 'world', null, 'test'])
 const result = s.str.len()
 console.log(result)
 // NodeSeries [ 5, 5, null, 4 ]
+```
+
+### Indexing Methods
+
+The `loc` and `iloc` accessors provide label-based and position-based indexing for Series data.
+
+#### loc.get()
+
+Access values by index labels. Supports single labels and arrays of labels.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([10, 20, 30, 40], { index: ['a', 'b', 'c', 'd'] })
+console.log(s)
+// NodeSeries [ 10, 20, 30, 40 ]
+// index: ['a', 'b', 'c', 'd']
+
+// Get single value by label
+const value = s.loc.get('b')
+console.log(value)
+// 20
+
+// Get multiple values by labels
+const values = s.loc.get(['a', 'c', 'd'])
+console.log(values)
+// NodeSeries [ 10, 30, 40 ]
+// index: ['a', 'c', 'd']
+```
+
+#### iloc.get()
+
+Access values by integer positions. Supports single positions and arrays of positions.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([10, 20, 30, 40], { index: ['a', 'b', 'c', 'd'] })
+console.log(s)
+// NodeSeries [ 10, 20, 30, 40 ]
+
+// Get single value by position
+const value = s.iloc.get(1)
+console.log(value)
+// 20
+
+// Get multiple values by positions
+const values = s.iloc.get([0, 2, 3])
+console.log(values)
+// NodeSeries [ 10, 30, 40 ]
+```
+
+#### loc.set()
+
+Set values by index labels. Supports single labels and arrays of labels.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([10, 20, 30, 40], { index: ['a', 'b', 'c', 'd'] })
+
+// Set single value by label
+s.loc.set('b', 99)
+console.log(s)
+// NodeSeries [ 10, 99, 30, 40 ]
+
+// Set multiple values by labels
+s.loc.set(['a', 'c'], [100, 300])
+console.log(s)
+// NodeSeries [ 100, 99, 300, 40 ]
+```
+
+#### iloc.set()
+
+Set values by integer positions. Supports single positions and arrays of positions.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([10, 20, 30, 40], { index: ['a', 'b', 'c', 'd'] })
+
+// Set single value by position
+s.iloc.set(1, 99)
+console.log(s)
+// NodeSeries [ 10, 99, 30, 40 ]
+
+// Set multiple values by positions
+s.iloc.set([0, 2], [100, 300])
+console.log(s)
+// NodeSeries [ 100, 99, 300, 40 ]
+```
+
+### Window Operations
+
+Window operations allow you to perform calculations over sliding or expanding windows of data.
+
+#### rolling()
+
+Create a rolling window for calculating statistics over a fixed window size.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+
+// Rolling mean with window size 3
+const rollingMean = s.rolling(3).mean()
+console.log(rollingMean)
+// NodeSeries [ null, null, 2, 3, 4, 5, 6, 7, 8, 9 ]
+
+// Rolling sum with window size 3
+const rollingSum = s.rolling(3).sum()
+console.log(rollingSum)
+// NodeSeries [ null, null, 6, 9, 12, 15, 18, 21, 24, 27 ]
+
+// Rolling min with window size 3
+const rollingMin = s.rolling(3).min()
+console.log(rollingMin)
+// NodeSeries [ null, null, 1, 2, 3, 4, 5, 6, 7, 8 ]
+
+// Rolling max with window size 3
+const rollingMax = s.rolling(3).max()
+console.log(rollingMax)
+// NodeSeries [ null, null, 3, 4, 5, 6, 7, 8, 9, 10 ]
+
+// Rolling standard deviation with window size 3
+const rollingStd = s.rolling(3).std()
+console.log(rollingStd)
+// NodeSeries [ null, null, 1, 1, 1, 1, 1, 1, 1, 1 ]
+```
+
+#### expanding()
+
+Create an expanding window that includes all values from the start up to the current position.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([1, 2, 3, 4, 5])
+
+// Expanding mean
+const expandingMean = s.expanding().mean()
+console.log(expandingMean)
+// NodeSeries [ 1, 1.5, 2, 2.5, 3 ]
+
+// Expanding sum
+const expandingSum = s.expanding().sum()
+console.log(expandingSum)
+// NodeSeries [ 1, 3, 6, 10, 15 ]
+
+// Expanding min
+const expandingMin = s.expanding().min()
+console.log(expandingMin)
+// NodeSeries [ 1, 1, 1, 1, 1 ]
+
+// Expanding max
+const expandingMax = s.expanding().max()
+console.log(expandingMax)
+// NodeSeries [ 1, 2, 3, 4, 5 ]
+
+// Expanding standard deviation
+const expandingStd = s.expanding().std()
+console.log(expandingStd)
+// NodeSeries [ 0, 0.707..., 1, 1.29..., 1.58... ]
 ```
 
 <hr>
