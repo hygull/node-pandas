@@ -33,6 +33,677 @@ const { getLogger } = require('../utils/logger');
 const logger = getLogger();
 
 /**
+ * RollingWindow class - Provides rolling window operations for Series.
+ * Accessed via the Series.rolling() method, this class offers pandas-like rolling
+ * window calculations that compute statistics over a sliding window.
+ * 
+ * @class RollingWindow
+ * 
+ * @example
+ * const series = new Series([1, 2, 3, 4, 5]);
+ * const rollingMean = series.rolling(3).mean();
+ * // Returns Series with rolling 3-period mean
+ */
+class RollingWindow {
+  /**
+   * Creates a new RollingWindow instance.
+   * 
+   * @param {Series} series - The Series instance to operate on
+   * @param {number} window - The size of the rolling window
+   * 
+   * @example
+   * // Typically accessed via series.rolling(), not instantiated directly
+   * const rolling = new RollingWindow(series, 3);
+   */
+  constructor(series, window) {
+    validateNumber(window, 'window');
+    if (window <= 0) {
+      throw new ValidationError('Window size must be greater than 0');
+    }
+    this._series = series;
+    this._window = window;
+  }
+
+  /**
+   * Calculate rolling mean over the window.
+   * 
+   * @returns {Series} A new Series with rolling mean values
+   * 
+   * @example
+   * const series = new Series([1, 2, 3, 4, 5]);
+   * const result = series.rolling(3).mean();
+   * // Returns Series: [null, null, 2, 3, 4]
+   */
+  mean() {
+    const resultData = [];
+    const data = this._series._data;
+
+    for (let i = 0; i < data.length; i++) {
+      if (i < this._window - 1) {
+        resultData.push(null);
+        continue;
+      }
+
+      let sum = 0;
+      let count = 0;
+
+      for (let j = i - this._window + 1; j <= i; j++) {
+        const val = data[j];
+        if (!isNull(val)) {
+          const numVal = toNumeric(val);
+          if (!isNull(numVal)) {
+            sum += numVal;
+            count++;
+          }
+        }
+      }
+
+      resultData.push(count > 0 ? sum / count : null);
+    }
+
+    return new Series(resultData, {
+      index: this._series._index,
+      name: this._series._name
+    });
+  }
+
+  /**
+   * Calculate rolling sum over the window.
+   * 
+   * @returns {Series} A new Series with rolling sum values
+   * 
+   * @example
+   * const series = new Series([1, 2, 3, 4, 5]);
+   * const result = series.rolling(3).sum();
+   * // Returns Series: [null, null, 6, 9, 12]
+   */
+  sum() {
+    const resultData = [];
+    const data = this._series._data;
+
+    for (let i = 0; i < data.length; i++) {
+      if (i < this._window - 1) {
+        resultData.push(null);
+        continue;
+      }
+
+      let sum = 0;
+      let count = 0;
+
+      for (let j = i - this._window + 1; j <= i; j++) {
+        const val = data[j];
+        if (!isNull(val)) {
+          const numVal = toNumeric(val);
+          if (!isNull(numVal)) {
+            sum += numVal;
+            count++;
+          }
+        }
+      }
+
+      resultData.push(count > 0 ? sum : null);
+    }
+
+    return new Series(resultData, {
+      index: this._series._index,
+      name: this._series._name
+    });
+  }
+
+  /**
+   * Calculate rolling minimum over the window.
+   * 
+   * @returns {Series} A new Series with rolling minimum values
+   * 
+   * @example
+   * const series = new Series([5, 2, 8, 1, 9]);
+   * const result = series.rolling(3).min();
+   * // Returns Series: [null, null, 2, 1, 1]
+   */
+  min() {
+    const resultData = [];
+    const data = this._series._data;
+
+    for (let i = 0; i < data.length; i++) {
+      if (i < this._window - 1) {
+        resultData.push(null);
+        continue;
+      }
+
+      let min = Infinity;
+      let hasValue = false;
+
+      for (let j = i - this._window + 1; j <= i; j++) {
+        const val = data[j];
+        if (!isNull(val)) {
+          const numVal = toNumeric(val);
+          if (!isNull(numVal)) {
+            min = Math.min(min, numVal);
+            hasValue = true;
+          }
+        }
+      }
+
+      resultData.push(hasValue ? min : null);
+    }
+
+    return new Series(resultData, {
+      index: this._series._index,
+      name: this._series._name
+    });
+  }
+
+  /**
+   * Calculate rolling maximum over the window.
+   * 
+   * @returns {Series} A new Series with rolling maximum values
+   * 
+   * @example
+   * const series = new Series([5, 2, 8, 1, 9]);
+   * const result = series.rolling(3).max();
+   * // Returns Series: [null, null, 8, 8, 9]
+   */
+  max() {
+    const resultData = [];
+    const data = this._series._data;
+
+    for (let i = 0; i < data.length; i++) {
+      if (i < this._window - 1) {
+        resultData.push(null);
+        continue;
+      }
+
+      let max = -Infinity;
+      let hasValue = false;
+
+      for (let j = i - this._window + 1; j <= i; j++) {
+        const val = data[j];
+        if (!isNull(val)) {
+          const numVal = toNumeric(val);
+          if (!isNull(numVal)) {
+            max = Math.max(max, numVal);
+            hasValue = true;
+          }
+        }
+      }
+
+      resultData.push(hasValue ? max : null);
+    }
+
+    return new Series(resultData, {
+      index: this._series._index,
+      name: this._series._name
+    });
+  }
+
+  /**
+   * Calculate rolling standard deviation over the window.
+   * 
+   * @returns {Series} A new Series with rolling standard deviation values
+   * 
+   * @example
+   * const series = new Series([1, 2, 3, 4, 5]);
+   * const result = series.rolling(3).std();
+   * // Returns Series with rolling 3-period standard deviation
+   */
+  std() {
+    const resultData = [];
+    const data = this._series._data;
+
+    for (let i = 0; i < data.length; i++) {
+      if (i < this._window - 1) {
+        resultData.push(null);
+        continue;
+      }
+
+      const values = [];
+
+      for (let j = i - this._window + 1; j <= i; j++) {
+        const val = data[j];
+        if (!isNull(val)) {
+          const numVal = toNumeric(val);
+          if (!isNull(numVal)) {
+            values.push(numVal);
+          }
+        }
+      }
+
+      if (values.length === 0) {
+        resultData.push(null);
+        continue;
+      }
+
+      const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
+      const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length;
+      resultData.push(Math.sqrt(variance));
+    }
+
+    return new Series(resultData, {
+      index: this._series._index,
+      name: this._series._name
+    });
+  }
+}
+
+/**
+ * ExpandingWindow class - Provides expanding window operations for Series.
+ * Accessed via the Series.expanding() method, this class offers pandas-like expanding
+ * window calculations that compute cumulative statistics from the start.
+ * 
+ * @class ExpandingWindow
+ * 
+ * @example
+ * const series = new Series([1, 2, 3, 4, 5]);
+ * const expandingMean = series.expanding().mean();
+ * // Returns Series with expanding mean: [1, 1.5, 2, 2.5, 3]
+ */
+class ExpandingWindow {
+  /**
+   * Creates a new ExpandingWindow instance.
+   * 
+   * @param {Series} series - The Series instance to operate on
+   * 
+   * @example
+   * // Typically accessed via series.expanding(), not instantiated directly
+   * const expanding = new ExpandingWindow(series);
+   */
+  constructor(series) {
+    this._series = series;
+  }
+
+  /**
+   * Calculate expanding mean from the start.
+   * 
+   * @returns {Series} A new Series with expanding mean values
+   * 
+   * @example
+   * const series = new Series([1, 2, 3, 4, 5]);
+   * const result = series.expanding().mean();
+   * // Returns Series: [1, 1.5, 2, 2.5, 3]
+   */
+  mean() {
+    const resultData = [];
+    const data = this._series._data;
+    let sum = 0;
+    let count = 0;
+
+    for (let i = 0; i < data.length; i++) {
+      const val = data[i];
+      if (!isNull(val)) {
+        const numVal = toNumeric(val);
+        if (!isNull(numVal)) {
+          sum += numVal;
+          count++;
+        }
+      }
+
+      resultData.push(count > 0 ? sum / count : null);
+    }
+
+    return new Series(resultData, {
+      index: this._series._index,
+      name: this._series._name
+    });
+  }
+
+  /**
+   * Calculate expanding sum from the start.
+   * 
+   * @returns {Series} A new Series with expanding sum values
+   * 
+   * @example
+   * const series = new Series([1, 2, 3, 4, 5]);
+   * const result = series.expanding().sum();
+   * // Returns Series: [1, 3, 6, 10, 15]
+   */
+  sum() {
+    const resultData = [];
+    const data = this._series._data;
+    let sum = 0;
+    let count = 0;
+
+    for (let i = 0; i < data.length; i++) {
+      const val = data[i];
+      if (!isNull(val)) {
+        const numVal = toNumeric(val);
+        if (!isNull(numVal)) {
+          sum += numVal;
+          count++;
+        }
+      }
+
+      resultData.push(count > 0 ? sum : null);
+    }
+
+    return new Series(resultData, {
+      index: this._series._index,
+      name: this._series._name
+    });
+  }
+
+  /**
+   * Calculate expanding minimum from the start.
+   * 
+   * @returns {Series} A new Series with expanding minimum values
+   * 
+   * @example
+   * const series = new Series([5, 2, 8, 1, 9]);
+   * const result = series.expanding().min();
+   * // Returns Series: [5, 2, 2, 1, 1]
+   */
+  min() {
+    const resultData = [];
+    const data = this._series._data;
+    let min = Infinity;
+    let hasValue = false;
+
+    for (let i = 0; i < data.length; i++) {
+      const val = data[i];
+      if (!isNull(val)) {
+        const numVal = toNumeric(val);
+        if (!isNull(numVal)) {
+          min = Math.min(min, numVal);
+          hasValue = true;
+        }
+      }
+
+      resultData.push(hasValue ? min : null);
+    }
+
+    return new Series(resultData, {
+      index: this._series._index,
+      name: this._series._name
+    });
+  }
+
+  /**
+   * Calculate expanding maximum from the start.
+   * 
+   * @returns {Series} A new Series with expanding maximum values
+   * 
+   * @example
+   * const series = new Series([5, 2, 8, 1, 9]);
+   * const result = series.expanding().max();
+   * // Returns Series: [5, 5, 8, 8, 9]
+   */
+  max() {
+    const resultData = [];
+    const data = this._series._data;
+    let max = -Infinity;
+    let hasValue = false;
+
+    for (let i = 0; i < data.length; i++) {
+      const val = data[i];
+      if (!isNull(val)) {
+        const numVal = toNumeric(val);
+        if (!isNull(numVal)) {
+          max = Math.max(max, numVal);
+          hasValue = true;
+        }
+      }
+
+      resultData.push(hasValue ? max : null);
+    }
+
+    return new Series(resultData, {
+      index: this._series._index,
+      name: this._series._name
+    });
+  }
+
+  /**
+   * Calculate expanding standard deviation from the start.
+   * 
+   * @returns {Series} A new Series with expanding standard deviation values
+   * 
+   * @example
+   * const series = new Series([1, 2, 3, 4, 5]);
+   * const result = series.expanding().std();
+   * // Returns Series with expanding standard deviation
+   */
+  std() {
+    const resultData = [];
+    const data = this._series._data;
+    const values = [];
+
+    for (let i = 0; i < data.length; i++) {
+      const val = data[i];
+      if (!isNull(val)) {
+        const numVal = toNumeric(val);
+        if (!isNull(numVal)) {
+          values.push(numVal);
+        }
+      }
+
+      if (values.length === 0) {
+        resultData.push(null);
+        continue;
+      }
+
+      const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
+      const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length;
+      resultData.push(Math.sqrt(variance));
+    }
+
+    return new Series(resultData, {
+      index: this._series._index,
+      name: this._series._name
+    });
+  }
+}
+
+/**
+ * LocIndexer class - Provides label-based indexing for Series.
+ * Accessed via the Series.loc property, this class offers pandas-like label-based
+ * indexing that allows getting and setting values by index labels.
+ * 
+ * @class LocIndexer
+ * 
+ * @example
+ * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+ * const value = series.loc.get('b'); // 20
+ * const subset = series.loc.get(['a', 'c']); // Series with values [10, 30]
+ * series.loc.set('b', 25); // Sets value at label 'b' to 25
+ */
+class LocIndexer {
+  /**
+   * Creates a new LocIndexer instance.
+   * 
+   * @param {Series} series - The Series instance to operate on
+   * 
+   * @example
+   * // Typically accessed via series.loc, not instantiated directly
+   * const locIndexer = new LocIndexer(series);
+   */
+  constructor(series) {
+    this._series = series;
+  }
+
+  /**
+   * Gets value(s) by index label(s).
+   * 
+   * @param {string|number|Array<string|number>} label - Single label or array of labels
+   * @returns {*|Series} Single value if label is scalar, Series if label is array
+   * 
+   * @throws {DataFrameError} If any label does not exist in the index
+   * 
+   * @example
+   * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+   * console.log(series.loc.get('b')); // 20
+   * 
+   * @example
+   * const subset = series.loc.get(['a', 'c']);
+   * console.log(subset); // Series with values [10, 30] and index ['a', 'c']
+   */
+  get(label) {
+    if (Array.isArray(label)) {
+      // Handle array of labels - return a new Series
+      const data = [];
+      const index = [];
+      
+      for (const lbl of label) {
+        const idx = this._series._index.indexOf(lbl);
+        if (idx === -1) {
+          throw new DataFrameError(`Index label '${lbl}' not found in Series`, {
+            operation: 'loc.get',
+            value: lbl,
+            expected: `one of ${JSON.stringify(this._series._index)}`
+          });
+        }
+        data.push(this._series._data[idx]);
+        index.push(lbl);
+      }
+      
+      return new Series(data, { 
+        index: index, 
+        name: this._series._name 
+      });
+    } else {
+      // Handle single label - return the value
+      const idx = this._series._index.indexOf(label);
+      if (idx === -1) {
+        throw new DataFrameError(`Index label '${label}' not found in Series`, {
+          operation: 'loc.get',
+          value: label,
+          expected: `one of ${JSON.stringify(this._series._index)}`
+        });
+      }
+      return this._series._data[idx];
+    }
+  }
+
+  /**
+   * Sets value at the specified index label.
+   * 
+   * @param {string|number} label - The index label to set
+   * @param {*} value - The value to set
+   * @returns {void}
+   * 
+   * @throws {DataFrameError} If the label does not exist in the index
+   * 
+   * @example
+   * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+   * series.loc.set('b', 25);
+   * console.log(series.get('b')); // 25
+   */
+  set(label, value) {
+    const idx = this._series._index.indexOf(label);
+    if (idx === -1) {
+      throw new DataFrameError(`Index label '${label}' not found in Series`, {
+        operation: 'loc.set',
+        value: label,
+        expected: `one of ${JSON.stringify(this._series._index)}`
+      });
+    }
+    this._series._data[idx] = value;
+  }
+}
+
+/**
+ * ILocIndexer class - Provides position-based indexing for Series.
+ * Accessed via the Series.iloc property, this class offers pandas-like integer-based
+ * indexing that allows getting and setting values by integer positions.
+ * 
+ * @class ILocIndexer
+ * 
+ * @example
+ * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+ * const value = series.iloc.get(1); // 20
+ * const subset = series.iloc.get([0, 2]); // Series with values [10, 30]
+ * series.iloc.set(1, 25); // Sets value at position 1 to 25
+ */
+class ILocIndexer {
+  /**
+   * Creates a new ILocIndexer instance.
+   * 
+   * @param {Series} series - The Series instance to operate on
+   * 
+   * @example
+   * // Typically accessed via series.iloc, not instantiated directly
+   * const ilocIndexer = new ILocIndexer(series);
+   */
+  constructor(series) {
+    this._series = series;
+  }
+
+  /**
+   * Gets value(s) by integer position(s).
+   * 
+   * @param {number|Array<number>} position - Single position or array of positions
+   * @returns {*|Series} Single value if position is scalar, Series if position is array
+   * 
+   * @throws {DataFrameError} If any position is out of bounds
+   * 
+   * @example
+   * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+   * console.log(series.iloc.get(1)); // 20
+   * 
+   * @example
+   * const subset = series.iloc.get([0, 2]);
+   * console.log(subset); // Series with values [10, 30] and index ['a', 'c']
+   */
+  get(position) {
+    if (Array.isArray(position)) {
+      // Handle array of positions - return a new Series
+      const data = [];
+      const index = [];
+      
+      for (const pos of position) {
+        if (!Number.isInteger(pos) || pos < 0 || pos >= this._series._data.length) {
+          throw new DataFrameError(`Position ${pos} is out of bounds for Series of length ${this._series._data.length}`, {
+            operation: 'iloc.get',
+            value: pos,
+            expected: `integer between 0 and ${this._series._data.length - 1}`
+          });
+        }
+        data.push(this._series._data[pos]);
+        index.push(this._series._index[pos]);
+      }
+      
+      return new Series(data, { 
+        index: index, 
+        name: this._series._name 
+      });
+    } else {
+      // Handle single position - return the value
+      if (!Number.isInteger(position) || position < 0 || position >= this._series._data.length) {
+        throw new DataFrameError(`Position ${position} is out of bounds for Series of length ${this._series._data.length}`, {
+          operation: 'iloc.get',
+          value: position,
+          expected: `integer between 0 and ${this._series._data.length - 1}`
+        });
+      }
+      return this._series._data[position];
+    }
+  }
+
+  /**
+   * Sets value at the specified integer position.
+   * 
+   * @param {number} position - The integer position to set
+   * @param {*} value - The value to set
+   * @returns {void}
+   * 
+   * @throws {DataFrameError} If the position is out of bounds
+   * 
+   * @example
+   * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+   * series.iloc.set(1, 25);
+   * console.log(series.iloc.get(1)); // 25
+   */
+  set(position, value) {
+    if (!Number.isInteger(position) || position < 0 || position >= this._series._data.length) {
+      throw new DataFrameError(`Position ${position} is out of bounds for Series of length ${this._series._data.length}`, {
+        operation: 'iloc.set',
+        value: position,
+        expected: `integer between 0 and ${this._series._data.length - 1}`
+      });
+    }
+    this._series._data[position] = value;
+  }
+}
+
+/**
  * StringAccessor class - Provides string manipulation methods for Series.
  * Accessed via the Series.str property, this class offers pandas-like string operations
  * that return new Series with transformed values while preserving null values.
@@ -417,6 +1088,54 @@ class Series extends Array {
    */
   get str() {
     return new StringAccessor(this);
+  }
+
+  /**
+   * Gets a LocIndexer for label-based indexing on the Series.
+   * Provides pandas-like label-based indexing that allows getting and setting
+   * values by index labels.
+   * 
+   * @type {LocIndexer}
+   * @readonly
+   * 
+   * @example
+   * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+   * const value = series.loc.get('b'); // 20
+   * 
+   * @example
+   * const subset = series.loc.get(['a', 'c']);
+   * console.log(subset); // Series with values [10, 30]
+   * 
+   * @example
+   * series.loc.set('b', 25);
+   * console.log(series.get('b')); // 25
+   */
+  get loc() {
+    return new LocIndexer(this);
+  }
+
+  /**
+   * Gets an ILocIndexer for position-based indexing on the Series.
+   * Provides pandas-like integer-based indexing that allows getting and setting
+   * values by integer positions.
+   * 
+   * @type {ILocIndexer}
+   * @readonly
+   * 
+   * @example
+   * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+   * const value = series.iloc.get(1); // 20
+   * 
+   * @example
+   * const subset = series.iloc.get([0, 2]);
+   * console.log(subset); // Series with values [10, 30]
+   * 
+   * @example
+   * series.iloc.set(1, 25);
+   * console.log(series.iloc.get(1)); // 25
+   */
+  get iloc() {
+    return new ILocIndexer(this);
   }
 
   /**
@@ -1933,6 +2652,45 @@ class Series extends Array {
       index: this._index,
       name: this._name
     });
+  }
+
+  /**
+   * Create a rolling window for computing rolling statistics.
+   * 
+   * @param {number} window - The size of the rolling window
+   * @returns {RollingWindow} A RollingWindow instance for computing rolling statistics
+   * 
+   * @example
+   * const series = new Series([1, 2, 3, 4, 5]);
+   * const rollingMean = series.rolling(3).mean();
+   * // Returns Series: [null, null, 2, 3, 4]
+   * 
+   * @example
+   * const series = new Series([1, 2, 3, 4, 5]);
+   * const rollingSum = series.rolling(2).sum();
+   * // Returns Series: [null, 3, 5, 7, 9]
+   */
+  rolling(window) {
+    return new RollingWindow(this, window);
+  }
+
+  /**
+   * Create an expanding window for computing cumulative statistics.
+   * 
+   * @returns {ExpandingWindow} An ExpandingWindow instance for computing expanding statistics
+   * 
+   * @example
+   * const series = new Series([1, 2, 3, 4, 5]);
+   * const expandingMean = series.expanding().mean();
+   * // Returns Series: [1, 1.5, 2, 2.5, 3]
+   * 
+   * @example
+   * const series = new Series([1, 2, 3, 4, 5]);
+   * const expandingSum = series.expanding().sum();
+   * // Returns Series: [1, 3, 6, 10, 15]
+   */
+  expanding() {
+    return new ExpandingWindow(this);
   }
 
 
