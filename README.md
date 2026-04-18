@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/banner.svg" alt="node-pandas — Pandas for Node.js" width="100%" />
+</p>
+
 # node-pandas
 
 [![npm version](https://img.shields.io/npm/v/node-pandas.svg?label=node-pandas&color=brightgreen)](https://www.npmjs.com/package/node-pandas)

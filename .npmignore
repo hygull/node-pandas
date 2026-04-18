@@ -11,6 +11,9 @@
 # Internal/process docs (design specs, implementation plans, etc.)
 docs/superpowers/
 
+# README banner (for GitHub display only, not needed at runtime)
+assets/
+
 # Tests and coverage
 tests/
 coverage/
