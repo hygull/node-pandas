@@ -4,6 +4,7 @@
  */
 
 const DataFrame = require('../../src/dataframe/dataframe');
+const { ColumnError, ValidationError } = require('../../src/utils/errors');
 
 describe('DataFrame.setIndex()', () => {
   const buildDf = () => DataFrame(
@@ -41,8 +42,8 @@ describe('DataFrame.setIndex()', () => {
 
   describe('edge cases', () => {
     test('empty DataFrame returns empty DataFrame', () => {
-      const df = DataFrame([], []);
-      const out = df.setIndex('any');
+      const df = DataFrame([], ['a', 'b']);
+      const out = df.setIndex('a');
       expect(out.rows).toBe(0);
     });
 
@@ -63,14 +64,19 @@ describe('DataFrame.setIndex()', () => {
   describe('errors', () => {
     test('throws ColumnError when column does not exist', () => {
       const df = buildDf();
-      expect(() => df.setIndex('missing')).toThrow(/missing/);
+      expect(() => df.setIndex('missing')).toThrow(ColumnError);
     });
 
     test('throws ValidationError when columnName is not a string', () => {
       const df = buildDf();
-      expect(() => df.setIndex(42)).toThrow();
-      expect(() => df.setIndex(null)).toThrow();
-      expect(() => df.setIndex(undefined)).toThrow();
+      expect(() => df.setIndex(42)).toThrow(ValidationError);
+      expect(() => df.setIndex(null)).toThrow(ValidationError);
+      expect(() => df.setIndex(undefined)).toThrow(ValidationError);
+    });
+
+    test('throws ColumnError on empty DataFrame when column does not exist', () => {
+      const df = DataFrame([], []);
+      expect(() => df.setIndex('any')).toThrow(ColumnError);
     });
   });
 });

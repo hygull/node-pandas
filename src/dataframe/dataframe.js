@@ -323,15 +323,8 @@ class NodeDataFrame extends Array {
       throw new ValidationError('setIndex columnName must be a string', {
         operation: 'setIndex',
         value: columnName,
-        expected: 'string',
-        actual: typeof columnName
+        expected: 'string'
       });
-    }
-
-    const drop = options.drop !== false; // default true
-
-    if (this.rows === 0) {
-      return DataFrame([], drop ? this.columns.filter(c => c !== columnName) : this.columns);
     }
 
     const colIdx = this.columns.indexOf(columnName);
@@ -339,9 +332,14 @@ class NodeDataFrame extends Array {
       throw new ColumnError(`Column '${columnName}' does not exist`, {
         operation: 'setIndex',
         column: columnName,
-        expected: `one of ${JSON.stringify(this.columns)}`,
-        actual: columnName
+        value: this.columns
       });
+    }
+
+    const drop = options.drop !== false; // default true
+
+    if (this.rows === 0) {
+      return DataFrame([], drop ? this.columns.filter(c => c !== columnName) : [...this.columns]);
     }
 
     // Internal rows are stored as objects keyed by column name.
