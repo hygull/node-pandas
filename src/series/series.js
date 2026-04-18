@@ -2970,5 +2970,12 @@ function createSeries(data, options = {}) {
   return new Series(data, options);
 }
 
+// camelCase aliases for snake_case methods (kept for backward compatibility).
+// Canonical: camelCase. Aliases: snake_case. See README "Naming convention".
+Series.prototype.sortValues = Series.prototype.sort_values;
+Series.prototype.sortIndex = Series.prototype.sort_index;
+Series.prototype.valueCounts = Series.prototype.value_counts;
+Series.prototype.dropDuplicates = Series.prototype.drop_duplicates;
+
 module.exports = Series;
 module.exports.createSeries = createSeries;
