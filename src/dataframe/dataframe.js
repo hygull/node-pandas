@@ -24,12 +24,147 @@ const validation = require('../utils/validation');
 const typeDetection = require('../utils/typeDetection');
 
 /**
+ * DataFrameAtIndexer class - Fast scalar label-based accessor for DataFrame cells.
+ * Accessed via the DataFrame.at property, this class offers pandas-like fast
+ * scalar access by `(rowLabel, colName)`. Both arguments must be scalar; arrays
+ * or other non-scalar values are rejected. Mirrors pandas `df.at[row, col]`
+ * semantics.
+ *
+ * Internally, DataFrame rows are stored as objects keyed by column name, so the
+ * indexer reads/writes via `data[rowIdx][colName]`. The column index is still
+ * computed for validation and error messages.
+ *
+ * @class DataFrameAtIndexer
+ *
+ * @example
+ * const df = DataFrame([[1, 'Alice', 25], [2, 'Bob', 30]], ['id', 'name', 'age']);
+ * df.index = ['x', 'y'];
+ * df.at.get('x', 'name'); // 'Alice'
+ * df.at.set('x', 'name', 'Alicia'); // mutates in place, returns df
+ */
+class DataFrameAtIndexer {
+  /**
+   * Creates a new DataFrameAtIndexer instance.
+   *
+   * @param {DataFrame} df - The DataFrame instance to operate on
+   *
+   * @example
+   * // Typically accessed via df.at, not instantiated directly
+   * const atIndexer = new DataFrameAtIndexer(df);
+   */
+  constructor(df) {
+    this._df = df;
+  }
+
+  /**
+   * Resolves a `(rowLabel, colName)` pair to internal indices, validating that
+   * both arguments are scalar and that the row label and column name exist on
+   * the DataFrame. Used internally by `get` and `set`.
+   *
+   * @param {string|number} rowLabel - The row label to resolve
+   * @param {string} colName - The column name to resolve
+   * @param {string} op - Operation tag for error context ('DataFrame.at.get' or 'DataFrame.at.set')
+   * @returns {{rowIdx: number, colIdx: number}} Resolved row and column indices
+   *
+   * @throws {ValidationError} If either argument is an array or otherwise non-scalar
+   * @throws {IndexError} If `rowLabel` is not present in `df.index`
+   * @throws {ColumnError} If `colName` is not present in `df.columns`
+   * @private
+   */
+  _resolve(rowLabel, colName, op) {
+    if (Array.isArray(rowLabel) || (rowLabel !== null && typeof rowLabel === 'object')) {
+      throw new ValidationError('at accepts only scalar row labels, not arrays or objects', {
+        operation: op,
+        value: rowLabel,
+        expected: 'scalar'
+      });
+    }
+    if (Array.isArray(colName) || (colName !== null && typeof colName === 'object')) {
+      throw new ValidationError('at accepts only scalar column names, not arrays or objects', {
+        operation: op,
+        value: colName,
+        expected: 'scalar',
+        column: colName
+      });
+    }
+
+    const rowIdx = this._df.index.indexOf(rowLabel);
+    if (rowIdx === -1) {
+      throw new IndexError(`Row label '${rowLabel}' not found in index`, {
+        operation: op,
+        value: rowLabel,
+        expected: `one of ${JSON.stringify(this._df.index)}`
+      });
+    }
+
+    const colIdx = this._df.columns.indexOf(colName);
+    if (colIdx === -1) {
+      throw new ColumnError(`Column '${colName}' does not exist`, {
+        operation: op,
+        value: colName,
+        expected: `one of ${JSON.stringify(this._df.columns)}`,
+        column: colName
+      });
+    }
+
+    return { rowIdx, colIdx };
+  }
+
+  /**
+   * Gets the scalar value at the specified `(rowLabel, colName)`.
+   * Both arguments must be scalar.
+   *
+   * @param {string|number} rowLabel - The row label
+   * @param {string} colName - The column name
+   * @returns {*} The cell value at the given (rowLabel, colName)
+   *
+   * @throws {ValidationError} If either argument is non-scalar
+   * @throws {IndexError} If the row label is not in `df.index`
+   * @throws {ColumnError} If the column name is not in `df.columns`
+   *
+   * @example
+   * const df = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+   * df.index = ['x', 'y'];
+   * df.at.get('x', 'name'); // 'Alice'
+   */
+  get(rowLabel, colName) {
+    const { rowIdx } = this._resolve(rowLabel, colName, 'DataFrame.at.get');
+    return this._df.data[rowIdx][colName];
+  }
+
+  /**
+   * Sets the scalar value at the specified `(rowLabel, colName)` in place.
+   * Both arguments must be scalar. Returns the underlying DataFrame for chaining.
+   *
+   * @param {string|number} rowLabel - The row label
+   * @param {string} colName - The column name
+   * @param {*} value - The value to set at the cell
+   * @returns {DataFrame} The DataFrame instance (for chaining)
+   *
+   * @throws {ValidationError} If either argument is non-scalar
+   * @throws {IndexError} If the row label is not in `df.index`
+   * @throws {ColumnError} If the column name is not in `df.columns`
+   *
+   * @example
+   * const df = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+   * df.index = ['x', 'y'];
+   * df.at.set('x', 'name', 'Alicia');
+   * df.at.get('x', 'name'); // 'Alicia'
+   */
+  set(rowLabel, colName, value) {
+    const { rowIdx } = this._resolve(rowLabel, colName, 'DataFrame.at.set');
+    this._df.data[rowIdx][colName] = value;
+    return this._df;
+  }
+}
+
+/**
  * NodeDataFrame class - A two-dimensional labeled data structure.
- * 
+ *
  * Extends JavaScript's Array class to provide array-like behavior while adding
  * pandas-specific functionality for data manipulation, selection, and analysis.
  * Each row is represented as an array, and columns are accessible by name.
- * 
+ *
  * @class NodeDataFrame
  * @extends Array
  * 
@@ -300,6 +435,25 @@ class NodeDataFrame extends Array {
     }
 
     return undefined;
+  }
+
+  /**
+   * Fast scalar label-based accessor for individual DataFrame cells.
+   *
+   * Returns a {@link DataFrameAtIndexer} bound to this DataFrame. Mirrors
+   * pandas `df.at[row, col]`: both arguments must be scalar (no arrays/slices),
+   * and lookups go via the row label (`df.index`) and column name (`df.columns`).
+   *
+   * @returns {DataFrameAtIndexer} A label-based scalar cell accessor
+   *
+   * @example
+   * const df = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+   * df.index = ['x', 'y'];
+   * df.at.get('x', 'name');           // 'Alice'
+   * df.at.set('x', 'name', 'Alicia'); // mutates in place, returns df
+   */
+  get at() {
+    return new DataFrameAtIndexer(this);
   }
 
   /**

@@ -1,5 +1,6 @@
 const Series = require('../../src/series/series');
-const { IndexError, ValidationError } = require('../../src/utils/errors');
+const DataFrame = require('../../src/dataframe/dataframe');
+const { IndexError, ValidationError, ColumnError } = require('../../src/utils/errors');
 
 describe('Series.at indexer', () => {
   const build = () => new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
@@ -74,6 +75,50 @@ describe('Series.at indexer', () => {
       s.at.set('a', 99);
       expect(s._data[0]).toBe(99);
       expect(s._data[2]).toBe(30);
+    });
+  });
+});
+
+describe('DataFrame.at indexer', () => {
+  const build = () => {
+    const df = DataFrame([[1, 'Alice', 25], [2, 'Bob', 30]], ['id', 'name', 'age']);
+    df.index = ['x', 'y'];
+    return df;
+  };
+
+  describe('get', () => {
+    test('returns scalar at (rowLabel, colName)', () => {
+      const df = build();
+      expect(df.at.get('x', 'name')).toBe('Alice');
+      expect(df.at.get('y', 'age')).toBe(30);
+    });
+    test('throws IndexError on missing rowLabel', () => {
+      expect(() => build().at.get('z', 'name')).toThrow(IndexError);
+    });
+    test('throws ColumnError on missing colName', () => {
+      expect(() => build().at.get('x', 'missing')).toThrow(ColumnError);
+    });
+    test('throws ValidationError when arguments are non-scalar', () => {
+      expect(() => build().at.get(['x'], 'name')).toThrow(ValidationError);
+      expect(() => build().at.get('x', ['name'])).toThrow(ValidationError);
+    });
+  });
+
+  describe('set', () => {
+    test('mutates the cell in place', () => {
+      const df = build();
+      df.at.set('x', 'name', 'Alicia');
+      expect(df.at.get('x', 'name')).toBe('Alicia');
+    });
+    test('returns the DataFrame for chaining', () => {
+      const df = build();
+      expect(df.at.set('x', 'name', 'A')).toBe(df);
+    });
+    test('throws on missing row, missing col, or non-scalar args', () => {
+      const df = build();
+      expect(() => df.at.set('z', 'name', 1)).toThrow(IndexError);
+      expect(() => df.at.set('x', 'missing', 1)).toThrow(ColumnError);
+      expect(() => df.at.set(['x'], 'name', 1)).toThrow(ValidationError);
     });
   });
 });
