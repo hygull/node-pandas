@@ -159,6 +159,145 @@ class DataFrameAtIndexer {
 }
 
 /**
+ * DataFrameIatIndexer class - Fast scalar position-based accessor for DataFrame cells.
+ * Accessed via the DataFrame.iat property, this class offers pandas-like fast
+ * scalar access by `(rowPos, colPos)` integer positions. Both arguments must be
+ * scalar integers; arrays or non-integer values are rejected. Mirrors pandas
+ * `df.iat[rowPos, colPos]` semantics.
+ *
+ * Internally, DataFrame rows are stored as objects keyed by column name, so the
+ * indexer reads/writes via `data[rowPos][df.columns[colPos]]` after resolving
+ * the column name from the integer position.
+ *
+ * @class DataFrameIatIndexer
+ *
+ * @example
+ * const df = DataFrame([[1, 'Alice', 25], [2, 'Bob', 30]], ['id', 'name', 'age']);
+ * df.iat.get(0, 1);            // 'Alice'
+ * df.iat.set(0, 1, 'Alicia');  // mutates in place, returns df
+ */
+class DataFrameIatIndexer {
+  /**
+   * Creates a new DataFrameIatIndexer instance.
+   *
+   * @param {DataFrame} df - The DataFrame instance to operate on
+   *
+   * @example
+   * // Typically accessed via df.iat, not instantiated directly
+   * const iatIndexer = new DataFrameIatIndexer(df);
+   */
+  constructor(df) {
+    this._df = df;
+  }
+
+  /**
+   * Resolves a `(rowPos, colPos)` pair, validating that both arguments are
+   * scalar integers within bounds. Used internally by `get` and `set`.
+   *
+   * @param {number} rowPos - The integer row position to resolve
+   * @param {number} colPos - The integer column position to resolve
+   * @param {string} op - Operation tag for error context ('DataFrame.iat.get' or 'DataFrame.iat.set')
+   * @returns {{rowPos: number, colPos: number, colName: string}} Resolved positions and column name
+   *
+   * @throws {ValidationError} If either argument is an array or not an integer
+   * @throws {IndexError} If `rowPos` is out of `[0, df.rows - 1]`
+   * @throws {IndexError} If `colPos` is out of `[0, df.cols - 1]`
+   * @private
+   */
+  _resolve(rowPos, colPos, op) {
+    if (Array.isArray(rowPos)) {
+      throw new ValidationError('iat accepts only a scalar integer row position, not arrays', {
+        operation: op,
+        value: rowPos,
+        expected: 'integer'
+      });
+    }
+    if (Array.isArray(colPos)) {
+      throw new ValidationError('iat accepts only a scalar integer column position, not arrays', {
+        operation: op,
+        value: colPos,
+        expected: 'integer'
+      });
+    }
+    if (!Number.isInteger(rowPos)) {
+      throw new ValidationError('iat row position must be an integer', {
+        operation: op,
+        value: rowPos,
+        expected: 'integer'
+      });
+    }
+    if (!Number.isInteger(colPos)) {
+      throw new ValidationError('iat column position must be an integer', {
+        operation: op,
+        value: colPos,
+        expected: 'integer'
+      });
+    }
+
+    if (rowPos < 0 || rowPos >= this._df.rows) {
+      throw new IndexError(`Row position ${rowPos} is out of bounds for DataFrame with ${this._df.rows} rows`, {
+        operation: op,
+        value: rowPos,
+        expected: `integer between 0 and ${this._df.rows - 1}`
+      });
+    }
+    if (colPos < 0 || colPos >= this._df.cols) {
+      throw new IndexError(`Column position ${colPos} is out of bounds for DataFrame with ${this._df.cols} columns`, {
+        operation: op,
+        value: colPos,
+        expected: `integer between 0 and ${this._df.cols - 1}`
+      });
+    }
+
+    return { rowPos, colPos, colName: this._df.columns[colPos] };
+  }
+
+  /**
+   * Gets the scalar value at the specified `(rowPos, colPos)`.
+   * Both arguments must be scalar integers.
+   *
+   * @param {number} rowPos - The integer row position
+   * @param {number} colPos - The integer column position
+   * @returns {*} The cell value at the given (rowPos, colPos)
+   *
+   * @throws {ValidationError} If either argument is an array or not an integer
+   * @throws {IndexError} If `rowPos` or `colPos` is out of range
+   *
+   * @example
+   * const df = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+   * df.iat.get(0, 1); // 'Alice'
+   */
+  get(rowPos, colPos) {
+    const { colName } = this._resolve(rowPos, colPos, 'DataFrame.iat.get');
+    return this._df.data[rowPos][colName];
+  }
+
+  /**
+   * Sets the scalar value at the specified `(rowPos, colPos)` in place.
+   * Both arguments must be scalar integers. Returns the underlying DataFrame
+   * for chaining.
+   *
+   * @param {number} rowPos - The integer row position
+   * @param {number} colPos - The integer column position
+   * @param {*} value - The value to set at the cell
+   * @returns {DataFrame} The DataFrame instance (for chaining)
+   *
+   * @throws {ValidationError} If either position argument is an array or not an integer
+   * @throws {IndexError} If `rowPos` or `colPos` is out of range
+   *
+   * @example
+   * const df = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+   * df.iat.set(0, 1, 'Alicia');
+   * df.iat.get(0, 1); // 'Alicia'
+   */
+  set(rowPos, colPos, value) {
+    const { colName } = this._resolve(rowPos, colPos, 'DataFrame.iat.set');
+    this._df.data[rowPos][colName] = value;
+    return this._df;
+  }
+}
+
+/**
  * NodeDataFrame class - A two-dimensional labeled data structure.
  *
  * Extends JavaScript's Array class to provide array-like behavior while adding
@@ -454,6 +593,25 @@ class NodeDataFrame extends Array {
    */
   get at() {
     return new DataFrameAtIndexer(this);
+  }
+
+  /**
+   * Fast scalar position-based accessor for individual DataFrame cells.
+   *
+   * Returns a {@link DataFrameIatIndexer} bound to this DataFrame. Mirrors
+   * pandas `df.iat[rowPos, colPos]`: both arguments must be scalar integers
+   * (no arrays/slices), and lookups go via integer row position into
+   * `df.data` and integer column position into `df.columns`.
+   *
+   * @returns {DataFrameIatIndexer} A position-based scalar cell accessor
+   *
+   * @example
+   * const df = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+   * df.iat.get(0, 1);            // 'Alice'
+   * df.iat.set(0, 1, 'Alicia');  // mutates in place, returns df
+   */
+  get iat() {
+    return new DataFrameIatIndexer(this);
   }
 
   /**
