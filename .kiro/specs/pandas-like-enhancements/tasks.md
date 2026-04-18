@@ -217,8 +217,8 @@ This implementation plan transforms the node-pandas library into a production-re
     - Test groups with no valid values
     - _Requirements: 13.1, 13.3_
 
-- [ ] 11. Implement DataFrame transformation operations
-  - [ ] 11.1 Add transformation methods to DataFrame
+- [x] 11. Implement DataFrame transformation operations
+  - [x] 11.1 Add transformation methods to DataFrame
     - Add apply method for column transformations
     - Add map method for element-wise transformations
     - Add replace method for value replacement
@@ -238,8 +238,8 @@ This implementation plan transforms the node-pandas library into a production-re
     - Test type inference after transformation
     - _Requirements: 13.1, 13.3_
 
-- [ ] 12. Implement DataFrame statistical methods
-  - [ ] 12.1 Add describe method to DataFrame
+- [x] 12. Implement DataFrame statistical methods
+  - [x] 12.1 Add describe method to DataFrame
     - Implement describe method that returns summary statistics DataFrame
     - Include count, mean, std, min, max, and percentiles for numeric columns
     - Handle non-numeric columns appropriately
@@ -258,8 +258,8 @@ This implementation plan transforms the node-pandas library into a production-re
 - [ ] 13. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 14. Implement DataFrame merging and joining
-  - [ ] 14.1 Implement merge method
+- [x] 14. Implement DataFrame merging and joining
+  - [x] 14.1 Implement merge method
     - Add merge method that accepts another DataFrame and join key
     - Support join types: inner, left, right, outer
     - Add suffixes for conflicting column names
@@ -274,7 +274,7 @@ This implementation plan transforms the node-pandas library into a production-re
     - **Property 33: Join Types Handle Non-Matching Keys Correctly**
     - **Validates: Requirements 8.1, 8.3, 8.4, 8.5**
   
-  - [ ] 14.3 Implement concat method
+  - [x] 14.3 Implement concat method
     - Add concat static method that accepts array of DataFrames
     - Support vertical (axis=0) and horizontal (axis=1) concatenation
     - Handle column alignment for vertical concat
@@ -285,7 +285,7 @@ This implementation plan transforms the node-pandas library into a production-re
     - **Property 34: Concat Stacks DataFrames Correctly**
     - **Validates: Requirements 8.6**
   
-  - [ ]* 14.5 Write unit tests for merge and concat
+  - [x]* 14.5 Write unit tests for merge and concat
     - Test all join types
     - Test with non-matching keys
     - Test vertical and horizontal concat
