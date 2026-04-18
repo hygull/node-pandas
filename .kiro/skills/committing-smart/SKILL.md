@@ -169,7 +169,7 @@ Committed <short-hash> on <branch>
 Time log updated.
 ```
 
-Do **not** push. Pushing is a separate, deliberate action; the user can run `git push` themselves or use `/cap` for the combined flow.
+Do **not** push. Pushing is a separate, deliberate action; the user can run `git push` themselves or use the project's commit-and-push command (e.g. `/cap`) for the combined flow.
 
 ## Boundaries
 
@@ -182,4 +182,8 @@ Do **not** push. Pushing is a separate, deliberate action; the user can run `git
 
 ## When this skill applies
 
-Use when the user asks to "commit", "make a commit", "smart commit", or invokes `/committing-smart`. If the user wants to commit AND push in one step, use the existing `/cap` skill instead. If the user wants a non-SMART commit (e.g. for a fork or a non-Jira project), don't force the SMART format — fall back to a plain conventional commit.
+Use when the user asks to "commit", "make a commit", "smart commit", or invokes `/committing-smart`. If the user wants to commit AND push in one step, use the project's combined commit-and-push flow instead. If the user wants a non-SMART commit (e.g. for a fork or a non-Jira project), don't force the SMART format — fall back to a plain conventional commit.
+
+## History
+
+This skill replaces the older `.kiro/agents/git-committer-agent.md` agent definition. The agent's "Phase 1: skip diff if you've already committed a minute ago" hint is preserved in step 1 above. Other agent-specific phases (8-step display format, time-log auto-creation) were dropped in favor of this skill's tighter workflow.
