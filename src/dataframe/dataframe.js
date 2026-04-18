@@ -19,7 +19,7 @@ const messages = require('../messages/messages');
 const Series = require('../series/series');
 const CsvBase = require('../bases/CsvBase');
 const GroupBy = require('../features/GroupBy');
-const { ValidationError, ColumnError, IndexError } = require('../utils/errors');
+const { ValidationError, ColumnError, IndexError, OperationError } = require('../utils/errors');
 const validation = require('../utils/validation');
 const typeDetection = require('../utils/typeDetection');
 
@@ -723,6 +723,89 @@ class NodeDataFrame extends Array {
   }
 
   /**
+   * Apply a function along an axis.
+   *
+   * Two call signatures are supported for backward compatibility:
+   *  - apply(fn, options): function-first signature (pandas-like). Applies fn
+   *    per column (axis 0, default) or per row (axis 1). fn receives a Series.
+   *  - apply(columnName, fn): legacy signature. Transforms a single column
+   *    element-wise, returning a new DataFrame.
+   *
+   * @param {Function|string} fnOrCol - Function (axis-based) or column name (legacy).
+   * @param {Object|Function} [optionsOrFn] - Options object for axis form, or fn for legacy.
+   * @param {0|1} [optionsOrFn.axis=0] - 0 = per column, 1 = per row.
+   * @returns {Series|DataFrame} Series of scalars, or DataFrame if fn returns arrays/Series.
+   * @throws {ValidationError} if fn is not a function or axis is not 0/1.
+   * @throws {OperationError} if fn returns mixed shapes.
+   */
+  apply(fnOrCol, optionsOrFn = {}) {
+    // Legacy signature dispatch: apply(columnName, fn)
+    if (typeof fnOrCol === 'string') {
+      return this._applyToColumn(fnOrCol, optionsOrFn);
+    }
+
+    const fn = fnOrCol;
+    const options = optionsOrFn || {};
+
+    if (typeof fn !== 'function') {
+      throw new ValidationError('apply requires a function', {
+        operation: 'apply', value: fn, expected: 'function'
+      });
+    }
+    const axis = options.axis === undefined ? 0 : options.axis;
+    if (axis !== 0 && axis !== 1) {
+      throw new ValidationError('apply axis must be 0 or 1', {
+        operation: 'apply', value: axis, expected: '0 or 1'
+      });
+    }
+
+    const results = [];
+    const resultIndex = [];
+
+    if (axis === 0) {
+      for (const colName of this.columns) {
+        const colData = this.data.map(row => row[colName]);
+        const colSeries = new Series(colData, { index: [...this.index], name: colName });
+        results.push(fn(colSeries));
+        resultIndex.push(colName);
+      }
+    } else {
+      for (let r = 0; r < this.rows; r++) {
+        const rowObj = this.data[r];
+        const rowData = this.columns.map(c => rowObj[c]);
+        const rowSeries = new Series(rowData, { index: [...this.columns], name: this.index[r] });
+        results.push(fn(rowSeries));
+        resultIndex.push(this.index[r]);
+      }
+    }
+
+    const isSeriesOrArray = v => Array.isArray(v) || (v && typeof v === 'object' && '_data' in v);
+    const shapes = results.map(r => isSeriesOrArray(r) ? 'array' : 'scalar');
+    const allSame = shapes.every(s => s === shapes[0]);
+    if (!allSame) {
+      throw new OperationError('apply received mixed return shapes', {
+        operation: 'apply', expected: 'uniform return shape'
+      });
+    }
+
+    if (shapes.length === 0 || shapes[0] === 'scalar') {
+      return new Series(results, { index: resultIndex });
+    }
+    const arrays = results.map(r => Array.isArray(r) ? r : r._data);
+    // For axis=0, each returned array represents a column; transpose so rows=length of returned array.
+    // For axis=1, each returned array represents a row; use as-is.
+    if (axis === 0) {
+      const nRows = arrays[0].length;
+      const transposed = [];
+      for (let i = 0; i < nRows; i++) {
+        transposed.push(arrays.map(col => col[i]));
+      }
+      return DataFrame(transposed);
+    }
+    return DataFrame(arrays);
+  }
+
+  /**
    * Creates a cached Series for a column and stores it internally.
    * 
    * This internal method is called when a column is first accessed to create
@@ -1037,7 +1120,7 @@ class NodeDataFrame extends Array {
    *   console.error(error.message); // "Column 'nonexistent' does not exist"
    * }
    */
-  apply(columnName, fn) {
+  _applyToColumn(columnName, fn) {
     // Validate column exists
     const colIndex = this.columns.indexOf(columnName);
     if (colIndex === -1) {
