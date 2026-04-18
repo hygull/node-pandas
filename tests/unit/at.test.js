@@ -17,6 +17,19 @@ describe('Series.at indexer', () => {
       expect(() => s.at.get('z')).toThrow(IndexError);
     });
 
+    test('IndexError context includes operation, value, and expected fields', () => {
+      const s = build();
+      try {
+        s.at.get('z');
+        throw new Error('should have thrown');
+      } catch (e) {
+        expect(e.context).toBeDefined();
+        expect(e.context.operation).toBe('Series.at.get');
+        expect(e.context.value).toBe('z');
+        expect(e.context.expected).toBeDefined();
+      }
+    });
+
     test('throws ValidationError when label is an array', () => {
       const s = build();
       expect(() => s.at.get(['a', 'b'])).toThrow(ValidationError);
@@ -45,6 +58,22 @@ describe('Series.at indexer', () => {
     test('throws ValidationError when label is an array', () => {
       const s = build();
       expect(() => s.at.set(['a'], 1)).toThrow(ValidationError);
+    });
+  });
+
+  describe('duplicate labels', () => {
+    test('get returns the first match when label is duplicated in the index', () => {
+      // Current behavior: _index.indexOf returns the first match. Pin this so
+      // a future pandas-style "raise on ambiguous label" change is deliberate.
+      const s = new Series([10, 20, 30], { index: ['a', 'b', 'a'] });
+      expect(s.at.get('a')).toBe(10);
+    });
+
+    test('set mutates only the first occurrence of a duplicated label', () => {
+      const s = new Series([10, 20, 30], { index: ['a', 'b', 'a'] });
+      s.at.set('a', 99);
+      expect(s._data[0]).toBe(99);
+      expect(s._data[2]).toBe(30);
     });
   });
 });
