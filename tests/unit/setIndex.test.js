@@ -17,8 +17,8 @@ describe('DataFrame.setIndex()', () => {
       const out = df.setIndex('id');
       expect(out.index).toEqual([1, 2, 3]);
       expect(out.columns).toEqual(['name', 'age']);
-      expect(out.data[0]).toEqual(['Alice', 25]);
-      expect(out.data[2]).toEqual(['Carol', 35]);
+      expect(out.getRow(0)).toEqual({ name: 'Alice', age: 25 });
+      expect(out.getRow(2)).toEqual({ name: 'Carol', age: 35 });
     });
 
     test('keeps the column when drop:false', () => {
@@ -26,7 +26,7 @@ describe('DataFrame.setIndex()', () => {
       const out = df.setIndex('id', { drop: false });
       expect(out.index).toEqual([1, 2, 3]);
       expect(out.columns).toEqual(['id', 'name', 'age']);
-      expect(out.data[0]).toEqual([1, 'Alice', 25]);
+      expect(out.getRow(0)).toEqual({ id: 1, name: 'Alice', age: 25 });
     });
 
     test('returns a new DataFrame; original is unchanged (immutability)', () => {

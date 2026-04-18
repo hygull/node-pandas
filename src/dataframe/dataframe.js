@@ -358,8 +358,6 @@ class NodeDataFrame extends Array {
 
     const out = DataFrame(newData, newColumns);
     out.index = newIndex;
-    // Expose rows in array-of-arrays form so out.data[i] is an array of values.
-    out.data = newData;
     return out;
   }
 
