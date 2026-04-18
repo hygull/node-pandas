@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-04-18
+
+### Added
+- DataFrame.setIndex(columnName, { drop }) — promote a column to be the index
+- DataFrame.resetIndex({ drop, name }) — demote the current index back to a column or discard it
+- Series.at / DataFrame.at — fast scalar label-based cell accessors with .get / .set
+- Series.iat / DataFrame.iat — fast scalar position-based cell accessors with .get / .set
+- DataFrame.apply(fn, { axis }) — apply a function column-wise (axis 0) or row-wise (axis 1), passing real Series instances to the callback
+- camelCase aliases for the existing snake_case methods (sortValues, sortIndex, valueCounts, dropDuplicates)
+
+### Changed
+- Established camelCase as the canonical naming convention; snake_case names retained as aliases. Documented in README under "Naming convention".
+
+### Notes
+- Zero breaking changes. All existing snake_case method calls continue to work via the new aliases.
+
 ## [2.2.0] - 2026-03-05
 
 ### Added

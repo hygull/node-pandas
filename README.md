@@ -128,6 +128,21 @@ An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates mi
 
 <hr>
 
+## Naming convention
+
+`node-pandas` uses **camelCase** as the canonical naming convention for all methods (e.g. `setIndex`, `sortValues`, `dropDuplicates`).
+
+For backward compatibility, the four methods originally shipped with snake_case names continue to work:
+
+| Canonical (camelCase) | Alias (snake_case) |
+| --- | --- |
+| `sortValues` | `sort_values` |
+| `sortIndex` | `sort_index` |
+| `valueCounts` | `value_counts` |
+| `dropDuplicates` | `drop_duplicates` |
+
+The aliases are literally the same function reference — there is no behavior or performance difference. New code should prefer the camelCase form.
+
 ## Getting started
 
 > ## `Series`
