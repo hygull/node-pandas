@@ -1,0 +1,31 @@
+# Internal tooling and process artifacts — never publish to npm.
+# Note: package.json `files` whitelist is the primary control; this file is
+# defensive in case the whitelist is ever removed.
+
+# Claude Code project config (skills, settings, memory)
+.claude/
+
+# Kiro specs, agents, time logs, publish notes
+.kiro/
+
+# Internal/process docs (design specs, implementation plans, etc.)
+docs/superpowers/
+
+# Tests and coverage
+tests/
+coverage/
+
+# Repo-level config not needed at runtime
+jest.config.js
+TESTING_SETUP.md
+CLAUDE.md
+
+# Site/docs scaffolding
+_config.yml
+docs/code/
+docs/csvs/
+
+# Editor / OS / VCS junk
+.vscode/
+.DS_Store
+*.log
