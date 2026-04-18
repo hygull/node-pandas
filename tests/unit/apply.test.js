@@ -44,6 +44,29 @@ describe('DataFrame.apply()', () => {
       let i = 0;
       expect(() => buildDf().apply(() => (i++ === 0 ? 1 : [1,2]))).toThrow(OperationError);
     });
+    test('axis 0 with array returns preserves df columns as result columns', () => {
+      const df = buildDf();  // columns ['a','b','c']
+      const out = df.apply(col => [col._data[0], col._data[col._data.length - 1]]);
+      expect(out.columns).toEqual(['a', 'b', 'c']);
+      expect(out.rows).toBe(2);
+      expect(out.getRow(0)).toEqual({ a: 1, b: 10, c: 100 });
+      expect(out.getRow(1)).toEqual({ a: 3, b: 30, c: 300 });
+    });
+
+    test('axis 1 with array returns preserves df row labels as result index', () => {
+      const df = buildDf();
+      df.index = ['x', 'y', 'z'];
+      const out = df.apply(row => [row._data[0] * 2, row._data[1] * 2], { axis: 1 });
+      expect(out.rows).toBe(3);
+      expect(out.index).toEqual(['x', 'y', 'z']);
+      expect(out.getRow(0)).toEqual({ '0': 2, '1': 20 });
+    });
+
+    test('throws OperationError when array returns have non-uniform lengths', () => {
+      const df = buildDf();
+      let i = 0;
+      expect(() => df.apply(() => (i++ === 0 ? [1, 2] : [1, 2, 3]))).toThrow(OperationError);
+    });
   });
 
   describe('errors', () => {

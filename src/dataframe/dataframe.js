@@ -792,17 +792,30 @@ class NodeDataFrame extends Array {
       return new Series(results, { index: resultIndex });
     }
     const arrays = results.map(r => Array.isArray(r) ? r : r._data);
+    // Validate ragged arrays: all returned arrays must have the same length.
+    const firstLen = arrays[0].length;
+    if (!arrays.every(a => a.length === firstLen)) {
+      throw new OperationError('apply received array returns with non-uniform lengths', {
+        operation: 'apply',
+        expected: 'all returned arrays have the same length',
+        value: arrays.map(a => a.length)
+      });
+    }
     // For axis=0, each returned array represents a column; transpose so rows=length of returned array.
+    // Result columns are this.columns (one column per input column).
     // For axis=1, each returned array represents a row; use as-is.
+    // Result index is resultIndex (the row labels). Columns default to numeric '0'..'k-1'.
     if (axis === 0) {
-      const nRows = arrays[0].length;
+      const nRows = firstLen;
       const transposed = [];
       for (let i = 0; i < nRows; i++) {
         transposed.push(arrays.map(col => col[i]));
       }
-      return DataFrame(transposed);
+      return DataFrame(transposed, [...this.columns]);
     }
-    return DataFrame(arrays);
+    const out = DataFrame(arrays);
+    out.index = [...resultIndex];
+    return out;
   }
 
   /**
