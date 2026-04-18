@@ -19,17 +19,291 @@ const messages = require('../messages/messages');
 const Series = require('../series/series');
 const CsvBase = require('../bases/CsvBase');
 const GroupBy = require('../features/GroupBy');
-const { ValidationError, ColumnError, IndexError } = require('../utils/errors');
+const { ValidationError, ColumnError, IndexError, OperationError } = require('../utils/errors');
 const validation = require('../utils/validation');
 const typeDetection = require('../utils/typeDetection');
 
 /**
+ * DataFrameAtIndexer class - Fast scalar label-based accessor for DataFrame cells.
+ * Accessed via the DataFrame.at property, this class offers pandas-like fast
+ * scalar access by `(rowLabel, colName)`. Both arguments must be scalar; arrays
+ * or other non-scalar values are rejected. Mirrors pandas `df.at[row, col]`
+ * semantics.
+ *
+ * Internally, DataFrame rows are stored as objects keyed by column name, so the
+ * indexer reads/writes via `data[rowIdx][colName]`. The column index is still
+ * computed for validation and error messages.
+ *
+ * @class DataFrameAtIndexer
+ *
+ * @example
+ * const df = DataFrame([[1, 'Alice', 25], [2, 'Bob', 30]], ['id', 'name', 'age']);
+ * df.index = ['x', 'y'];
+ * df.at.get('x', 'name'); // 'Alice'
+ * df.at.set('x', 'name', 'Alicia'); // mutates in place, returns df
+ */
+class DataFrameAtIndexer {
+  /**
+   * Creates a new DataFrameAtIndexer instance.
+   *
+   * @param {DataFrame} df - The DataFrame instance to operate on
+   *
+   * @example
+   * // Typically accessed via df.at, not instantiated directly
+   * const atIndexer = new DataFrameAtIndexer(df);
+   */
+  constructor(df) {
+    this._df = df;
+  }
+
+  /**
+   * Resolves a `(rowLabel, colName)` pair to internal indices, validating that
+   * both arguments are scalar and that the row label and column name exist on
+   * the DataFrame. Used internally by `get` and `set`.
+   *
+   * @param {string|number} rowLabel - The row label to resolve
+   * @param {string} colName - The column name to resolve
+   * @param {string} op - Operation tag for error context ('DataFrame.at.get' or 'DataFrame.at.set')
+   * @returns {{rowIdx: number, colIdx: number}} Resolved row and column indices
+   *
+   * @throws {ValidationError} If either argument is an array or otherwise non-scalar
+   * @throws {IndexError} If `rowLabel` is not present in `df.index`
+   * @throws {ColumnError} If `colName` is not present in `df.columns`
+   * @private
+   */
+  _resolve(rowLabel, colName, op) {
+    if (Array.isArray(rowLabel) || (rowLabel !== null && typeof rowLabel === 'object')) {
+      throw new ValidationError('at accepts only scalar row labels, not arrays or objects', {
+        operation: op,
+        value: rowLabel,
+        expected: 'scalar'
+      });
+    }
+    if (Array.isArray(colName) || (colName !== null && typeof colName === 'object')) {
+      throw new ValidationError('at accepts only scalar column names, not arrays or objects', {
+        operation: op,
+        value: colName,
+        expected: 'scalar',
+        column: colName
+      });
+    }
+
+    const rowIdx = this._df.index.indexOf(rowLabel);
+    if (rowIdx === -1) {
+      throw new IndexError(`Row label '${rowLabel}' not found in index`, {
+        operation: op,
+        value: rowLabel,
+        expected: `one of ${JSON.stringify(this._df.index)}`
+      });
+    }
+
+    const colIdx = this._df.columns.indexOf(colName);
+    if (colIdx === -1) {
+      throw new ColumnError(`Column '${colName}' does not exist`, {
+        operation: op,
+        value: colName,
+        expected: `one of ${JSON.stringify(this._df.columns)}`,
+        column: colName
+      });
+    }
+
+    return { rowIdx, colIdx };
+  }
+
+  /**
+   * Gets the scalar value at the specified `(rowLabel, colName)`.
+   * Both arguments must be scalar.
+   *
+   * @param {string|number} rowLabel - The row label
+   * @param {string} colName - The column name
+   * @returns {*} The cell value at the given (rowLabel, colName)
+   *
+   * @throws {ValidationError} If either argument is non-scalar
+   * @throws {IndexError} If the row label is not in `df.index`
+   * @throws {ColumnError} If the column name is not in `df.columns`
+   *
+   * @example
+   * const df = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+   * df.index = ['x', 'y'];
+   * df.at.get('x', 'name'); // 'Alice'
+   */
+  get(rowLabel, colName) {
+    const { rowIdx } = this._resolve(rowLabel, colName, 'DataFrame.at.get');
+    return this._df.data[rowIdx][colName];
+  }
+
+  /**
+   * Sets the scalar value at the specified `(rowLabel, colName)` in place.
+   * Both arguments must be scalar. Returns the underlying DataFrame for chaining.
+   *
+   * @param {string|number} rowLabel - The row label
+   * @param {string} colName - The column name
+   * @param {*} value - The value to set at the cell
+   * @returns {DataFrame} The DataFrame instance (for chaining)
+   *
+   * @throws {ValidationError} If either argument is non-scalar
+   * @throws {IndexError} If the row label is not in `df.index`
+   * @throws {ColumnError} If the column name is not in `df.columns`
+   *
+   * @example
+   * const df = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+   * df.index = ['x', 'y'];
+   * df.at.set('x', 'name', 'Alicia');
+   * df.at.get('x', 'name'); // 'Alicia'
+   */
+  set(rowLabel, colName, value) {
+    const { rowIdx } = this._resolve(rowLabel, colName, 'DataFrame.at.set');
+    this._df.data[rowIdx][colName] = value;
+    return this._df;
+  }
+}
+
+/**
+ * DataFrameIatIndexer class - Fast scalar position-based accessor for DataFrame cells.
+ * Accessed via the DataFrame.iat property, this class offers pandas-like fast
+ * scalar access by `(rowPos, colPos)` integer positions. Both arguments must be
+ * scalar integers; arrays or non-integer values are rejected. Mirrors pandas
+ * `df.iat[rowPos, colPos]` semantics.
+ *
+ * Internally, DataFrame rows are stored as objects keyed by column name, so the
+ * indexer reads/writes via `data[rowPos][df.columns[colPos]]` after resolving
+ * the column name from the integer position.
+ *
+ * @class DataFrameIatIndexer
+ *
+ * @example
+ * const df = DataFrame([[1, 'Alice', 25], [2, 'Bob', 30]], ['id', 'name', 'age']);
+ * df.iat.get(0, 1);            // 'Alice'
+ * df.iat.set(0, 1, 'Alicia');  // mutates in place, returns df
+ */
+class DataFrameIatIndexer {
+  /**
+   * Creates a new DataFrameIatIndexer instance.
+   *
+   * @param {DataFrame} df - The DataFrame instance to operate on
+   *
+   * @example
+   * // Typically accessed via df.iat, not instantiated directly
+   * const iatIndexer = new DataFrameIatIndexer(df);
+   */
+  constructor(df) {
+    this._df = df;
+  }
+
+  /**
+   * Resolves a `(rowPos, colPos)` pair, validating that both arguments are
+   * scalar integers within bounds. Used internally by `get` and `set`.
+   *
+   * @param {number} rowPos - The integer row position to resolve
+   * @param {number} colPos - The integer column position to resolve
+   * @param {string} op - Operation tag for error context ('DataFrame.iat.get' or 'DataFrame.iat.set')
+   * @returns {{rowPos: number, colPos: number, colName: string}} Resolved positions and column name
+   *
+   * @throws {ValidationError} If either argument is an array or not an integer
+   * @throws {IndexError} If `rowPos` is out of `[0, df.rows - 1]`
+   * @throws {IndexError} If `colPos` is out of `[0, df.cols - 1]`
+   * @private
+   */
+  _resolve(rowPos, colPos, op) {
+    if (Array.isArray(rowPos)) {
+      throw new ValidationError('iat accepts only a scalar integer row position, not arrays', {
+        operation: op,
+        value: rowPos,
+        expected: 'integer'
+      });
+    }
+    if (Array.isArray(colPos)) {
+      throw new ValidationError('iat accepts only a scalar integer column position, not arrays', {
+        operation: op,
+        value: colPos,
+        expected: 'integer'
+      });
+    }
+    if (!Number.isInteger(rowPos)) {
+      throw new ValidationError('iat row position must be an integer', {
+        operation: op,
+        value: rowPos,
+        expected: 'integer'
+      });
+    }
+    if (!Number.isInteger(colPos)) {
+      throw new ValidationError('iat column position must be an integer', {
+        operation: op,
+        value: colPos,
+        expected: 'integer'
+      });
+    }
+
+    if (rowPos < 0 || rowPos >= this._df.rows) {
+      throw new IndexError(`Row position ${rowPos} is out of bounds for DataFrame with ${this._df.rows} rows`, {
+        operation: op,
+        value: rowPos,
+        expected: `integer between 0 and ${this._df.rows - 1}`
+      });
+    }
+    if (colPos < 0 || colPos >= this._df.cols) {
+      throw new IndexError(`Column position ${colPos} is out of bounds for DataFrame with ${this._df.cols} columns`, {
+        operation: op,
+        value: colPos,
+        expected: `integer between 0 and ${this._df.cols - 1}`
+      });
+    }
+
+    return { rowPos, colPos, colName: this._df.columns[colPos] };
+  }
+
+  /**
+   * Gets the scalar value at the specified `(rowPos, colPos)`.
+   * Both arguments must be scalar integers.
+   *
+   * @param {number} rowPos - The integer row position
+   * @param {number} colPos - The integer column position
+   * @returns {*} The cell value at the given (rowPos, colPos)
+   *
+   * @throws {ValidationError} If either argument is an array or not an integer
+   * @throws {IndexError} If `rowPos` or `colPos` is out of range
+   *
+   * @example
+   * const df = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+   * df.iat.get(0, 1); // 'Alice'
+   */
+  get(rowPos, colPos) {
+    const { colName } = this._resolve(rowPos, colPos, 'DataFrame.iat.get');
+    return this._df.data[rowPos][colName];
+  }
+
+  /**
+   * Sets the scalar value at the specified `(rowPos, colPos)` in place.
+   * Both arguments must be scalar integers. Returns the underlying DataFrame
+   * for chaining.
+   *
+   * @param {number} rowPos - The integer row position
+   * @param {number} colPos - The integer column position
+   * @param {*} value - The value to set at the cell
+   * @returns {DataFrame} The DataFrame instance (for chaining)
+   *
+   * @throws {ValidationError} If either position argument is an array or not an integer
+   * @throws {IndexError} If `rowPos` or `colPos` is out of range
+   *
+   * @example
+   * const df = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+   * df.iat.set(0, 1, 'Alicia');
+   * df.iat.get(0, 1); // 'Alicia'
+   */
+  set(rowPos, colPos, value) {
+    const { colName } = this._resolve(rowPos, colPos, 'DataFrame.iat.set');
+    this._df.data[rowPos][colName] = value;
+    return this._df;
+  }
+}
+
+/**
  * NodeDataFrame class - A two-dimensional labeled data structure.
- * 
+ *
  * Extends JavaScript's Array class to provide array-like behavior while adding
  * pandas-specific functionality for data manipulation, selection, and analysis.
  * Each row is represented as an array, and columns are accessible by name.
- * 
+ *
  * @class NodeDataFrame
  * @extends Array
  * 
@@ -300,6 +574,248 @@ class NodeDataFrame extends Array {
     }
 
     return undefined;
+  }
+
+  /**
+   * Fast scalar label-based accessor for individual DataFrame cells.
+   *
+   * Returns a {@link DataFrameAtIndexer} bound to this DataFrame. Mirrors
+   * pandas `df.at[row, col]`: both arguments must be scalar (no arrays/slices),
+   * and lookups go via the row label (`df.index`) and column name (`df.columns`).
+   *
+   * @returns {DataFrameAtIndexer} A label-based scalar cell accessor
+   *
+   * @example
+   * const df = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+   * df.index = ['x', 'y'];
+   * df.at.get('x', 'name');           // 'Alice'
+   * df.at.set('x', 'name', 'Alicia'); // mutates in place, returns df
+   */
+  get at() {
+    return new DataFrameAtIndexer(this);
+  }
+
+  /**
+   * Fast scalar position-based accessor for individual DataFrame cells.
+   *
+   * Returns a {@link DataFrameIatIndexer} bound to this DataFrame. Mirrors
+   * pandas `df.iat[rowPos, colPos]`: both arguments must be scalar integers
+   * (no arrays/slices), and lookups go via integer row position into
+   * `df.data` and integer column position into `df.columns`.
+   *
+   * @returns {DataFrameIatIndexer} A position-based scalar cell accessor
+   *
+   * @example
+   * const df = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+   * df.iat.get(0, 1);            // 'Alice'
+   * df.iat.set(0, 1, 'Alicia');  // mutates in place, returns df
+   */
+  get iat() {
+    return new DataFrameIatIndexer(this);
+  }
+
+  /**
+   * Promotes a column to be the DataFrame's index.
+   *
+   * @param {string} columnName - The column name to promote.
+   * @param {Object} [options] - Options object.
+   * @param {boolean} [options.drop=true] - If true, the column is removed from columns; if false, it remains.
+   * @returns {DataFrame} A new DataFrame with the chosen column as the index.
+   *
+   * @throws {ValidationError} If columnName is not a string.
+   * @throws {ColumnError} If columnName is not in df.columns.
+   *
+   * @example
+   * const df = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+   * const indexed = df.setIndex('id');
+   * // indexed.index === [1, 2], indexed.columns === ['name']
+   */
+  setIndex(columnName, options = {}) {
+    if (typeof columnName !== 'string') {
+      throw new ValidationError('setIndex columnName must be a string', {
+        operation: 'setIndex',
+        value: columnName,
+        expected: 'string'
+      });
+    }
+
+    const colIdx = this.columns.indexOf(columnName);
+    if (colIdx === -1) {
+      throw new ColumnError(`Column '${columnName}' does not exist`, {
+        operation: 'setIndex',
+        column: columnName,
+        value: this.columns
+      });
+    }
+
+    const drop = options.drop !== false; // default true
+
+    if (this.rows === 0) {
+      return DataFrame([], drop ? this.columns.filter(c => c !== columnName) : [...this.columns]);
+    }
+
+    // Internal rows are stored as objects keyed by column name.
+    const newIndex = this.data.map(row => row[columnName]);
+    let newColumns;
+    let newData;
+
+    if (drop) {
+      newColumns = this.columns.filter((_, i) => i !== colIdx);
+    } else {
+      newColumns = [...this.columns];
+    }
+    newData = this.data.map(row => newColumns.map(col => row[col]));
+
+    const out = DataFrame(newData, newColumns);
+    out.index = newIndex;
+    return out;
+  }
+
+  /**
+   * Demotes the current index back to a regular column, or discards it.
+   *
+   * @param {Object} [options] - Options object.
+   * @param {boolean} [options.drop=false] - If true, discard the index entirely.
+   * @param {string} [options.name='index'] - Name of the new column when promoting.
+   * @returns {DataFrame} A new DataFrame.
+   *
+   * @throws {ValidationError} If name is not a string.
+   * @throws {ColumnError} If name collides with an existing column (when drop:false).
+   *
+   * @example
+   * const df = DataFrame([[10], [20]], ['age']);
+   * df.index = ['a', 'b'];
+   * df.resetIndex(); // columns: ['index', 'age']; data: [['a', 10], ['b', 20]]
+   */
+  resetIndex(options = {}) {
+    const drop = options.drop === true; // default false
+    const name = options.name === undefined ? 'index' : options.name;
+
+    if (typeof name !== 'string') {
+      throw new ValidationError('resetIndex name must be a string', {
+        operation: 'resetIndex',
+        value: name,
+        expected: 'string'
+      });
+    }
+
+    if (!drop && this.columns.indexOf(name) !== -1) {
+      throw new ColumnError(`Column '${name}' already exists; choose a different name`, {
+        operation: 'resetIndex',
+        column: name,
+        expected: 'a name not in df.columns'
+      });
+    }
+
+    if (this.rows === 0) {
+      return DataFrame([], drop ? [...this.columns] : [name, ...this.columns]);
+    }
+
+    if (drop) {
+      const newData = this.data.map(row => this.columns.map(col => row[col]));
+      // Default 0..n-1 index is set automatically by getIndicesColumns; no override.
+      return DataFrame(newData, [...this.columns]);
+    }
+
+    const newColumns = [name, ...this.columns];
+    const newData = this.data.map((row, i) => [this.index[i], ...this.columns.map(col => row[col])]);
+    return DataFrame(newData, newColumns);
+  }
+
+  /**
+   * Apply a function along an axis.
+   *
+   * Two call signatures are supported for backward compatibility:
+   *  - apply(fn, options): function-first signature (pandas-like). Applies fn
+   *    per column (axis 0, default) or per row (axis 1). fn receives a Series.
+   *  - apply(columnName, fn): legacy signature. Transforms a single column
+   *    element-wise, returning a new DataFrame.
+   *
+   * @param {Function|string} fnOrCol - Function (axis-based) or column name (legacy).
+   * @param {Object|Function} [optionsOrFn] - Options object for axis form, or fn for legacy.
+   * @param {0|1} [optionsOrFn.axis=0] - 0 = per column, 1 = per row.
+   * @returns {Series|DataFrame} Series of scalars, or DataFrame if fn returns arrays/Series.
+   * @throws {ValidationError} if fn is not a function or axis is not 0/1.
+   * @throws {OperationError} if fn returns mixed shapes.
+   */
+  apply(fnOrCol, optionsOrFn = {}) {
+    // Legacy signature dispatch: apply(columnName, fn)
+    if (typeof fnOrCol === 'string') {
+      return this._applyToColumn(fnOrCol, optionsOrFn);
+    }
+
+    const fn = fnOrCol;
+    const options = optionsOrFn || {};
+
+    if (typeof fn !== 'function') {
+      throw new ValidationError('apply requires a function', {
+        operation: 'apply', value: fn, expected: 'function'
+      });
+    }
+    const axis = options.axis === undefined ? 0 : options.axis;
+    if (axis !== 0 && axis !== 1) {
+      throw new ValidationError('apply axis must be 0 or 1', {
+        operation: 'apply', value: axis, expected: '0 or 1'
+      });
+    }
+
+    const results = [];
+    const resultIndex = [];
+
+    if (axis === 0) {
+      for (const colName of this.columns) {
+        const colData = this.data.map(row => row[colName]);
+        const colSeries = new Series(colData, { index: [...this.index], name: colName });
+        results.push(fn(colSeries));
+        resultIndex.push(colName);
+      }
+    } else {
+      for (let r = 0; r < this.rows; r++) {
+        const rowObj = this.data[r];
+        const rowData = this.columns.map(c => rowObj[c]);
+        const rowSeries = new Series(rowData, { index: [...this.columns], name: this.index[r] });
+        results.push(fn(rowSeries));
+        resultIndex.push(this.index[r]);
+      }
+    }
+
+    const isSeriesOrArray = v => Array.isArray(v) || (v && typeof v === 'object' && '_data' in v);
+    const shapes = results.map(r => isSeriesOrArray(r) ? 'array' : 'scalar');
+    const allSame = shapes.every(s => s === shapes[0]);
+    if (!allSame) {
+      throw new OperationError('apply received mixed return shapes', {
+        operation: 'apply', expected: 'uniform return shape'
+      });
+    }
+
+    if (shapes.length === 0 || shapes[0] === 'scalar') {
+      return new Series(results, { index: resultIndex });
+    }
+    const arrays = results.map(r => Array.isArray(r) ? r : r._data);
+    // Validate ragged arrays: all returned arrays must have the same length.
+    const firstLen = arrays[0].length;
+    if (!arrays.every(a => a.length === firstLen)) {
+      throw new OperationError('apply received array returns with non-uniform lengths', {
+        operation: 'apply',
+        expected: 'all returned arrays have the same length',
+        value: arrays.map(a => a.length)
+      });
+    }
+    // For axis=0, each returned array represents a column; transpose so rows=length of returned array.
+    // Result columns are this.columns (one column per input column).
+    // For axis=1, each returned array represents a row; use as-is.
+    // Result index is resultIndex (the row labels). Columns default to numeric '0'..'k-1'.
+    if (axis === 0) {
+      const nRows = firstLen;
+      const transposed = [];
+      for (let i = 0; i < nRows; i++) {
+        transposed.push(arrays.map(col => col[i]));
+      }
+      return DataFrame(transposed, [...this.columns]);
+    }
+    const out = DataFrame(arrays);
+    out.index = [...resultIndex];
+    return out;
   }
 
   /**
@@ -617,7 +1133,7 @@ class NodeDataFrame extends Array {
    *   console.error(error.message); // "Column 'nonexistent' does not exist"
    * }
    */
-  apply(columnName, fn) {
+  _applyToColumn(columnName, fn) {
     // Validate column exists
     const colIndex = this.columns.indexOf(columnName);
     if (colIndex === -1) {

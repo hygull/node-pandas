@@ -24,6 +24,7 @@ const {
 const {
   DataFrameError,
   ValidationError,
+  IndexError,
   TypeError: TypeErrorClass,
   OperationError
 } = require('../utils/errors');
@@ -704,6 +705,216 @@ class ILocIndexer {
 }
 
 /**
+ * SeriesAtIndexer class - Fast scalar label-based accessor for Series.
+ * Accessed via the Series.at property, this class offers pandas-like fast
+ * scalar access by index label. Unlike LocIndexer, it rejects array/slice
+ * arguments and only supports single scalar labels for both get and set.
+ * Mirrors pandas `s.at[label]` semantics.
+ *
+ * @class SeriesAtIndexer
+ *
+ * @example
+ * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+ * const value = series.at.get('b'); // 20
+ * series.at.set('b', 99); // Sets value at label 'b' to 99 in place
+ */
+class SeriesAtIndexer {
+  /**
+   * Creates a new SeriesAtIndexer instance.
+   *
+   * @param {Series} series - The Series instance to operate on
+   *
+   * @example
+   * // Typically accessed via series.at, not instantiated directly
+   * const atIndexer = new SeriesAtIndexer(series);
+   */
+  constructor(series) {
+    this._series = series;
+  }
+
+  /**
+   * Gets the scalar value at the specified index label.
+   * Only accepts a single scalar label; arrays are rejected.
+   *
+   * @param {string|number} label - The index label to look up
+   * @returns {*} The value at the given label
+   *
+   * @throws {ValidationError} If `label` is an array
+   * @throws {IndexError} If the label does not exist in the index
+   *
+   * @example
+   * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+   * console.log(series.at.get('b')); // 20
+   */
+  get(label) {
+    if (Array.isArray(label)) {
+      throw new ValidationError('at.get accepts only scalar labels, not arrays', {
+        operation: 'Series.at.get',
+        value: label,
+        expected: 'scalar'
+      });
+    }
+    const idx = this._series._index.indexOf(label);
+    if (idx === -1) {
+      throw new IndexError(`Label '${label}' not found in index`, {
+        operation: 'Series.at.get',
+        value: label,
+        expected: `one of ${JSON.stringify(this._series._index)}`
+      });
+    }
+    return this._series._data[idx];
+  }
+
+  /**
+   * Sets the scalar value at the specified index label in place.
+   * Only accepts a single scalar label; arrays are rejected. Returns the
+   * underlying Series to allow chaining.
+   *
+   * @param {string|number} label - The index label to set
+   * @param {*} value - The value to set at the label
+   * @returns {Series} The Series instance (for chaining)
+   *
+   * @throws {ValidationError} If `label` is an array
+   * @throws {IndexError} If the label does not exist in the index
+   *
+   * @example
+   * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+   * series.at.set('b', 99);
+   * console.log(series.at.get('b')); // 99
+   */
+  set(label, value) {
+    if (Array.isArray(label)) {
+      throw new ValidationError('at.set accepts only scalar labels, not arrays', {
+        operation: 'Series.at.set',
+        value: label,
+        expected: 'scalar'
+      });
+    }
+    const idx = this._series._index.indexOf(label);
+    if (idx === -1) {
+      throw new IndexError(`Label '${label}' not found in index`, {
+        operation: 'Series.at.set',
+        value: label,
+        expected: `one of ${JSON.stringify(this._series._index)}`
+      });
+    }
+    this._series._data[idx] = value;
+    this._series[idx] = value; // keep Array-extending storage in sync
+    return this._series;
+  }
+}
+
+/**
+ * SeriesIatIndexer class - Fast scalar position-based accessor for Series.
+ * Accessed via the Series.iat property, this class offers pandas-like fast
+ * scalar access by integer position. Unlike ILocIndexer, it rejects array/slice
+ * arguments and only supports a single integer position for both get and set.
+ * Mirrors pandas `s.iat[pos]` semantics.
+ *
+ * @class SeriesIatIndexer
+ *
+ * @example
+ * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+ * const value = series.iat.get(1); // 20
+ * series.iat.set(1, 99); // Sets value at position 1 to 99 in place
+ */
+class SeriesIatIndexer {
+  /**
+   * Creates a new SeriesIatIndexer instance.
+   *
+   * @param {Series} series - The Series instance to operate on
+   *
+   * @example
+   * // Typically accessed via series.iat, not instantiated directly
+   * const iatIndexer = new SeriesIatIndexer(series);
+   */
+  constructor(series) {
+    this._series = series;
+  }
+
+  /**
+   * Validates that `position` is a single, in-range integer position.
+   * Used internally by `get` and `set`. Rejects arrays, non-integer numeric
+   * values, non-number types, and positions outside `[0, length - 1]`.
+   *
+   * @param {number} position - The integer position to validate
+   * @param {string} op - Operation tag for error context ('Series.iat.get' or 'Series.iat.set')
+   * @returns {void}
+   *
+   * @throws {ValidationError} If `position` is an array
+   * @throws {ValidationError} If `position` is not an integer (including non-number types)
+   * @throws {IndexError} If `position` is out of range for the Series
+   * @private
+   */
+  _validatePos(position, op) {
+    if (Array.isArray(position)) {
+      throw new ValidationError('iat accepts only a scalar integer position, not arrays', {
+        operation: op,
+        value: position,
+        expected: 'integer'
+      });
+    }
+    if (!Number.isInteger(position)) {
+      throw new ValidationError('iat position must be an integer', {
+        operation: op,
+        value: position,
+        expected: 'integer'
+      });
+    }
+    if (position < 0 || position >= this._series._data.length) {
+      throw new IndexError(`Position ${position} is out of bounds for Series of length ${this._series._data.length}`, {
+        operation: op,
+        value: position,
+        expected: `integer between 0 and ${this._series._data.length - 1}`
+      });
+    }
+  }
+
+  /**
+   * Gets the scalar value at the specified integer position.
+   * Only accepts a single integer position; arrays are rejected.
+   *
+   * @param {number} position - The integer position to look up
+   * @returns {*} The value at the given position
+   *
+   * @throws {ValidationError} If `position` is an array or not an integer
+   * @throws {IndexError} If `position` is out of range for the Series
+   *
+   * @example
+   * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+   * console.log(series.iat.get(1)); // 20
+   */
+  get(position) {
+    this._validatePos(position, 'Series.iat.get');
+    return this._series._data[position];
+  }
+
+  /**
+   * Sets the scalar value at the specified integer position in place.
+   * Only accepts a single integer position; arrays are rejected. Returns the
+   * underlying Series to allow chaining.
+   *
+   * @param {number} position - The integer position to set
+   * @param {*} value - The value to set at the position
+   * @returns {Series} The Series instance (for chaining)
+   *
+   * @throws {ValidationError} If `position` is an array or not an integer
+   * @throws {IndexError} If `position` is out of range for the Series
+   *
+   * @example
+   * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+   * series.iat.set(1, 99);
+   * console.log(series.iat.get(1)); // 99
+   */
+  set(position, value) {
+    this._validatePos(position, 'Series.iat.set');
+    this._series._data[position] = value;
+    this._series[position] = value; // keep Array-extending storage in sync
+    return this._series;
+  }
+}
+
+/**
  * StringAccessor class - Provides string manipulation methods for Series.
  * Accessed via the Series.str property, this class offers pandas-like string operations
  * that return new Series with transformed values while preserving null values.
@@ -1136,6 +1347,46 @@ class Series extends Array {
    */
   get iloc() {
     return new ILocIndexer(this);
+  }
+
+  /**
+   * Gets a SeriesAtIndexer for fast scalar label-based access on the Series.
+   * Provides pandas-like `s.at[label]` semantics - get/set a single value by
+   * its index label. Rejects array/slice arguments.
+   *
+   * @type {SeriesAtIndexer}
+   * @readonly
+   *
+   * @example
+   * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+   * const value = series.at.get('b'); // 20
+   *
+   * @example
+   * series.at.set('b', 99);
+   * console.log(series.at.get('b')); // 99
+   */
+  get at() {
+    return new SeriesAtIndexer(this);
+  }
+
+  /**
+   * Gets a SeriesIatIndexer for fast scalar position-based access on the Series.
+   * Provides pandas-like `s.iat[pos]` semantics - get/set a single value by
+   * its integer position. Rejects array/slice arguments and non-integer values.
+   *
+   * @type {SeriesIatIndexer}
+   * @readonly
+   *
+   * @example
+   * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+   * const value = series.iat.get(1); // 20
+   *
+   * @example
+   * series.iat.set(1, 99);
+   * console.log(series.iat.get(1)); // 99
+   */
+  get iat() {
+    return new SeriesIatIndexer(this);
   }
 
   /**
@@ -2718,6 +2969,13 @@ class Series extends Array {
 function createSeries(data, options = {}) {
   return new Series(data, options);
 }
+
+// camelCase aliases for snake_case methods (kept for backward compatibility).
+// Canonical: camelCase. Aliases: snake_case. See README "Naming convention".
+Series.prototype.sortValues = Series.prototype.sort_values;
+Series.prototype.sortIndex = Series.prototype.sort_index;
+Series.prototype.valueCounts = Series.prototype.value_counts;
+Series.prototype.dropDuplicates = Series.prototype.drop_duplicates;
 
 module.exports = Series;
 module.exports.createSeries = createSeries;
