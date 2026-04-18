@@ -303,6 +303,67 @@ class NodeDataFrame extends Array {
   }
 
   /**
+   * Promotes a column to be the DataFrame's index.
+   *
+   * @param {string} columnName - The column name to promote.
+   * @param {Object} [options] - Options object.
+   * @param {boolean} [options.drop=true] - If true, the column is removed from columns; if false, it remains.
+   * @returns {DataFrame} A new DataFrame with the chosen column as the index.
+   *
+   * @throws {ValidationError} If columnName is not a string.
+   * @throws {ColumnError} If columnName is not in df.columns.
+   *
+   * @example
+   * const df = DataFrame([[1, 'Alice'], [2, 'Bob']], ['id', 'name']);
+   * const indexed = df.setIndex('id');
+   * // indexed.index === [1, 2], indexed.columns === ['name']
+   */
+  setIndex(columnName, options = {}) {
+    if (typeof columnName !== 'string') {
+      throw new ValidationError('setIndex columnName must be a string', {
+        operation: 'setIndex',
+        value: columnName,
+        expected: 'string',
+        actual: typeof columnName
+      });
+    }
+
+    const drop = options.drop !== false; // default true
+
+    if (this.rows === 0) {
+      return DataFrame([], drop ? this.columns.filter(c => c !== columnName) : this.columns);
+    }
+
+    const colIdx = this.columns.indexOf(columnName);
+    if (colIdx === -1) {
+      throw new ColumnError(`Column '${columnName}' does not exist`, {
+        operation: 'setIndex',
+        column: columnName,
+        expected: `one of ${JSON.stringify(this.columns)}`,
+        actual: columnName
+      });
+    }
+
+    // Internal rows are stored as objects keyed by column name.
+    const newIndex = this.data.map(row => row[columnName]);
+    let newColumns;
+    let newData;
+
+    if (drop) {
+      newColumns = this.columns.filter((_, i) => i !== colIdx);
+    } else {
+      newColumns = [...this.columns];
+    }
+    newData = this.data.map(row => newColumns.map(col => row[col]));
+
+    const out = DataFrame(newData, newColumns);
+    out.index = newIndex;
+    // Expose rows in array-of-arrays form so out.data[i] is an array of values.
+    out.data = newData;
+    return out;
+  }
+
+  /**
    * Creates a cached Series for a column and stores it internally.
    * 
    * This internal method is called when a column is first accessed to create
