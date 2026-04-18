@@ -24,6 +24,7 @@ const {
 const {
   DataFrameError,
   ValidationError,
+  IndexError,
   TypeError: TypeErrorClass,
   OperationError
 } = require('../utils/errors');
@@ -704,6 +705,106 @@ class ILocIndexer {
 }
 
 /**
+ * SeriesAtIndexer class - Fast scalar label-based accessor for Series.
+ * Accessed via the Series.at property, this class offers pandas-like fast
+ * scalar access by index label. Unlike LocIndexer, it rejects array/slice
+ * arguments and only supports single scalar labels for both get and set.
+ * Mirrors pandas `s.at[label]` semantics.
+ *
+ * @class SeriesAtIndexer
+ *
+ * @example
+ * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+ * const value = series.at.get('b'); // 20
+ * series.at.set('b', 99); // Sets value at label 'b' to 99 in place
+ */
+class SeriesAtIndexer {
+  /**
+   * Creates a new SeriesAtIndexer instance.
+   *
+   * @param {Series} series - The Series instance to operate on
+   *
+   * @example
+   * // Typically accessed via series.at, not instantiated directly
+   * const atIndexer = new SeriesAtIndexer(series);
+   */
+  constructor(series) {
+    this._series = series;
+  }
+
+  /**
+   * Gets the scalar value at the specified index label.
+   * Only accepts a single scalar label; arrays are rejected.
+   *
+   * @param {string|number} label - The index label to look up
+   * @returns {*} The value at the given label
+   *
+   * @throws {ValidationError} If `label` is an array
+   * @throws {IndexError} If the label does not exist in the index
+   *
+   * @example
+   * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+   * console.log(series.at.get('b')); // 20
+   */
+  get(label) {
+    if (Array.isArray(label)) {
+      throw new ValidationError('at.get accepts only scalar labels, not arrays', {
+        operation: 'Series.at.get',
+        value: label,
+        expected: 'scalar'
+      });
+    }
+    const idx = this._series._index.indexOf(label);
+    if (idx === -1) {
+      throw new IndexError(`Label '${label}' not found in index`, {
+        operation: 'Series.at.get',
+        value: label,
+        expected: `one of ${JSON.stringify(this._series._index)}`
+      });
+    }
+    return this._series._data[idx];
+  }
+
+  /**
+   * Sets the scalar value at the specified index label in place.
+   * Only accepts a single scalar label; arrays are rejected. Returns the
+   * underlying Series to allow chaining.
+   *
+   * @param {string|number} label - The index label to set
+   * @param {*} value - The value to set at the label
+   * @returns {Series} The Series instance (for chaining)
+   *
+   * @throws {ValidationError} If `label` is an array
+   * @throws {IndexError} If the label does not exist in the index
+   *
+   * @example
+   * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+   * series.at.set('b', 99);
+   * console.log(series.at.get('b')); // 99
+   */
+  set(label, value) {
+    if (Array.isArray(label)) {
+      throw new ValidationError('at.set accepts only scalar labels, not arrays', {
+        operation: 'Series.at.set',
+        value: label,
+        expected: 'scalar'
+      });
+    }
+    const idx = this._series._index.indexOf(label);
+    if (idx === -1) {
+      throw new IndexError(`Label '${label}' not found in index`, {
+        operation: 'Series.at.set',
+        value: label,
+        expected: `one of ${JSON.stringify(this._series._index)}`
+      });
+    }
+    this._series._data[idx] = value;
+    this._series[idx] = value; // keep Array-extending storage in sync
+    return this._series;
+  }
+}
+
+/**
  * StringAccessor class - Provides string manipulation methods for Series.
  * Accessed via the Series.str property, this class offers pandas-like string operations
  * that return new Series with transformed values while preserving null values.
@@ -1136,6 +1237,26 @@ class Series extends Array {
    */
   get iloc() {
     return new ILocIndexer(this);
+  }
+
+  /**
+   * Gets a SeriesAtIndexer for fast scalar label-based access on the Series.
+   * Provides pandas-like `s.at[label]` semantics - get/set a single value by
+   * its index label. Rejects array/slice arguments.
+   *
+   * @type {SeriesAtIndexer}
+   * @readonly
+   *
+   * @example
+   * const series = new Series([10, 20, 30], { index: ['a', 'b', 'c'] });
+   * const value = series.at.get('b'); // 20
+   *
+   * @example
+   * series.at.set('b', 99);
+   * console.log(series.at.get('b')); // 99
+   */
+  get at() {
+    return new SeriesAtIndexer(this);
   }
 
   /**
