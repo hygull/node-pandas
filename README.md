@@ -825,6 +825,55 @@ console.log(s)
 // NodeSeries [ 100, 99, 300, 40 ]
 ```
 
+#### at.get() / at.set()
+
+Fast scalar label-based accessor. Like `loc`, but accepts only a single scalar label (no arrays or slices). Use this when you know you want exactly one cell.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([10, 20, 30], { index: ['a', 'b', 'c'] })
+
+// Get single value by label
+console.log(s.at.get('b'))
+// 20
+
+// Set single value by label (mutates in place, returns the Series for chaining)
+s.at.set('b', 99)
+console.log(s.at.get('b'))
+// 99
+
+// Errors:
+//   s.at.get(['a', 'b'])  // throws ValidationError (arrays not allowed)
+//   s.at.get('z')         // throws IndexError (label not in index)
+```
+
+#### iat.get() / iat.set()
+
+Fast scalar position-based accessor. Like `iloc`, but accepts only a single integer position. Use this when you know you want exactly one cell.
+
+```javascript
+const pd = require("node-pandas")
+
+const s = pd.Series([10, 20, 30], { index: ['a', 'b', 'c'] })
+
+// Get value by position
+console.log(s.iat.get(1))
+// 20
+
+// Set value by position (mutates in place, returns the Series)
+s.iat.set(1, 99)
+console.log(s.iat.get(1))
+// 99
+
+// Errors:
+//   s.iat.get([0])    // throws ValidationError (arrays not allowed)
+//   s.iat.get(1.5)    // throws ValidationError (must be integer)
+//   s.iat.get(99)     // throws IndexError (out of range)
+```
+
+`at` and `iat` also work on DataFrames as `df.at.get(rowLabel, colName)` and `df.iat.get(rowPos, colPos)`. See the DataFrame Methods section below.
+
 ### Window Operations
 
 Window operations allow you to perform calculations over sliding or expanding windows of data.
@@ -898,6 +947,161 @@ const expandingStd = s.expanding().std()
 console.log(expandingStd)
 // NodeSeries [ 0, 0.707..., 1, 1.29..., 1.58... ]
 ```
+
+## DataFrame Methods
+
+### Index Manipulation
+
+#### setIndex()
+
+Promote a column to be the DataFrame's row index. Returns a **new** DataFrame; the original is unchanged.
+
+```javascript
+const pd = require("node-pandas")
+
+const df = pd.DataFrame(
+  [[1, 'Alice', 25], [2, 'Bob', 30], [3, 'Carol', 35]],
+  ['id', 'name', 'age']
+)
+
+// Promote 'id' to index (default: drop the column)
+const indexed = df.setIndex('id')
+console.log(indexed.index)
+// [ 1, 2, 3 ]
+console.log(indexed.columns)
+// [ 'name', 'age' ]
+
+// Keep the column as a regular column too
+const kept = df.setIndex('id', { drop: false })
+console.log(kept.columns)
+// [ 'id', 'name', 'age' ]
+
+// Errors:
+//   df.setIndex('missing')   // throws ColumnError
+//   df.setIndex(42)          // throws ValidationError
+```
+
+#### resetIndex()
+
+Demote the current index back to a regular column, or discard it. Returns a **new** DataFrame.
+
+```javascript
+const pd = require("node-pandas")
+
+const df = pd.DataFrame([[10, 'Alice'], [20, 'Bob']], ['age', 'name'])
+df.index = ['a', 'b']
+
+// Default: promote index to a column named 'index', reset index to 0..n-1
+const a = df.resetIndex()
+console.log(a.columns)
+// [ 'index', 'age', 'name' ]
+console.log(a.getRow(0))
+// { index: 'a', age: 10, name: 'Alice' }
+
+// Custom column name
+const b = df.resetIndex({ name: 'label' })
+console.log(b.columns)
+// [ 'label', 'age', 'name' ]
+
+// Discard the index entirely
+const c = df.resetIndex({ drop: true })
+console.log(c.columns)
+// [ 'age', 'name' ]
+console.log(c.index)
+// [ 0, 1 ]
+```
+
+### Cell Accessors
+
+#### at.get() / at.set()
+
+Fast scalar label-based cell accessor. Accepts a single row label and a single column name.
+
+```javascript
+const pd = require("node-pandas")
+
+const df = pd.DataFrame([[1, 'Alice', 25], [2, 'Bob', 30]], ['id', 'name', 'age'])
+df.index = ['x', 'y']
+
+// Get a single cell
+console.log(df.at.get('x', 'name'))
+// 'Alice'
+
+// Set a single cell (mutates in place, returns the DataFrame)
+df.at.set('x', 'name', 'Alicia')
+console.log(df.at.get('x', 'name'))
+// 'Alicia'
+
+// Errors:
+//   df.at.get('z', 'name')         // throws IndexError (row label not found)
+//   df.at.get('x', 'missing')      // throws ColumnError
+//   df.at.get(['x'], 'name')       // throws ValidationError (arrays not allowed)
+```
+
+#### iat.get() / iat.set()
+
+Fast scalar position-based cell accessor. Accepts a row position and column position.
+
+```javascript
+const pd = require("node-pandas")
+
+const df = pd.DataFrame([[1, 'Alice', 25], [2, 'Bob', 30]], ['id', 'name', 'age'])
+
+// Get cell at (row 0, column 1)
+console.log(df.iat.get(0, 1))
+// 'Alice'
+
+// Set cell (mutates, returns DataFrame)
+df.iat.set(0, 1, 'Alicia')
+console.log(df.iat.get(0, 1))
+// 'Alicia'
+
+// Errors:
+//   df.iat.get(99, 0)        // throws IndexError (row out of range)
+//   df.iat.get(0, 9)         // throws IndexError (column out of range)
+//   df.iat.get(0.5, 0)       // throws ValidationError (must be integer)
+```
+
+### Apply with Axis
+
+#### apply(fn, { axis })
+
+Apply a function along an axis. The callback receives a real `Series` (with `_index` and `_name`), so you can compose with any Series method inside `fn`.
+
+```javascript
+const pd = require("node-pandas")
+
+const df = pd.DataFrame(
+  [[1, 10, 100], [2, 20, 200], [3, 30, 300]],
+  ['a', 'b', 'c']
+)
+
+// axis: 0 (default) — apply per column, fn receives a Series per column
+const colSums = df.apply(col => col._data.reduce((s, v) => s + v, 0))
+console.log(colSums._data)
+// [ 6, 60, 600 ]
+console.log(colSums._index)
+// [ 'a', 'b', 'c' ]   (indexed by column name)
+
+// axis: 1 — apply per row, fn receives a Series per row
+const rowSums = df.apply(row => row._data.reduce((s, v) => s + v, 0), { axis: 1 })
+console.log(rowSums._data)
+// [ 111, 222, 333 ]
+
+// Returning arrays produces a DataFrame, with column names preserved on axis 0
+const firstAndLast = df.apply(col => [col._data[0], col._data[col._data.length - 1]])
+console.log(firstAndLast.columns)
+// [ 'a', 'b', 'c' ]
+console.log(firstAndLast.getRow(0))
+// { a: 1, b: 10, c: 100 }
+
+// Errors:
+//   df.apply(null)                // throws ValidationError (fn must be a function)
+//   df.apply(x => x, { axis: 2 }) // throws ValidationError (axis must be 0 or 1)
+//   df.apply(() => i++ === 0 ? 1 : [1, 2])  // throws OperationError (mixed return shapes)
+```
+
+> **Note:** The legacy column-transform form `df.apply('columnName', fn)` — where `fn` transforms each cell of a single column — is still supported. The dispatcher routes by the type of the first argument: string → legacy column transform; function → axis-based apply.
 
 <hr>
 
