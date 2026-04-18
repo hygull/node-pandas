@@ -1,0 +1,271 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">node-pandas — Pandas for Node.js (Krishna-inspired theme)</title>
+  <desc id="desc">A pandas-style data manipulation library for Node.js. Krishna-inspired theme combining the iconic mor-pankh peacock feather, bansuri flute, and a clean technical layout.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a1f3a"/>
+      <stop offset="100%" stop-color="#142d52"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#d4a017"/>
+      <stop offset="50%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#f5cb47"/>
+    </linearGradient>
+    <linearGradient id="peacock" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0e7490"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="vrindavan" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#84cc16"/>
+    </linearGradient>
+    <radialGradient id="featherEye" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#0a1f3a"/>
+      <stop offset="30%" stop-color="#0e7490"/>
+      <stop offset="60%" stop-color="#22c55e"/>
+      <stop offset="85%" stop-color="#facc15"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </radialGradient>
+    <radialGradient id="featherHalo" cx="0.5" cy="0.45" r="0.55">
+      <stop offset="0%" stop-color="#5eead4" stop-opacity="0.9"/>
+      <stop offset="55%" stop-color="#0891b2" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#1e3a8a" stop-opacity="0.6"/>
+    </radialGradient>
+    <linearGradient id="featherBody" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#14b8a6"/>
+      <stop offset="40%" stop-color="#0891b2"/>
+      <stop offset="75%" stop-color="#1e40af"/>
+      <stop offset="100%" stop-color="#5b21b6"/>
+    </linearGradient>
+    <linearGradient id="featherSheen" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="bansuri" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a16207"/>
+      <stop offset="50%" stop-color="#ca8a04"/>
+      <stop offset="100%" stop-color="#854d0e"/>
+    </linearGradient>
+    <filter id="featherGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="eyeGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- background -->
+  <rect width="1280" height="400" fill="url(#bg)"/>
+
+  <!-- subtle gold corner accents -->
+  <g fill="url(#gold)" opacity="0.18">
+    <circle cx="40" cy="40" r="2.5"/>
+    <circle cx="80" cy="40" r="1.8"/>
+    <circle cx="40" cy="80" r="1.8"/>
+    <circle cx="1240" cy="360" r="2.5"/>
+    <circle cx="1200" cy="360" r="1.8"/>
+    <circle cx="1240" cy="320" r="1.8"/>
+  </g>
+
+  <!-- subtle Vrindavan leaf dots scattered -->
+  <g fill="url(#vrindavan)" opacity="0.25">
+    <circle cx="900" cy="60" r="2"/>
+    <circle cx="950" cy="80" r="1.5"/>
+    <circle cx="1050" cy="50" r="1.5"/>
+    <circle cx="120" cy="350" r="1.8"/>
+  </g>
+
+  <!-- LEFT EMBLEM: peacock feather + bansuri flute crossing + DataFrame chip -->
+  <g transform="translate(100, 85)">
+
+    <!-- bansuri (flute) — diagonal behind the feather -->
+    <g transform="rotate(-22 85 170)">
+      <!-- main flute body -->
+      <rect x="-20" y="165" width="220" height="12" rx="5" fill="url(#bansuri)" stroke="#5c2e0a" stroke-width="1.2"/>
+      <!-- end caps (gold-banded mouthpiece + far end) -->
+      <rect x="-20" y="164" width="12" height="14" fill="url(#gold)" stroke="#5c2e0a" stroke-width="1"/>
+      <rect x="188" y="164" width="12" height="14" fill="url(#gold)" stroke="#5c2e0a" stroke-width="1"/>
+      <!-- finger holes -->
+      <g fill="#3a1a05">
+        <circle cx="30" cy="171" r="3"/>
+        <circle cx="55" cy="171" r="3"/>
+        <circle cx="80" cy="171" r="3"/>
+        <circle cx="105" cy="171" r="3"/>
+        <circle cx="130" cy="171" r="3"/>
+        <circle cx="155" cy="171" r="3"/>
+        <!-- mouthpiece embouchure -->
+        <ellipse cx="-2" cy="171" rx="3.5" ry="2"/>
+      </g>
+      <!-- thin gold band rings -->
+      <g stroke="url(#gold)" stroke-width="1.2" opacity="0.85" fill="none">
+        <line x1="12" y1="165" x2="12" y2="177"/>
+        <line x1="172" y1="165" x2="172" y2="177"/>
+      </g>
+    </g>
+
+    <!-- peacock feather (mor-pankh) — rich layered mor-pankh -->
+    <g filter="url(#featherGlow)">
+      <!-- soft outer halo -->
+      <ellipse cx="85" cy="108" rx="68" ry="105" fill="url(#featherHalo)" opacity="0.45"/>
+
+      <!-- feather body (pointed almond) -->
+      <path d="M 85 -4 Q 150 40 150 110 Q 150 188 85 206 Q 20 188 20 110 Q 20 40 85 -4 Z"
+            fill="url(#featherBody)" opacity="0.96"/>
+
+      <!-- subtle vertical sheen over body -->
+      <path d="M 85 -4 Q 150 40 150 110 Q 150 188 85 206 Q 20 188 20 110 Q 20 40 85 -4 Z"
+            fill="url(#featherSheen)" opacity="0.6"/>
+
+      <!-- central rachis (shaft) -->
+      <line x1="85" y1="-12" x2="85" y2="198" stroke="url(#gold)" stroke-width="1.2" opacity="0.55"/>
+
+      <!-- outer emerald ring around eye -->
+      <ellipse cx="85" cy="102" rx="40" ry="52" fill="none" stroke="#16a34a" stroke-width="1.2" opacity="0.65"/>
+
+      <!-- eye halo (turquoise outer) -->
+      <ellipse cx="85" cy="102" rx="36" ry="47" fill="#0e7490" opacity="0.55"/>
+
+      <!-- iconic eye with multi-stop radial -->
+      <ellipse cx="85" cy="102" rx="32" ry="42" fill="url(#featherEye)" filter="url(#eyeGlow)"/>
+
+      <!-- deep navy pupil core -->
+      <ellipse cx="85" cy="100" rx="14" ry="20" fill="#0a1f3a"/>
+
+      <!-- gold iris dot -->
+      <ellipse cx="85" cy="98" rx="6" ry="9" fill="url(#gold)"/>
+
+      <!-- bright catchlight -->
+      <circle cx="87" cy="94" r="2.8" fill="#fef9c3" opacity="0.95"/>
+      <circle cx="82" cy="108" r="1.2" fill="#fef9c3" opacity="0.5"/>
+    </g>
+
+    <!-- fine feather barbs (dense radial plumes) -->
+    <g stroke="url(#peacock)" stroke-width="1" opacity="0.5" fill="none" stroke-linecap="round">
+      <!-- top plume -->
+      <line x1="85" y1="-16" x2="85" y2="6"/>
+      <line x1="75" y1="-12" x2="78" y2="8"/>
+      <line x1="95" y1="-12" x2="92" y2="8"/>
+      <line x1="65" y1="-6" x2="72" y2="12"/>
+      <line x1="105" y1="-6" x2="98" y2="12"/>
+      <line x1="55" y1="2" x2="67" y2="18"/>
+      <line x1="115" y1="2" x2="103" y2="18"/>
+      <!-- left side soft barbs -->
+      <line x1="10" y1="60" x2="28" y2="65"/>
+      <line x1="8" y1="85" x2="26" y2="88"/>
+      <line x1="8" y1="115" x2="26" y2="115"/>
+      <line x1="10" y1="145" x2="28" y2="142"/>
+      <line x1="14" y1="170" x2="32" y2="164"/>
+      <!-- right side soft barbs -->
+      <line x1="160" y1="60" x2="142" y2="65"/>
+      <line x1="162" y1="85" x2="144" y2="88"/>
+      <line x1="162" y1="115" x2="144" y2="115"/>
+      <line x1="160" y1="145" x2="142" y2="142"/>
+      <line x1="156" y1="170" x2="138" y2="164"/>
+    </g>
+
+    <!-- gold micro-specks on feather (iridescent suggestion) -->
+    <g fill="url(#gold)" opacity="0.8">
+      <circle cx="60" cy="52" r="1.3"/>
+      <circle cx="110" cy="52" r="1.3"/>
+      <circle cx="50" cy="160" r="1.2"/>
+      <circle cx="120" cy="160" r="1.2"/>
+      <circle cx="85" cy="180" r="1.4"/>
+    </g>
+
+    <!-- Series + DataFrame chips below the emblem -->
+    <g transform="translate(-3, 215)">
+      <!-- Series chip (single-column) -->
+      <g transform="translate(0, 0)">
+        <rect x="0" y="0" width="60" height="26" rx="4" fill="none" stroke="url(#gold)" stroke-width="1.5" opacity="0.95"/>
+        <line x1="0" y1="9" x2="60" y2="9" stroke="url(#gold)" stroke-width="0.8" opacity="0.55"/>
+        <line x1="0" y1="17" x2="60" y2="17" stroke="url(#gold)" stroke-width="0.8" opacity="0.4"/>
+        <text x="30" y="18" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="9" fill="url(#gold)" font-weight="700" letter-spacing="0.5">Series</text>
+      </g>
+      <!-- DataFrame chip (3-col) -->
+      <g transform="translate(72, 0)">
+        <rect x="0" y="0" width="100" height="26" rx="4" fill="none" stroke="url(#gold)" stroke-width="1.5" opacity="0.95"/>
+        <line x1="33" y1="0" x2="33" y2="26" stroke="url(#gold)" stroke-width="1" opacity="0.9"/>
+        <line x1="66" y1="0" x2="66" y2="26" stroke="url(#gold)" stroke-width="1" opacity="0.9"/>
+        <line x1="0" y1="9" x2="100" y2="9" stroke="url(#gold)" stroke-width="0.8" opacity="0.55"/>
+        <text x="50" y="19" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="9" fill="url(#gold)" font-weight="700" letter-spacing="0.5">DataFrame</text>
+      </g>
+    </g>
+
+    <!-- File-format tags below the chips: CSV · XLSX · JSON -->
+    <g transform="translate(-3, 250)" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="8.5" font-weight="700" letter-spacing="0.5">
+      <!-- CSV tag (folded-corner document) -->
+      <g transform="translate(0, 0)">
+        <path d="M 0 2 L 36 2 L 44 10 L 44 26 L 0 26 Z" fill="none" stroke="url(#gold)" stroke-width="1.3" opacity="0.95"/>
+        <path d="M 36 2 L 36 10 L 44 10" fill="none" stroke="url(#gold)" stroke-width="1.3" opacity="0.95"/>
+        <text x="22" y="20" text-anchor="middle" fill="url(#gold)">CSV</text>
+      </g>
+      <!-- XLSX tag -->
+      <g transform="translate(56, 0)">
+        <path d="M 0 2 L 36 2 L 44 10 L 44 26 L 0 26 Z" fill="none" stroke="url(#gold)" stroke-width="1.3" opacity="0.95"/>
+        <path d="M 36 2 L 36 10 L 44 10" fill="none" stroke="url(#gold)" stroke-width="1.3" opacity="0.95"/>
+        <text x="22" y="20" text-anchor="middle" fill="url(#gold)">XLSX</text>
+      </g>
+      <!-- JSON tag -->
+      <g transform="translate(112, 0)">
+        <path d="M 0 2 L 36 2 L 44 10 L 44 26 L 0 26 Z" fill="none" stroke="url(#gold)" stroke-width="1.3" opacity="0.95"/>
+        <path d="M 36 2 L 36 10 L 44 10" fill="none" stroke="url(#gold)" stroke-width="1.3" opacity="0.95"/>
+        <text x="22" y="20" text-anchor="middle" fill="url(#gold)">JSON</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- RIGHT: wordmark + tagline + Sanskrit + methods + install -->
+  <g transform="translate(340, 0)" fill="#fef9c3">
+
+    <!-- Sanskrit invocation: श्री कृष्णाय नमः -->
+    <text x="0" y="78"
+          font-family="'Noto Serif Devanagari', 'Tiro Devanagari Sanskrit', 'Mangal', serif"
+          font-size="26" fill="url(#gold)" letter-spacing="2.5">श्री कृष्णाय नमः</text>
+
+    <!-- wordmark -->
+    <text x="0" y="200"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
+          font-size="92" font-weight="800" letter-spacing="-2.5" fill="#fef9c3">
+      node<tspan fill="url(#gold)">-</tspan>pandas
+    </text>
+
+    <!-- tagline -->
+    <text x="0" y="248"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace"
+          font-size="28" fill="#bae6fd" letter-spacing="0.4">
+      Pandas for Node.js. Series &amp; DataFrame for JavaScript.
+    </text>
+
+    <!-- method line 1 -->
+    <text x="0" y="283"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace"
+          font-size="17" fill="#7dd3fc" letter-spacing="0.3">readCsv · toCsv · loc · iloc · at · iat · select · filter</text>
+
+    <!-- method line 2 -->
+    <text x="0" y="312"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace"
+          font-size="17" fill="#7dd3fc" letter-spacing="0.3">groupBy · merge · setIndex · apply · rolling · expanding</text>
+
+    <!-- install + footer -->
+    <g transform="translate(0, 345)" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="18">
+      <text x="0" y="0" font-weight="700" fill="url(#gold)">npm install node-pandas</text>
+      <text x="280" y="0" fill="url(#gold)">·</text>
+      <text x="300" y="0" fill="#bae6fd">zero dependencies</text>
+      <text x="500" y="0" fill="url(#gold)">·</text>
+      <text x="520" y="0" fill="#bae6fd">MIT</text>
+    </g>
+  </g>
+
+  <!-- bottom accent bar -->
+  <rect x="0" y="396" width="1280" height="4" fill="url(#gold)"/>
+</svg>
