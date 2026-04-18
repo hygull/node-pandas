@@ -1,100 +1,125 @@
 # node-pandas
 
+[![npm version](https://img.shields.io/npm/v/node-pandas.svg?label=node-pandas&color=brightgreen)](https://www.npmjs.com/package/node-pandas)
+[![npm downloads](https://img.shields.io/npm/dm/node-pandas.svg)](https://www.npmjs.com/package/node-pandas)
+[![install size](https://packagephobia.com/badge?p=node-pandas)](https://packagephobia.com/result?p=node-pandas)
+[![license](https://img.shields.io/npm/l/node-pandas.svg)](./LICENSE)
+[![github stars](https://img.shields.io/github/stars/hygull/node-pandas?style=social)](https://github.com/hygull/node-pandas)
+
 **Pandas for Node.js.** A pandas-like data manipulation library for JavaScript and Node.js. Provides `Series` and `DataFrame` data structures with `groupBy`, `merge`, `concat`, indexing (`loc`, `iloc`, `at`, `iat`), `setIndex` / `resetIndex`, `apply` with axis support, rolling and expanding window operations, string accessors, and CSV I/O. **Zero runtime dependencies.**
 
 If you've used Python's [pandas](https://pandas.pydata.org/) and want the same API in Node.js, this library is for you.
 
-[![npm](https://img.shields.io/npm/v/node-pandas.svg?label=node-pandas)](https://www.npmjs.com/package/node-pandas) ![NPM](https://img.shields.io/npm/l/node-pandas.svg)
+```javascript
+const pd = require("node-pandas")
 
-```bash
-npm install node-pandas
+const df = pd.DataFrame(
+  [
+    ['Subhash Agrawani', 'Eng', 95000],
+    ['Sandhya Agrawani', 'Sales', 70000],
+    ['Rishikesh Agrawani', 'Eng', 90000],
+    ['Malinikesh Agrawani', 'Eng', 85000]
+  ],
+  ['name', 'team', 'salary']
+)
+
+const avgByTeam = df.groupBy('team').mean('salary')
+avgByTeam.show
+// ┌─────────┬───────┬─────────┐
+// │ (index) │ team  │ salary  │
+// ├─────────┼───────┼─────────┤
+// │ 0       │ Eng   │ 90000   │
+// │ 1       │ Sales │ 70000   │
+// └─────────┴───────┴─────────┘
 ```
 
-> Full documentation: [https://hygull.github.io/node-pandas/](https://hygull.github.io/node-pandas/)
->
-> **Status:** Actively developed. New pandas methods are added with each release. See [CHANGELOG.md](./CHANGELOG.md) for the latest features.
->
-> ## What node-pandas can do
->
-> node-pandas brings pandas-style data manipulation to Node.js. Here's what you can do:
->
-> **Create and manipulate data structures:**
-> - Create Series from 1D arrays and DataFrames from 2D arrays or CSV files
-> - Access data using array-like syntax (indexing, looping, slicing)
-> - View data in beautiful tabular format on console
-> - Advanced indexing with loc (label-based) and iloc (position-based)
->
-> **Work with columns and rows:**
-> - Select specific columns with `select()`
-> - Filter rows with conditions using `filter()`
-> - Access columns by name or index
-> - Sort data with `sort_values()` and `sort_index()`
->
-> **Analyze and aggregate data:**
-> - Group data by columns with `groupBy()` and aggregate using `mean()`, `sum()`, `count()`, `min()`, `max()`
-> - Perform statistical analysis on Series and DataFrames
-> - Compute cumulative statistics with `cumsum()`, `cumprod()`, `cummax()`, `cummin()`
-> - Calculate rolling and expanding window statistics
->
-> **Handle missing data:**
-> - Fill missing values with `fillna()`
-> - Drop missing values with `dropna()`
-> - Detect missing values with `isna()` and `notna()`
->
-> **String operations:**
-> - Manipulate string data with the `str` accessor
-> - Methods include `upper()`, `lower()`, `contains()`, `replace()`, `split()`, and more
->
-> **Value operations:**
-> - Get unique values with `unique()`
-> - Count value occurrences with `value_counts()`
-> - Detect and remove duplicates with `duplicated()` and `drop_duplicates()`
->
-> **Comparison operations:**
-> - Element-wise comparisons with `eq()`, `ne()`, `gt()`, `lt()`, `ge()`, `le()`
-> - Range checking with `between()`
->
-> **Import and export:**
-> - Read CSV files with `readCsv()`
-> - Save DataFrames to CSV with `toCsv()`
->
-> **Quick Examples:**
->
-> ```javascript
-> const pd = require("node-pandas")
->
-> // Create a Series
-> const ages = pd.Series([32, 30, 28])
-> console.log(ages[0]) // 32
->
-> // Create a DataFrame
-> const df = pd.DataFrame([
->     ['Rishikesh Agrawani', 32, 'Engineering'],
->     ['Hemkesh Agrawani', 30, 'Marketing'],
->     ['Malinikesh Agrawani', 28, 'Sales']
-> ], ['name', 'age', 'department'])
->
-> // Select columns
-> const names = df.select(['name'])
->
-> // Filter rows
-> const over30 = df.filter(row => row.age > 30)
->
-> // Group and aggregate
-> const avgByDept = df.groupBy('department').mean('age')
->
-> // Save to CSV
-> df.toCsv('./output.csv')
-> ```
+## Why node-pandas?
+
+- **Zero runtime dependencies.** The whole library installs in seconds with no transitive bloat.
+- **Pandas-faithful API.** Method names and behavior mirror Python pandas, so muscle memory transfers.
+- **Real Series and DataFrame.** Both extend `Array`, so `df.length`, `for...of`, and indexing work natively.
+- **Batteries included.** GroupBy with aggregations, merge with all join types, rolling/expanding windows, string accessors, label/position-based indexing, and CSV I/O — out of the box.
+
+## pandas vs node-pandas
+
+The same operation, side by side.
+
+**Group by + aggregate:**
+
+```python
+# Python pandas
+import pandas as pd
+
+df = pd.DataFrame({
+    'team': ['Eng', 'Sales', 'Eng'],
+    'salary': [90000, 70000, 95000]
+})
+df.groupby('team').mean()
+```
+
+```javascript
+// node-pandas
+const pd = require("node-pandas")
+
+const df = pd.DataFrame(
+  [['Eng', 90000], ['Sales', 70000], ['Eng', 95000]],
+  ['team', 'salary']
+)
+df.groupBy('team').mean('salary')
+```
+
+**Read CSV, filter, select:**
+
+```python
+# Python pandas
+df = pd.read_csv('data.csv')
+adults = df[df['age'] >= 18][['name', 'email']]
+```
+
+```javascript
+// node-pandas
+const df = pd.readCsv('./data.csv')
+const adults = df.filter(row => row.age >= 18).select(['name', 'email'])
+```
 
 ## Installation
 
-| Installation type | command |
-| :--- | :--- |
-| Local | `npm install node-pandas --save` |
-| Local as dev dependency | `npm install node-pandas --save-dev` |
-| Global | `npm install node-pandas` |
+| Use case | Command |
+| --- | --- |
+| Local install (default) | `npm install node-pandas` |
+| Save as dev dependency | `npm install --save-dev node-pandas` |
+| Global install | `npm install -g node-pandas` |
+| Yarn | `yarn add node-pandas` |
+| pnpm | `pnpm add node-pandas` |
 
+Requires Node.js 14 or later. Works in Node and in browser bundlers (webpack, esbuild, Vite, etc.).
+
+## Documentation
+
+- **Full docs site:** [hygull.github.io/node-pandas](https://hygull.github.io/node-pandas/)
+- **Changelog:** [CHANGELOG.md](./CHANGELOG.md)
+- **Naming convention:** see the [Naming convention](#naming-convention) section below — camelCase canonical, snake_case supported as aliases.
+
+> **Status:** Actively developed. New pandas methods are added with each release.
+
+## At a glance — capabilities
+
+| Category | Methods |
+| --- | --- |
+| **Data structures** | `Series`, `DataFrame`, `readCsv`, `toCsv`, `dateRange` |
+| **Selection & filtering** | `select`, `filter`, column accessors (`df.colName`) |
+| **Indexing** | `loc`, `iloc` (label/position, supports arrays), `at`, `iat` (single-cell, fast) |
+| **Index manipulation** | `setIndex`, `resetIndex` |
+| **Sorting** | `sortValues` / `sort_values`, `sortIndex` / `sort_index` |
+| **Aggregation** | `groupBy().mean/sum/count/min/max/std`, `mean`, `median`, `mode`, `std`, `var`, `min`, `max`, `describe` |
+| **Joins & concat** | `merge` (inner/left/right/outer), `concat` (axis 0/1) |
+| **Apply / transform** | `apply(fn, { axis })` (DataFrame), `apply`/`map`/`replace` (Series) |
+| **Missing data** | `fillna`, `dropna`, `isna`, `notna` |
+| **Value operations** | `unique`, `valueCounts` / `value_counts`, `duplicated`, `dropDuplicates` / `drop_duplicates` |
+| **Comparison** | `eq`, `ne`, `gt`, `lt`, `ge`, `le`, `between` |
+| **Cumulative** | `cumsum`, `cumprod`, `cummax`, `cummin` |
+| **Window** | `rolling(window).{mean,sum,min,max,std}`, `expanding().{mean,sum,min,max,std}` |
+| **String accessor** | `str.upper`, `str.lower`, `str.contains`, `str.replace`, `str.split`, `str.strip`, `str.startswith`, `str.endswith`, `str.len` |
 
 ## Table of contents
 
@@ -151,50 +176,35 @@ The aliases are literally the same function reference — there is no behavior o
 
 ## Getting started
 
-> ## `Series`
+### `Series`
 
-<h3 id='s-ex1'><code>Example 1 - Creating Series using 1D array/list</code></h3>
+<h4 id='s-ex1'>Example 1 — Creating a Series from a 1D array</h4>
 
 ```javascript
-> const pd = require("node-pandas")
-undefined
-> 
-> s = pd.Series([1, 9, 2, 6, 7, -8, 4, -3, 0, 5]) 
-NodeSeries [
-  1,
-  9,
-  2,
-  6,
-  7,
-  -8,
-  4,
-  -3,
-  0,
-  5,
-]
-> 
-> s.show
-┌─────────┬────────┐
-│ (index) │ Values │
-├─────────┼────────┤
-│ 0       │ 1      │
-│ 1       │ 9      │
-│ 2       │ 2      │
-│ 3       │ 6      │
-│ 4       │ 7      │
-│ 5       │ -8     │
-│ 6       │ 4      │
-│ 7       │ -3     │
-│ 8       │ 0      │
-│ 9       │ 5      │
-└─────────┴────────┘
-undefined
-> 
-> s[0]  // First element in Series
-1
-> s.length // Total number of elements 
-10
-> 
+const pd = require("node-pandas")
+
+const s = pd.Series([1, 9, 2, 6, 7, -8, 4, -3, 0, 5])
+console.log(s)
+// NodeSeries [ 1, 9, 2, 6, 7, -8, 4, -3, 0, 5 ]
+
+s.show
+// ┌─────────┬────────┐
+// │ (index) │ Values │
+// ├─────────┼────────┤
+// │ 0       │ 1      │
+// │ 1       │ 9      │
+// │ 2       │ 2      │
+// │ 3       │ 6      │
+// │ 4       │ 7      │
+// │ 5       │ -8     │
+// │ 6       │ 4      │
+// │ 7       │ -3     │
+// │ 8       │ 0      │
+// │ 9       │ 5      │
+// └─────────┴────────┘
+
+console.log(s[0])       // 1   — first element
+console.log(s.length)   // 10  — total number of elements
 ```
 
 ## Series Methods
@@ -960,7 +970,7 @@ Promote a column to be the DataFrame's row index. Returns a **new** DataFrame; t
 const pd = require("node-pandas")
 
 const df = pd.DataFrame(
-  [[1, 'Alice', 25], [2, 'Bob', 30], [3, 'Carol', 35]],
+  [[1, 'Malinikesh Agrawani', 28], [2, 'Hemkesh Agrawani', 30], [3, 'Rishikesh Agrawani', 32]],
   ['id', 'name', 'age']
 )
 
@@ -988,7 +998,7 @@ Demote the current index back to a regular column, or discard it. Returns a **ne
 ```javascript
 const pd = require("node-pandas")
 
-const df = pd.DataFrame([[10, 'Alice'], [20, 'Bob']], ['age', 'name'])
+const df = pd.DataFrame([[28, 'Malinikesh Agrawani'], [30, 'Hemkesh Agrawani']], ['age', 'name'])
 df.index = ['a', 'b']
 
 // Default: promote index to a column named 'index', reset index to 0..n-1
@@ -996,7 +1006,7 @@ const a = df.resetIndex()
 console.log(a.columns)
 // [ 'index', 'age', 'name' ]
 console.log(a.getRow(0))
-// { index: 'a', age: 10, name: 'Alice' }
+// { index: 'a', age: 28, name: 'Malinikesh Agrawani' }
 
 // Custom column name
 const b = df.resetIndex({ name: 'label' })
@@ -1020,17 +1030,17 @@ Fast scalar label-based cell accessor. Accepts a single row label and a single c
 ```javascript
 const pd = require("node-pandas")
 
-const df = pd.DataFrame([[1, 'Alice', 25], [2, 'Bob', 30]], ['id', 'name', 'age'])
+const df = pd.DataFrame([[1, 'Malinikesh Agrawani', 28], [2, 'Hemkesh Agrawani', 30]], ['id', 'name', 'age'])
 df.index = ['x', 'y']
 
 // Get a single cell
 console.log(df.at.get('x', 'name'))
-// 'Alice'
+// 'Malinikesh Agrawani'
 
 // Set a single cell (mutates in place, returns the DataFrame)
-df.at.set('x', 'name', 'Alicia')
+df.at.set('x', 'name', 'Malini Agrawani')
 console.log(df.at.get('x', 'name'))
-// 'Alicia'
+// 'Malini Agrawani'
 
 // Errors:
 //   df.at.get('z', 'name')         // throws IndexError (row label not found)
@@ -1045,16 +1055,16 @@ Fast scalar position-based cell accessor. Accepts a row position and column posi
 ```javascript
 const pd = require("node-pandas")
 
-const df = pd.DataFrame([[1, 'Alice', 25], [2, 'Bob', 30]], ['id', 'name', 'age'])
+const df = pd.DataFrame([[1, 'Malinikesh Agrawani', 28], [2, 'Hemkesh Agrawani', 30]], ['id', 'name', 'age'])
 
 // Get cell at (row 0, column 1)
 console.log(df.iat.get(0, 1))
-// 'Alice'
+// 'Malinikesh Agrawani'
 
 // Set cell (mutates, returns DataFrame)
-df.iat.set(0, 1, 'Alicia')
+df.iat.set(0, 1, 'Malini Agrawani')
 console.log(df.iat.get(0, 1))
-// 'Alicia'
+// 'Malini Agrawani'
 
 // Errors:
 //   df.iat.get(99, 0)        // throws IndexError (row out of range)
@@ -1105,70 +1115,42 @@ console.log(firstAndLast.getRow(0))
 
 <hr>
 
-> ## `DataFrame` 
+### `DataFrame`
 
-<h3 id='df-ex1'><code>Example 1 - Creating DataFrame using 2D array/list</code></h3>
+<h4 id='df-ex1'>Example 1 — Creating a DataFrame from a 2D array</h4>
 
 ```javascript
-> const pd = require("node-pandas")
-undefined
-> 
-> columns = ['full_name', 'user_id', 'technology']
-[ 'full_name', 'user_id', 'technology' ]
-> 
-> df = pd.DataFrame([
-...     ['Guido Van Rossum', 6, 'Python'],
-...     ['Ryan Dahl', 5, 'Node.js'],
-...     ['Anders Hezlsberg', 7, 'TypeScript'],
-...     ['Wes McKinney', 3, 'Pandas'],
-...     ['Ken Thompson', 1, 'B language']
-... ], columns)
-NodeDataFrame [
-  [ 'Guido Van Rossum', 6, 'Python' ],
-  [ 'Ryan Dahl', 5, 'Node.js' ],
-  [ 'Anders Hezlsberg', 7, 'TypeScript' ],
-  [ 'Wes McKinney', 3, 'Pandas' ],
-  [ 'Ken Thompson', 1, 'B language' ],
-  columns: [ 'full_name', 'user_id', 'technology' ],
-  index: [ 0, 1, 2, 3, 4 ],
-  rows: 5,
-  cols: 3,
-  out: true
-]
-> 
-> df.show
-┌─────────┬────────────────────┬─────────┬──────────────┐
-│ (index) │ full_name          │ user_id │ technology   │
-├─────────┼────────────────────┼─────────┼──────────────┤
-│ 0       │ 'Guido Van Rossum' │ 6       │ 'Python'     │
-│ 1       │ 'Ryan Dahl'        │ 5       │ 'Node.js'    │
-│ 2       │ 'Anders Hezlsberg' │ 7       │ 'TypeScript' │
-│ 3       │ 'Wes McKinney'     │ 3       │ 'Pandas'     │
-│ 4       │ 'Ken Thompson'     │ 1       │ 'B language' │
-└─────────┴────────────────────┴─────────┴──────────────┘
-undefined
-> 
-> df.index
-[ 0, 1, 2, 3, 4 ]
-> 
-> df.columns
-[ 'full_name', 'user_id', 'technology' ]
-> 
+const pd = require("node-pandas")
+
+const columns = ['full_name', 'user_id', 'technology']
+const df = pd.DataFrame([
+  ['Guido Van Rossum', 6, 'Python'],
+  ['Ryan Dahl', 5, 'Node.js'],
+  ['Anders Hezlsberg', 7, 'TypeScript'],
+  ['Wes McKinney', 3, 'Pandas'],
+  ['Ken Thompson', 1, 'B language']
+], columns)
+
+df.show
+// ┌─────────┬────────────────────┬─────────┬──────────────┐
+// │ (index) │ full_name          │ user_id │ technology   │
+// ├─────────┼────────────────────┼─────────┼──────────────┤
+// │ 0       │ 'Guido Van Rossum' │ 6       │ 'Python'     │
+// │ 1       │ 'Ryan Dahl'        │ 5       │ 'Node.js'    │
+// │ 2       │ 'Anders Hezlsberg' │ 7       │ 'TypeScript' │
+// │ 3       │ 'Wes McKinney'     │ 3       │ 'Pandas'     │
+// │ 4       │ 'Ken Thompson'     │ 1       │ 'B language' │
+// └─────────┴────────────────────┴─────────┴──────────────┘
+
+console.log(df.index)    // [ 0, 1, 2, 3, 4 ]
+console.log(df.columns)  // [ 'full_name', 'user_id', 'technology' ]
 ```
 
 <h3 id='df-ex2'><code>Example 2 - Creating DataFrame using a CSV file</code></h3>
 
-> **Note**: If CSV will have multiple newlines b/w 2 consecutive rows, no problem, it takes care of it and considers as single newline.
->
-> **`df = pd.readCsv(csvPath)`** where `CsvPath` is absolute/relative path of the CSV file.
->
-> **Examples:**
->
-> `df = pd.readCsv("../node-pandas/docs/csvs/devs.csv")`
->
-> `df = pd.readCsv("/Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv")`
+**Signature:** `pd.readCsv(csvPath)` — `csvPath` is the absolute or relative path to the CSV file. Multiple blank lines between rows are tolerated and collapsed to a single newline.
 
-[devs.csv](https://github.com/hygull/node-pandas/blob/master/docs/csvs/devs.csv) &raquo; `cat /Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv`
+Source CSV — [`devs.csv`](https://github.com/hygull/node-pandas/blob/master/docs/csvs/devs.csv):
 
 ```csv
 fullName,Profession,Language,DevId
@@ -1183,164 +1165,53 @@ Kylie Dwine,C++,C++ Developer,0011
 Briella Brown,JavaScript developer,JavaScript,8844
 ```
 
-Now have a look the below statements executed on Node REPL.
-
 ```javascript
-> const pd = require("node-pandas")
-undefined
-> 
-> df = pd.readCsv("/Users/hygull/Projects/NodeJS/node-pandas/docs/csvs/devs.csv")
-NodeDataFrame [
-  {
-    fullName: 'Ken Thompson',
-    Profession: 'C developer',
-    Language: 'C',
-    DevId: 1122
-  },
-  {
-    fullName: 'Ron Wilson',
-    Profession: 'Ruby developer',
-    Language: 'Ruby',
-    DevId: 4433
-  },
-  {
-    fullName: 'Jeff Thomas',
-    Profession: 'Java developer',
-    Language: 'Java',
-    DevId: 8899
-  },
-  {
-    fullName: 'Rishikesh Agrawani',
-    Profession: 'Python developer',
-    Language: 'Python',
-    DevId: 6677
-  },
-  {
-    fullName: 'Kylie Dwine',
-    Profession: 'C++',
-    Language: 'C++ Developer',
-    DevId: 11
-  },
-  {
-    fullName: 'Briella Brown',
-    Profession: 'JavaScirpt developer',
-    Language: 'JavaScript',
-    DevId: 8844
-  },
-  columns: [ 'fullName', 'Profession', 'Language', 'DevId' ],
-  index: [ 0, 1, 2, 3, 4, 5 ],
-  rows: 6,
-  cols: 4,
-  out: true
-]
-> 
-> df.index
-[ 0, 1, 2, 3, 4, 5 ]
-> 
-> df.columns
-[ 'fullName', 'Profession', 'Language', 'DevId' ]
-> 
-> df.show
-┌─────────┬──────────────────────┬────────────────────────┬─────────────────┬───────┐
-│ (index) │ fullName             │ Profession             │ Language        │ DevId │
-├─────────┼──────────────────────┼────────────────────────┼─────────────────┼───────┤
-│ 0       │ 'Ken Thompson'       │ 'C developer'          │ 'C'             │ 1122  │
-│ 1       │ 'Ron Wilson'         │ 'Ruby developer'       │ 'Ruby'          │ 4433  │
-│ 2       │ 'Jeff Thomas'        │ 'Java developer'       │ 'Java'          │ 8899  │
-│ 3       │ 'Rishikesh Agrawani' │ 'Python developer'     │ 'Python'        │ 6677  │
-│ 4       │ 'Kylie Dwine'        │ 'C++'                  │ 'C++ Developer' │ 11    │
-│ 5       │ 'Briella Brown'      │ 'JavaScript developer' │ 'JavaScript'    │ 8844  │
-└─────────┴──────────────────────┴────────────────────────┴─────────────────┴───────┘
-undefined
-> 
+const pd = require("node-pandas")
+
+const df = pd.readCsv("./docs/csvs/devs.csv")
+
+console.log(df.index)    // [ 0, 1, 2, 3, 4, 5 ]
+console.log(df.columns)  // [ 'fullName', 'Profession', 'Language', 'DevId' ]
+
+df.show
+// ┌─────────┬──────────────────────┬────────────────────────┬─────────────────┬───────┐
+// │ (index) │ fullName             │ Profession             │ Language        │ DevId │
+// ├─────────┼──────────────────────┼────────────────────────┼─────────────────┼───────┤
+// │ 0       │ 'Ken Thompson'       │ 'C developer'          │ 'C'             │ 1122  │
+// │ 1       │ 'Ron Wilson'         │ 'Ruby developer'       │ 'Ruby'          │ 4433  │
+// │ 2       │ 'Jeff Thomas'        │ 'Java developer'       │ 'Java'          │ 8899  │
+// │ 3       │ 'Rishikesh Agrawani' │ 'Python developer'     │ 'Python'        │ 6677  │
+// │ 4       │ 'Kylie Dwine'        │ 'C++'                  │ 'C++ Developer' │ 11    │
+// │ 5       │ 'Briella Brown'      │ 'JavaScript developer' │ 'JavaScript'    │ 8844  │
+// └─────────┴──────────────────────┴────────────────────────┴─────────────────┴───────┘
+
+// Cell access by row index + column name
+console.log(df[0]['fullName'])    // 'Ken Thompson'
+console.log(df[3]['Profession'])  // 'Python developer'
+console.log(df[5]['Language'])    // 'JavaScript'
 ```
 
-```javascript
-> df[0]['fullName']
-'Ken Thompson'
-> 
-> df[3]['Profession']
-'Python developer'
-> 
-> df[5]['Language']
-'JavaScript'
-> 
-```
+<h4 id='df-ex3'>Example 3 — Saving a DataFrame to a CSV file</h4>
 
-<h3 id='df-ex3'><code>Example 3 - Saving DataFrame in a CSV file</code></h3>
-
-> **Note:** Here we will save DataFrame in `/Users/hygull/Desktop/newDevs.csv` (in this case) which can be different in your case.
+The `toCsv(path)` method writes the DataFrame to disk. The output path can be absolute or relative.
 
 ```javascript
-> const pd = require("node-pandas")
-undefined
-> 
-> df = pd.readCsv("./docs/csvs/devs.csv")
-NodeDataFrame [
-  {
-    fullName: 'Ken Thompson',
-    Profession: 'C developer',
-    Language: 'C',
-    DevId: 1122
-  },
-  {
-    fullName: 'Ron Wilson',
-    Profession: 'Ruby developer',
-    Language: 'Ruby',
-    DevId: 4433
-  },
-  {
-    fullName: 'Jeff Thomas',
-    Profession: 'Java developer',
-    Language: 'Java',
-    DevId: 8899
-  },
-  {
-    fullName: 'Rishikesh Agrawani',
-    Profession: 'Python developer',
-    Language: 'Python',
-    DevId: 6677
-  },
-  {
-    fullName: 'Kylie Dwine',
-    Profession: 'C++',
-    Language: 'C++ Developer',
-    DevId: 11
-  },
-  {
-    fullName: 'Briella Brown',
-    Profession: 'JavaScirpt developer',
-    Language: 'JavaScript',
-    DevId: 8844
-  },
-  columns: [ 'fullName', 'Profession', 'Language', 'DevId' ],
-  index: [ 0, 1, 2, 3, 4, 5 ],
-  rows: 6,
-  cols: 4,
-  out: true
-]
-> 
-> df.cols
-4
-> df.rows
-6
-> df.columns
-[ 'fullName', 'Profession', 'Language', 'DevId' ]
-> df.index
-[ 0, 1, 2, 3, 4, 5 ]
-> 
-> df.toCsv("/Users/hygull/Desktop/newDevs.csv")
-undefined
-> CSV file is successfully created at /Users/hygull/Desktop/newDevs.csv
+const pd = require("node-pandas")
 
-> 
+const df = pd.readCsv("./docs/csvs/devs.csv")
+
+console.log(df.cols)     // 4
+console.log(df.rows)     // 6
+console.log(df.columns)  // [ 'fullName', 'Profession', 'Language', 'DevId' ]
+console.log(df.index)    // [ 0, 1, 2, 3, 4, 5 ]
+
+df.toCsv("./newDevs.csv")
+// Writes the DataFrame to ./newDevs.csv
 ```
 
-Let's see content of `/Users/hygull/Desktop/newDevs.csv`
+The resulting `newDevs.csv` (multiple blank lines from the source are collapsed):
 
-> **cat /Users/hygull/Desktop/newDevs.csv**
-
-```csv 
+```csv
 fullName,Profession,Language,DevId
 Ken Thompson,C developer,C,1122
 Ron Wilson,Ruby developer,Ruby,4433
@@ -1567,26 +1438,26 @@ const pd = require("node-pandas")
 
 // Create a DataFrame with employee data including departments
 const df = pd.DataFrame([
+    ['Subhash Agrawani', 60, 'Engineering', 120000],
+    ['Sandhya Agrawani', 55, 'Marketing', 95000],
     ['Rishikesh Agrawani', 32, 'Engineering', 95000],
     ['Hemkesh Agrawani', 30, 'Marketing', 75000],
     ['Malinikesh Agrawani', 28, 'Sales', 65000],
-    ['Alice Johnson', 29, 'Engineering', 92000],
-    ['Bob Smith', 31, 'Marketing', 78000],
-    ['Carol White', 27, 'Sales', 62000]
+    ['Yagyavalkya Agrawani', 26, 'Engineering', 70000]
 ], ['name', 'age', 'department', 'salary'])
 
 df.show
 /*
-┌─────────┬──────────────────────┬─────┬──────────────┬────────┐
-│ (index) │ name                 │ age │ department   │ salary │
-├─────────┼──────────────────────┼─────┼──────────────┼────────┤
-│ 0       │ 'Rishikesh Agrawani' │ 32  │ 'Engineering'│ 95000  │
-│ 1       │ 'Hemkesh Agrawani'   │ 30  │ 'Marketing'  │ 75000  │
-│ 2       │ 'Malinikesh Agrawani'│ 28  │ 'Sales'      │ 65000  │
-│ 3       │ 'Alice Johnson'      │ 29  │ 'Engineering'│ 92000  │
-│ 4       │ 'Bob Smith'          │ 31  │ 'Marketing'  │ 78000  │
-│ 5       │ 'Carol White'        │ 27  │ 'Sales'      │ 62000  │
-└─────────┴──────────────────────┴─────┴──────────────┴────────┘
+┌─────────┬─────────────────────────┬─────┬──────────────┬────────┐
+│ (index) │ name                    │ age │ department   │ salary │
+├─────────┼─────────────────────────┼─────┼──────────────┼────────┤
+│ 0       │ 'Subhash Agrawani'      │ 60  │ 'Engineering'│ 120000 │
+│ 1       │ 'Sandhya Agrawani'      │ 55  │ 'Marketing'  │ 95000  │
+│ 2       │ 'Rishikesh Agrawani'    │ 32  │ 'Engineering'│ 95000  │
+│ 3       │ 'Hemkesh Agrawani'      │ 30  │ 'Marketing'  │ 75000  │
+│ 4       │ 'Malinikesh Agrawani'   │ 28  │ 'Sales'      │ 65000  │
+│ 5       │ 'Yagyavalkya Agrawani'  │ 26  │ 'Engineering'│ 70000  │
+└─────────┴─────────────────────────┴─────┴──────────────┴────────┘
 */
 
 // Single-column grouping: Group by department and calculate mean salary
@@ -1596,9 +1467,9 @@ avgSalaryByDept.show
 ┌─────────┬──────────────┬──────────────┐
 │ (index) │ department   │ salary_mean  │
 ├─────────┼──────────────┼──────────────┤
-│ 0       │ 'Engineering'│ 93500        │
-│ 1       │ 'Marketing'  │ 76500        │
-│ 2       │ 'Sales'      │ 63500        │
+│ 0       │ 'Engineering'│ 95000        │
+│ 1       │ 'Marketing'  │ 85000        │
+│ 2       │ 'Sales'      │ 65000        │
 └─────────┴──────────────┴──────────────┘
 */
 
@@ -1609,9 +1480,9 @@ totalSalaryByDept.show
 ┌─────────┬──────────────┬──────────────┐
 │ (index) │ department   │ salary_sum   │
 ├─────────┼──────────────┼──────────────┤
-│ 0       │ 'Engineering'│ 187000       │
-│ 1       │ 'Marketing'  │ 153000       │
-│ 2       │ 'Sales'      │ 127000       │
+│ 0       │ 'Engineering'│ 285000       │
+│ 1       │ 'Marketing'  │ 170000       │
+│ 2       │ 'Sales'      │ 65000        │
 └─────────┴──────────────┴──────────────┘
 */
 
@@ -1622,9 +1493,9 @@ countByDept.show
 ┌─────────┬──────────────┬───────┐
 │ (index) │ department   │ count │
 ├─────────┼──────────────┼───────┤
-│ 0       │ 'Engineering'│ 2     │
+│ 0       │ 'Engineering'│ 3     │
 │ 1       │ 'Marketing'  │ 2     │
-│ 2       │ 'Sales'      │ 2     │
+│ 2       │ 'Sales'      │ 1     │
 └─────────┴──────────────┴───────┘
 */
 
@@ -1635,9 +1506,9 @@ minAgeByDept.show
 ┌─────────┬──────────────┬──────────┐
 │ (index) │ department   │ age_min  │
 ├─────────┼──────────────┼──────────┤
-│ 0       │ 'Engineering'│ 29       │
+│ 0       │ 'Engineering'│ 26       │
 │ 1       │ 'Marketing'  │ 30       │
-│ 2       │ 'Sales'      │ 27       │
+│ 2       │ 'Sales'      │ 28       │
 └─────────┴──────────────┴──────────┘
 */
 
@@ -1648,24 +1519,24 @@ maxAgeByDept.show
 ┌─────────┬──────────────┬──────────┐
 │ (index) │ department   │ age_max  │
 ├─────────┼──────────────┼──────────┤
-│ 0       │ 'Engineering'│ 32       │
-│ 1       │ 'Marketing'  │ 31       │
+│ 0       │ 'Engineering'│ 60       │
+│ 1       │ 'Marketing'  │ 55       │
 │ 2       │ 'Sales'      │ 28       │
 └─────────┴──────────────┴──────────┘
 */
 
-// Multi-column grouping: Group by department and age range
+// Multi-column grouping: Group by department and age
 const groupedByDeptAndAge = df.groupBy(['department', 'age']).count()
 groupedByDeptAndAge.show
 /*
 ┌─────────┬──────────────┬─────┬───────┐
 │ (index) │ department   │ age │ count │
 ├─────────┼──────────────┼─────┼───────┤
-│ 0       │ 'Engineering'│ 29  │ 1     │
+│ 0       │ 'Engineering'│ 26  │ 1     │
 │ 1       │ 'Engineering'│ 32  │ 1     │
-│ 2       │ 'Marketing'  │ 30  │ 1     │
-│ 3       │ 'Marketing'  │ 31  │ 1     │
-│ 4       │ 'Sales'      │ 27  │ 1     │
+│ 2       │ 'Engineering'│ 60  │ 1     │
+│ 3       │ 'Marketing'  │ 30  │ 1     │
+│ 4       │ 'Marketing'  │ 55  │ 1     │
 │ 5       │ 'Sales'      │ 28  │ 1     │
 └─────────┴──────────────┴─────┴───────┘
 */
