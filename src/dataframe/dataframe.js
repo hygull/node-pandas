@@ -360,6 +360,57 @@ class NodeDataFrame extends Array {
   }
 
   /**
+   * Demotes the current index back to a regular column, or discards it.
+   *
+   * @param {Object} [options] - Options object.
+   * @param {boolean} [options.drop=false] - If true, discard the index entirely.
+   * @param {string} [options.name='index'] - Name of the new column when promoting.
+   * @returns {DataFrame} A new DataFrame.
+   *
+   * @throws {ValidationError} If name is not a string.
+   * @throws {ColumnError} If name collides with an existing column (when drop:false).
+   *
+   * @example
+   * const df = DataFrame([[10], [20]], ['age']);
+   * df.index = ['a', 'b'];
+   * df.resetIndex(); // columns: ['index', 'age']; data: [['a', 10], ['b', 20]]
+   */
+  resetIndex(options = {}) {
+    const drop = options.drop === true; // default false
+    const name = options.name === undefined ? 'index' : options.name;
+
+    if (typeof name !== 'string') {
+      throw new ValidationError('resetIndex name must be a string', {
+        operation: 'resetIndex',
+        value: name,
+        expected: 'string'
+      });
+    }
+
+    if (!drop && this.columns.indexOf(name) !== -1) {
+      throw new ColumnError(`Column '${name}' already exists; choose a different name`, {
+        operation: 'resetIndex',
+        column: name,
+        expected: 'a name not in df.columns'
+      });
+    }
+
+    if (this.rows === 0) {
+      return DataFrame([], drop ? [...this.columns] : [name, ...this.columns]);
+    }
+
+    if (drop) {
+      const newData = this.data.map(row => this.columns.map(col => row[col]));
+      return DataFrame(newData, [...this.columns]);
+      // Default 0..n-1 index is set automatically by getIndicesColumns; no override.
+    }
+
+    const newColumns = [name, ...this.columns];
+    const newData = this.data.map((row, i) => [this.index[i], ...this.columns.map(col => row[col])]);
+    return DataFrame(newData, newColumns);
+  }
+
+  /**
    * Creates a cached Series for a column and stores it internally.
    * 
    * This internal method is called when a column is first accessed to create
