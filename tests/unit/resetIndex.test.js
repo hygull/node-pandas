@@ -46,6 +46,24 @@ describe('DataFrame.resetIndex()', () => {
       const out = df.resetIndex();
       expect(out.rows).toBe(0);
     });
+
+    test('drop:false with shorter index produces undefined in promoted column for unmatched rows', () => {
+      // Current behavior: index setter does not validate length; resetIndex will pick
+      // up `undefined` for rows beyond the index length. Pin this so a future change
+      // has to deliberately decide whether to validate.
+      const df = DataFrame([[1, 'a'], [2, 'b']], ['x', 'y']);
+      df.index = ['only-one'];  // length 1 vs. 2 rows
+      const out = df.resetIndex();
+      expect(out.getRow(0)).toEqual({ index: 'only-one', x: 1, y: 'a' });
+      expect(out.getRow(1)).toEqual({ index: undefined, x: 2, y: 'b' });
+    });
+
+    test('drop:true silently ignores the name option', () => {
+      const df = DataFrame([[10, 'Alice']], ['age', 'name']);
+      df.index = ['x'];
+      const out = df.resetIndex({ drop: true, name: 'should-be-ignored' });
+      expect(out.columns).toEqual(['age', 'name']);  // name not added
+    });
   });
 
   describe('errors', () => {

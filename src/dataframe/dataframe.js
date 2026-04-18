@@ -401,8 +401,8 @@ class NodeDataFrame extends Array {
 
     if (drop) {
       const newData = this.data.map(row => this.columns.map(col => row[col]));
-      return DataFrame(newData, [...this.columns]);
       // Default 0..n-1 index is set automatically by getIndicesColumns; no override.
+      return DataFrame(newData, [...this.columns]);
     }
 
     const newColumns = [name, ...this.columns];
