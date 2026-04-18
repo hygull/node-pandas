@@ -1,16 +1,22 @@
 # node-pandas
 
-An [npm package](https://www.npmjs.com/package/node-pandas) that incorporates minimal features of python [pandas](https://pandas.pydata.org/). Check it on npm at [https://www.npmjs.com/package/node-pandas](https://www.npmjs.com/package/node-pandas).
+**Pandas for Node.js.** A pandas-like data manipulation library for JavaScript and Node.js. Provides `Series` and `DataFrame` data structures with `groupBy`, `merge`, `concat`, indexing (`loc`, `iloc`, `at`, `iat`), `setIndex` / `resetIndex`, `apply` with axis support, rolling and expanding window operations, string accessors, and CSV I/O. **Zero runtime dependencies.**
 
-![npm](https://img.shields.io/npm/v/node-pandas.svg?label=node-pandas) ![NPM](https://img.shields.io/npm/l/node-pandas.svg)
+If you've used Python's [pandas](https://pandas.pydata.org/) and want the same API in Node.js, this library is for you.
 
-> You can also have a look at this colorful documentation at [https://hygull.github.io/node-pandas/](https://hygull.github.io/node-pandas/).
+[![npm](https://img.shields.io/npm/v/node-pandas.svg?label=node-pandas)](https://www.npmjs.com/package/node-pandas) ![NPM](https://img.shields.io/npm/l/node-pandas.svg)
+
+```bash
+npm install node-pandas
+```
+
+> Full documentation: [https://hygull.github.io/node-pandas/](https://hygull.github.io/node-pandas/)
 >
-> **Note:** Currently, this package is in development. More methods/functions/attributes will be added with time. 
+> **Status:** Actively developed. New pandas methods are added with each release. See [CHANGELOG.md](./CHANGELOG.md) for the latest features.
 >
-> ## What node-pandas v2.2.0 Can Do
+> ## What node-pandas can do
 >
-> node-pandas brings pandas-like data manipulation to Node.js. Here's what you can do:
+> node-pandas brings pandas-style data manipulation to Node.js. Here's what you can do:
 >
 > **Create and manipulate data structures:**
 > - Create Series from 1D arrays and DataFrames from 2D arrays or CSV files
