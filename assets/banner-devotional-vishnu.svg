@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">node-pandas — Pandas for Node.js (Vishnu / Hari-inspired theme)</title>
+  <desc id="desc">A pandas-style data manipulation library for Node.js, with a Lord Vishnu (Hari) inspired theme of lotus blue and gold, featuring shankha (conch), sudarshana chakra, and lotus motifs.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0c4a6e"/>
+      <stop offset="60%" stop-color="#0e6b8c"/>
+      <stop offset="100%" stop-color="#0891b2"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#d4a017"/>
+      <stop offset="50%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#f5cb47"/>
+    </linearGradient>
+    <linearGradient id="conch" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef9c3"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+    <linearGradient id="lotus" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fbcfe8"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="1280" height="400" fill="url(#bg)"/>
+
+  <!-- subtle ripple lines (kshira-sagara, the milk ocean) -->
+  <g stroke="#fef9c3" stroke-width="1" opacity="0.15" fill="none">
+    <path d="M 0 350 Q 100 340 200 350 T 400 350 T 600 350 T 800 350 T 1000 350 T 1280 350"/>
+    <path d="M 0 370 Q 100 360 200 370 T 400 370 T 600 370 T 800 370 T 1000 370 T 1280 370"/>
+  </g>
+
+  <!-- decorative gold dots -->
+  <g fill="url(#gold)" opacity="0.25">
+    <circle cx="40" cy="40" r="3"/>
+    <circle cx="80" cy="40" r="2"/>
+    <circle cx="40" cy="80" r="2"/>
+    <circle cx="1240" cy="80" r="3"/>
+    <circle cx="1200" cy="60" r="2"/>
+  </g>
+
+  <!-- left mark: shankha + sudarshana chakra + lotus + DataFrame grid -->
+  <g transform="translate(120, 90)">
+    <!-- sudarshana chakra (top-right) -->
+    <g transform="translate(110, 20)">
+      <circle cx="30" cy="30" r="28" fill="none" stroke="url(#gold)" stroke-width="3"/>
+      <circle cx="30" cy="30" r="6" fill="url(#gold)"/>
+      <g stroke="url(#gold)" stroke-width="2.5" stroke-linecap="round">
+        <line x1="30" y1="-5" x2="30" y2="10"/>
+        <line x1="30" y1="50" x2="30" y2="65"/>
+        <line x1="-5" y1="30" x2="10" y2="30"/>
+        <line x1="50" y1="30" x2="65" y2="30"/>
+        <line x1="5" y1="5" x2="14" y2="14"/>
+        <line x1="46" y1="46" x2="55" y2="55"/>
+        <line x1="5" y1="55" x2="14" y2="46"/>
+        <line x1="46" y1="14" x2="55" y2="5"/>
+      </g>
+    </g>
+
+    <!-- shankha / conch (top-left) — abstracted as a coiled spiral with fluted opening -->
+    <g transform="translate(0, 0)">
+      <!-- main body -->
+      <path d="M 60 30 Q 60 0 30 0 Q 0 0 0 35 Q 0 60 25 70 Q 50 75 70 60 L 80 50 Q 75 40 60 35" fill="url(#conch)" stroke="url(#gold)" stroke-width="2.5"/>
+      <!-- spiral lines inside -->
+      <path d="M 50 25 Q 35 25 30 35 Q 30 50 45 55" fill="none" stroke="url(#gold)" stroke-width="1.5" opacity="0.7"/>
+      <path d="M 55 20 Q 25 20 22 35 Q 22 60 50 65" fill="none" stroke="url(#gold)" stroke-width="1.2" opacity="0.5"/>
+      <!-- opening lip -->
+      <ellipse cx="73" cy="55" rx="10" ry="5" fill="url(#gold)" opacity="0.4"/>
+    </g>
+
+    <!-- padma / lotus (center-bottom) -->
+    <g transform="translate(40, 110)">
+      <g fill="url(#lotus)" stroke="#9d174d" stroke-width="1" opacity="0.95">
+        <ellipse cx="40" cy="30" rx="10" ry="24" transform="rotate(0 40 40)"/>
+        <ellipse cx="40" cy="30" rx="10" ry="24" transform="rotate(45 40 40)"/>
+        <ellipse cx="40" cy="30" rx="10" ry="24" transform="rotate(90 40 40)"/>
+        <ellipse cx="40" cy="30" rx="10" ry="24" transform="rotate(135 40 40)"/>
+        <ellipse cx="40" cy="30" rx="10" ry="24" transform="rotate(180 40 40)"/>
+        <ellipse cx="40" cy="30" rx="10" ry="24" transform="rotate(225 40 40)"/>
+        <ellipse cx="40" cy="30" rx="10" ry="24" transform="rotate(270 40 40)"/>
+        <ellipse cx="40" cy="30" rx="10" ry="24" transform="rotate(315 40 40)"/>
+      </g>
+      <circle cx="40" cy="40" r="10" fill="url(#gold)"/>
+    </g>
+
+    <!-- 2x2 DataFrame grid -->
+    <g transform="translate(60, 215)" stroke="url(#gold)" stroke-width="2.5" fill="none" opacity="0.95">
+      <rect x="0" y="0" width="18" height="18" rx="2"/>
+      <rect x="22" y="0" width="18" height="18" rx="2"/>
+      <rect x="0" y="22" width="18" height="18" rx="2"/>
+      <rect x="22" y="22" width="18" height="18" rx="2"/>
+    </g>
+  </g>
+
+  <!-- wordmark + tagline + Sanskrit invocation -->
+  <g transform="translate(360, 0)" fill="#fef9c3">
+    <!-- Sanskrit invocation: ॐ नमो नारायणाय — "Salutations to Sri Narayana" -->
+    <text x="0" y="80" font-family="'Noto Serif Devanagari', 'Tiro Devanagari Sanskrit', 'Mangal', serif" font-size="28" fill="url(#gold)" letter-spacing="2">ॐ नमो नारायणाय</text>
+
+    <text x="0" y="200" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace" font-size="92" font-weight="700" letter-spacing="-2" fill="#fef9c3">
+      node<tspan fill="url(#gold)">-</tspan>pandas
+    </text>
+    <text x="0" y="248" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="28" fill="#fde68a" letter-spacing="0.5">
+      Pandas for Node.js. Series &amp; DataFrame for JavaScript.
+    </text>
+    <text x="0" y="283" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="17" fill="#bae6fd" letter-spacing="0.3">groupBy · merge · loc · iloc · at · iat</text>
+    <text x="0" y="312" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="17" fill="#bae6fd" letter-spacing="0.3">setIndex · apply · rolling · expanding · readCsv · toCsv</text>
+    <g transform="translate(0, 345)" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="18" fill="#7dd3fc">
+      <text x="0" y="0" font-weight="700" fill="url(#gold)">npm install node-pandas</text>
+      <text x="280" y="0" fill="url(#gold)">·</text>
+      <text x="300" y="0">zero dependencies</text>
+      <text x="500" y="0" fill="url(#gold)">·</text>
+      <text x="520" y="0">MIT</text>
+    </g>
+  </g>
+
+  <!-- bottom accent bar -->
+  <rect x="0" y="396" width="1280" height="4" fill="url(#gold)"/>
+</svg>

@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">node-pandas — Pandas for Node.js (natural theme)</title>
+  <desc id="desc">A pandas-style data manipulation library for Node.js, with a calm natural color palette evoking forest and earth.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f5f0e1"/>
+      <stop offset="60%" stop-color="#e8dfc4"/>
+      <stop offset="100%" stop-color="#d4c89f"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3a6b35"/>
+      <stop offset="100%" stop-color="#5a8a4e"/>
+    </linearGradient>
+    <linearGradient id="bark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5c4632"/>
+      <stop offset="100%" stop-color="#3d2e1f"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="1280" height="400" fill="url(#bg)"/>
+
+  <!-- distant hills -->
+  <path d="M0 280 Q 200 220 400 260 T 800 250 T 1280 270 L 1280 400 L 0 400 Z" fill="#a8b894" opacity="0.5"/>
+  <path d="M0 320 Q 250 280 500 310 T 1000 305 T 1280 320 L 1280 400 L 0 400 Z" fill="#7a8e6c" opacity="0.6"/>
+
+  <!-- left mark: stylized leaf + DataFrame grid -->
+  <g transform="translate(120, 120)">
+    <!-- leaf -->
+    <path d="M 0 80 Q 0 0 80 0 Q 160 0 160 80 Q 160 160 80 160 Q 0 160 0 80 Z" fill="url(#leaf)" opacity="0.92"/>
+    <!-- leaf vein -->
+    <path d="M 80 10 L 80 150 M 80 40 L 130 60 M 80 70 L 130 90 M 80 100 L 130 120 M 80 40 L 30 60 M 80 70 L 30 90 M 80 100 L 30 120" stroke="#f5f0e1" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.7"/>
+    <!-- 2x2 grid overlay (DataFrame symbol) -->
+    <g transform="translate(50, 50)" stroke="#f5f0e1" stroke-width="2.5" fill="none" opacity="0.85">
+      <rect x="0" y="0" width="28" height="28" rx="3"/>
+      <rect x="32" y="0" width="28" height="28" rx="3"/>
+      <rect x="0" y="32" width="28" height="28" rx="3"/>
+      <rect x="32" y="32" width="28" height="28" rx="3"/>
+    </g>
+  </g>
+
+  <!-- wordmark + tagline -->
+  <g transform="translate(340, 0)" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace" fill="#2d3a26">
+    <text x="0" y="195" font-size="92" font-weight="700" letter-spacing="-2">
+      node<tspan fill="#3a6b35">-</tspan>pandas
+    </text>
+    <text x="0" y="245" font-size="28" fill="#4a5a3e" letter-spacing="0.5">
+      Pandas for Node.js. Series &amp; DataFrame for JavaScript.
+    </text>
+    <text x="0" y="283" font-size="17" fill="#6b7a5e" letter-spacing="0.3">groupBy · merge · loc · iloc · at · iat</text>
+    <text x="0" y="312" font-size="17" fill="#6b7a5e" letter-spacing="0.3">setIndex · apply · rolling · expanding · readCsv · toCsv</text>
+    <g transform="translate(0, 345)" font-size="18" fill="#7a8a6c">
+      <text x="0" y="0" font-weight="700" fill="#3a6b35">npm install node-pandas</text>
+      <text x="280" y="0" fill="#a8b894">·</text>
+      <text x="300" y="0">zero dependencies</text>
+      <text x="500" y="0" fill="#a8b894">·</text>
+      <text x="520" y="0">MIT</text>
+    </g>
+  </g>
+
+  <!-- bottom accent bar -->
+  <rect x="0" y="396" width="1280" height="4" fill="url(#leaf)"/>
+</svg>

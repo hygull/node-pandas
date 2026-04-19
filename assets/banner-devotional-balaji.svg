@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">node-pandas — Pandas for Node.js (Balaji / Tirumala-inspired theme)</title>
+  <desc id="desc">A pandas-style data manipulation library for Node.js, with a Lord Venkateshwara (Balaji) inspired theme of Tirumala temple gold and tulsi green, featuring tilak namam and shankha-chakra motifs.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a3a2e"/>
+      <stop offset="100%" stop-color="#0f2a1f"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="50%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#facc15"/>
+    </linearGradient>
+    <linearGradient id="tulsi" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+    <linearGradient id="namam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="1280" height="400" fill="url(#bg)"/>
+
+  <!-- decorative gold dots (pillared temple feel) -->
+  <g fill="url(#gold)" opacity="0.2">
+    <circle cx="40" cy="40" r="3"/>
+    <circle cx="80" cy="40" r="2"/>
+    <circle cx="40" cy="80" r="2"/>
+    <circle cx="1240" cy="360" r="3"/>
+    <circle cx="1200" cy="360" r="2"/>
+    <circle cx="1240" cy="320" r="2"/>
+  </g>
+
+  <!-- vertical pillars suggesting temple gopuram -->
+  <g fill="url(#gold)" opacity="0.1">
+    <rect x="20" y="0" width="6" height="400"/>
+    <rect x="1254" y="0" width="6" height="400"/>
+  </g>
+
+  <!-- left mark: stylized namam (V-shape with tulsi line) + shankha + DataFrame grid -->
+  <g transform="translate(140, 80)">
+    <!-- namam (the iconic U-shape mark) — two outer white strokes + a central red line -->
+    <g>
+      <!-- outer white "U" of the namam -->
+      <path d="M 30 0 Q 30 120 80 130 Q 130 120 130 0 L 110 0 Q 110 105 80 110 Q 50 105 50 0 Z" fill="url(#namam)" stroke="url(#gold)" stroke-width="2"/>
+      <!-- central red tilak line (kumkum stripe) -->
+      <path d="M 75 0 L 85 0 L 85 105 L 75 105 Z" fill="#dc2626" opacity="0.85"/>
+    </g>
+
+    <!-- shankha (conch) below-left, abstracted as a curled spiral -->
+    <g transform="translate(0, 145)">
+      <path d="M 30 30 Q 5 30 5 5 Q 5 -10 25 -10 Q 50 -10 50 15 Q 50 30 35 30 Q 25 30 25 22 Q 25 18 30 18" fill="none" stroke="url(#gold)" stroke-width="3" stroke-linecap="round"/>
+    </g>
+
+    <!-- chakra (discus) below-right, abstracted as a sun-rayed disc -->
+    <g transform="translate(95, 160)">
+      <circle cx="20" cy="15" r="14" fill="none" stroke="url(#gold)" stroke-width="3"/>
+      <circle cx="20" cy="15" r="3" fill="url(#gold)"/>
+      <g stroke="url(#gold)" stroke-width="2" stroke-linecap="round">
+        <line x1="20" y1="-3" x2="20" y2="3"/>
+        <line x1="20" y1="27" x2="20" y2="33"/>
+        <line x1="2" y1="15" x2="8" y2="15"/>
+        <line x1="32" y1="15" x2="38" y2="15"/>
+        <line x1="6" y1="1" x2="11" y2="6"/>
+        <line x1="29" y1="24" x2="34" y2="29"/>
+        <line x1="6" y1="29" x2="11" y2="24"/>
+        <line x1="29" y1="6" x2="34" y2="1"/>
+      </g>
+    </g>
+
+    <!-- 2x2 DataFrame grid -->
+    <g transform="translate(50, 215)" stroke="url(#tulsi)" stroke-width="2.5" fill="none" opacity="0.95">
+      <rect x="0" y="0" width="18" height="18" rx="2"/>
+      <rect x="22" y="0" width="18" height="18" rx="2"/>
+      <rect x="0" y="22" width="18" height="18" rx="2"/>
+      <rect x="22" y="22" width="18" height="18" rx="2"/>
+    </g>
+  </g>
+
+  <!-- wordmark + tagline + Sanskrit invocation -->
+  <g transform="translate(360, 0)" fill="#fef3c7">
+    <!-- Sanskrit invocation: ॐ नमो वेङ्कटेशाय — "Salutations to Sri Venkateshwara" -->
+    <text x="0" y="80" font-family="'Noto Serif Devanagari', 'Tiro Devanagari Sanskrit', 'Mangal', serif" font-size="28" fill="url(#gold)" letter-spacing="2">ॐ नमो वेङ्कटेशाय</text>
+
+    <text x="0" y="200" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace" font-size="92" font-weight="700" letter-spacing="-2" fill="#fef3c7">
+      node<tspan fill="url(#gold)">-</tspan>pandas
+    </text>
+    <text x="0" y="248" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="28" fill="#fde68a" letter-spacing="0.5">
+      Pandas for Node.js. Series &amp; DataFrame for JavaScript.
+    </text>
+    <text x="0" y="283" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="17" fill="#86efac" letter-spacing="0.3">groupBy · merge · loc · iloc · at · iat</text>
+    <text x="0" y="312" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="17" fill="#86efac" letter-spacing="0.3">setIndex · apply · rolling · expanding · readCsv · toCsv</text>
+    <g transform="translate(0, 345)" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="18" fill="#bbf7d0">
+      <text x="0" y="0" font-weight="700" fill="url(#gold)">npm install node-pandas</text>
+      <text x="280" y="0" fill="url(#gold)">·</text>
+      <text x="300" y="0">zero dependencies</text>
+      <text x="500" y="0" fill="url(#gold)">·</text>
+      <text x="520" y="0">MIT</text>
+    </g>
+  </g>
+
+  <!-- bottom accent bar -->
+  <rect x="0" y="396" width="1280" height="4" fill="url(#gold)"/>
+</svg>

@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">node-pandas — Pandas for Node.js (Shiva-inspired theme)</title>
+  <desc id="desc">A pandas-style data manipulation library for Node.js, with a Lord Shiva inspired theme of vibhuti white on Kailash twilight, with Om and trishul motifs.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e1b3a"/>
+      <stop offset="60%" stop-color="#2a2147"/>
+      <stop offset="100%" stop-color="#3d2a52"/>
+    </linearGradient>
+    <linearGradient id="vibhuti" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+    <linearGradient id="saffron" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ea580c"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <radialGradient id="moonGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#f8fafc" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#f8fafc" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="1280" height="400" fill="url(#bg)"/>
+
+  <!-- crescent moon glow upper-right (Chandra adorning Shiva's hair) -->
+  <circle cx="1120" cy="80" r="60" fill="url(#moonGlow)"/>
+  <path d="M 1100 60 A 30 30 0 1 0 1100 100 A 24 24 0 1 1 1100 60 Z" fill="#f8fafc" opacity="0.85"/>
+
+  <!-- subtle stars -->
+  <g fill="#f8fafc" opacity="0.5">
+    <circle cx="200" cy="50" r="1.2"/>
+    <circle cx="350" cy="30" r="1"/>
+    <circle cx="500" cy="60" r="1.3"/>
+    <circle cx="900" cy="40" r="1"/>
+    <circle cx="1000" cy="70" r="1.2"/>
+    <circle cx="1200" cy="160" r="1"/>
+    <circle cx="80" cy="120" r="1.2"/>
+  </g>
+
+  <!-- left mark: stylized trishul + DataFrame grid -->
+  <g transform="translate(160, 90)">
+    <!-- trishul (trident) -->
+    <g stroke="url(#vibhuti)" stroke-width="4" stroke-linecap="round" fill="none">
+      <!-- shaft -->
+      <line x1="60" y1="60" x2="60" y2="220"/>
+      <!-- center prong -->
+      <line x1="60" y1="60" x2="60" y2="0"/>
+      <path d="M 55 0 Q 60 -5 65 0" />
+      <!-- left prong (curved) -->
+      <path d="M 60 60 Q 30 30 25 0 Q 22 -3 18 0"/>
+      <!-- right prong (curved) -->
+      <path d="M 60 60 Q 90 30 95 0 Q 98 -3 102 0"/>
+      <!-- crossbar -->
+      <line x1="20" y1="60" x2="100" y2="60"/>
+      <!-- decorative damaru (drum) at the base of prongs -->
+      <ellipse cx="60" cy="80" rx="14" ry="6" fill="url(#saffron)" stroke="none"/>
+      <ellipse cx="60" cy="80" rx="14" ry="6"/>
+    </g>
+    <!-- 2x2 DataFrame grid above the shaft base -->
+    <g transform="translate(40, 150)" stroke="url(#saffron)" stroke-width="2" fill="none" opacity="0.95">
+      <rect x="0" y="0" width="18" height="18" rx="2"/>
+      <rect x="22" y="0" width="18" height="18" rx="2"/>
+      <rect x="0" y="22" width="18" height="18" rx="2"/>
+      <rect x="22" y="22" width="18" height="18" rx="2"/>
+    </g>
+  </g>
+
+  <!-- wordmark + tagline + Om symbol + Sanskrit invocation -->
+  <g transform="translate(360, 0)" fill="#f8fafc">
+    <!-- Om symbol + Sanskrit invocation: ॐ नमः शिवाय — "Om Namah Shivaya" -->
+    <text x="0" y="80" font-family="'Noto Serif Devanagari', 'Tiro Devanagari Sanskrit', 'Mangal', serif" font-size="30" fill="url(#saffron)" letter-spacing="3">ॐ नमः शिवाय</text>
+
+    <text x="0" y="200" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace" font-size="92" font-weight="700" letter-spacing="-2">
+      node<tspan fill="url(#saffron)">-</tspan>pandas
+    </text>
+    <text x="0" y="248" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="28" fill="#e2e8f0" letter-spacing="0.5">
+      Pandas for Node.js. Series &amp; DataFrame for JavaScript.
+    </text>
+    <text x="0" y="283" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="17" fill="#cbd5e1" letter-spacing="0.3">groupBy · merge · loc · iloc · at · iat</text>
+    <text x="0" y="312" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="17" fill="#cbd5e1" letter-spacing="0.3">setIndex · apply · rolling · expanding · readCsv · toCsv</text>
+    <g transform="translate(0, 345)" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="18" fill="#94a3b8">
+      <text x="0" y="0" font-weight="700" fill="url(#saffron)">npm install node-pandas</text>
+      <text x="280" y="0" fill="url(#saffron)">·</text>
+      <text x="300" y="0">zero dependencies</text>
+      <text x="500" y="0" fill="url(#saffron)">·</text>
+      <text x="520" y="0">MIT</text>
+    </g>
+  </g>
+
+  <!-- bottom accent bar -->
+  <rect x="0" y="396" width="1280" height="4" fill="url(#saffron)"/>
+</svg>

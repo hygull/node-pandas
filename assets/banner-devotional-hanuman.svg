@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">node-pandas — Pandas for Node.js (Hanuman-inspired theme)</title>
+  <desc id="desc">A pandas-style data manipulation library for Node.js, with a Lord Hanuman inspired theme of saffron and crimson, featuring a stylized gada (mace) and Sanskrit invocation.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7a1f0a"/>
+      <stop offset="60%" stop-color="#a32d10"/>
+      <stop offset="100%" stop-color="#c43d1c"/>
+    </linearGradient>
+    <linearGradient id="saffron" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#fde047"/>
+    </linearGradient>
+    <linearGradient id="gada" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#fde047" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#fde047" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="1280" height="400" fill="url(#bg)"/>
+
+  <!-- sun glow upper-right (the sun he leapt toward as a child) -->
+  <circle cx="1140" cy="100" r="80" fill="url(#sun)"/>
+  <circle cx="1140" cy="100" r="34" fill="#fde047" opacity="0.85"/>
+  <g stroke="#fde047" stroke-width="2" opacity="0.5">
+    <line x1="1140" y1="40" x2="1140" y2="20"/>
+    <line x1="1140" y1="160" x2="1140" y2="180"/>
+    <line x1="1080" y1="100" x2="1060" y2="100"/>
+    <line x1="1200" y1="100" x2="1220" y2="100"/>
+    <line x1="1098" y1="58" x2="1085" y2="45"/>
+    <line x1="1182" y1="142" x2="1195" y2="155"/>
+    <line x1="1098" y1="142" x2="1085" y2="155"/>
+    <line x1="1182" y1="58" x2="1195" y2="45"/>
+  </g>
+
+  <!-- subtle decorative dots -->
+  <g fill="url(#saffron)" opacity="0.25">
+    <circle cx="40" cy="40" r="3"/>
+    <circle cx="80" cy="40" r="2"/>
+    <circle cx="40" cy="80" r="2"/>
+  </g>
+
+  <!-- left mark: stylized gada (mace) + DataFrame grid -->
+  <g transform="translate(150, 90)">
+    <!-- gada head (bulbous top) -->
+    <ellipse cx="60" cy="30" rx="46" ry="32" fill="url(#gada)" stroke="#7a1f0a" stroke-width="3"/>
+    <!-- decorative bands on the head -->
+    <ellipse cx="60" cy="20" rx="38" ry="6" fill="none" stroke="#7a1f0a" stroke-width="2" opacity="0.7"/>
+    <ellipse cx="60" cy="40" rx="38" ry="6" fill="none" stroke="#7a1f0a" stroke-width="2" opacity="0.7"/>
+    <!-- spikes / bumps on the gada -->
+    <g fill="#7a1f0a">
+      <circle cx="30" cy="30" r="4"/>
+      <circle cx="50" cy="20" r="4"/>
+      <circle cx="70" cy="20" r="4"/>
+      <circle cx="90" cy="30" r="4"/>
+      <circle cx="50" cy="40" r="4"/>
+      <circle cx="70" cy="40" r="4"/>
+    </g>
+    <!-- handle / shaft -->
+    <rect x="54" y="62" width="12" height="120" fill="url(#gada)" stroke="#7a1f0a" stroke-width="2"/>
+    <!-- pommel -->
+    <ellipse cx="60" cy="186" rx="18" ry="10" fill="url(#gada)" stroke="#7a1f0a" stroke-width="3"/>
+    <!-- 2x2 DataFrame grid below the gada -->
+    <g transform="translate(40, 210)" stroke="url(#saffron)" stroke-width="2.5" fill="none" opacity="0.95">
+      <rect x="0" y="0" width="18" height="18" rx="2"/>
+      <rect x="22" y="0" width="18" height="18" rx="2"/>
+      <rect x="0" y="22" width="18" height="18" rx="2"/>
+      <rect x="22" y="22" width="18" height="18" rx="2"/>
+    </g>
+  </g>
+
+  <!-- wordmark + tagline + Sanskrit invocation -->
+  <g transform="translate(360, 0)" fill="#fef3c7">
+    <!-- Sanskrit invocation: जय श्री राम — "Jai Shri Ram" -->
+    <text x="0" y="80" font-family="'Noto Serif Devanagari', 'Tiro Devanagari Sanskrit', 'Mangal', serif" font-size="30" fill="url(#saffron)" letter-spacing="3">जय श्री राम</text>
+
+    <text x="0" y="200" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace" font-size="92" font-weight="700" letter-spacing="-2">
+      node<tspan fill="url(#saffron)">-</tspan>pandas
+    </text>
+    <text x="0" y="248" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="28" fill="#fef3c7" letter-spacing="0.5">
+      Pandas for Node.js. Series &amp; DataFrame for JavaScript.
+    </text>
+    <text x="0" y="283" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="17" fill="#fde68a" letter-spacing="0.3">groupBy · merge · loc · iloc · at · iat</text>
+    <text x="0" y="312" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="17" fill="#fde68a" letter-spacing="0.3">setIndex · apply · rolling · expanding · readCsv · toCsv</text>
+    <g transform="translate(0, 345)" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="18" fill="#fde68a">
+      <text x="0" y="0" font-weight="700" fill="url(#saffron)">npm install node-pandas</text>
+      <text x="280" y="0" fill="url(#saffron)">·</text>
+      <text x="300" y="0">zero dependencies</text>
+      <text x="500" y="0" fill="url(#saffron)">·</text>
+      <text x="520" y="0">MIT</text>
+    </g>
+  </g>
+
+  <!-- bottom accent bar -->
+  <rect x="0" y="396" width="1280" height="4" fill="url(#saffron)"/>
+</svg>
