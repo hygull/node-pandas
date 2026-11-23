@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" width="960" height="400" role="img" aria-labelledby="t d">
+  <title id="t">merge join types</title>
+  <desc id="d">Left DataFrame has ids 1 to 4, right DataFrame has ids 1, 2 and 5. Inner keeps 1 and 2, left keeps 1 to 4, right keeps 1, 2 and 5, outer keeps 1 to 5. Missing values become null.</desc>
+  <defs>
+    <clipPath id="inLeft" clipPathUnits="userSpaceOnUse"><circle cx="-28" cy="186" r="54"/></clipPath>
+  </defs>
+  <style>
+    .sans { font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .title { fill: #fef9c3; font-size: 17px; font-weight: 700; }
+    .keys { fill: #e2e8f0; font-size: 15px; }
+    .nulls { fill: #94a3b8; font-size: 12.5px; }
+    .ring { fill: none; stroke-width: 2; }
+    .L { stroke: #7dd3fc; }
+    .R { stroke: #facc15; }
+    .fill { fill: #22c55e; fill-opacity: 0.45; }
+  </style>
+
+  <rect width="960" height="400" rx="14" fill="#0a1f3a"/>
+  <text x="40" y="42" class="sans" font-size="22" font-weight="700" fill="#facc15">merge(other, 'id', how)</text>
+  <text x="40" y="72" class="mono" font-size="14" fill="#7dd3fc">left.id  = 1, 2, 3, 4   (has name)</text>
+  <text x="400" y="72" class="mono" font-size="14" fill="#facc15">right.id = 1, 2, 5   (has dept)</text>
+
+  <!-- panel template: translate x to panel centre -->
+  <!-- inner -->
+  <g transform="translate(140,0)">
+    <rect x="-105" y="92" width="210" height="282" rx="10" fill="#0f2a4d"/>
+    <text x="0" y="118" text-anchor="middle" class="mono title">'inner'</text>
+    <circle cx="28" cy="186" r="54" class="fill" clip-path="url(#inLeft)"/>
+    <circle cx="-28" cy="186" r="54" class="ring L"/>
+    <circle cx="28" cy="186" r="54" class="ring R"/>
+    <text x="0" y="274" text-anchor="middle" class="mono keys">id: 1, 2</text>
+    <text x="0" y="302" text-anchor="middle" class="sans nulls">matching keys only</text>
+  </g>
+
+  <!-- left -->
+  <g transform="translate(366,0)">
+    <rect x="-105" y="92" width="210" height="282" rx="10" fill="#0f2a4d"/>
+    <text x="0" y="118" text-anchor="middle" class="mono title">'left'</text>
+    <circle cx="-28" cy="186" r="54" class="fill"/>
+    <circle cx="-28" cy="186" r="54" class="ring L"/>
+    <circle cx="28" cy="186" r="54" class="ring R"/>
+    <text x="0" y="274" text-anchor="middle" class="mono keys">id: 1, 2, 3, 4</text>
+    <text x="0" y="302" text-anchor="middle" class="sans nulls">all left rows</text>
+    <text x="0" y="322" text-anchor="middle" class="mono nulls">3, 4 → dept = null</text>
+  </g>
+
+  <!-- right -->
+  <g transform="translate(592,0)">
+    <rect x="-105" y="92" width="210" height="282" rx="10" fill="#0f2a4d"/>
+    <text x="0" y="118" text-anchor="middle" class="mono title">'right'</text>
+    <circle cx="28" cy="186" r="54" class="fill"/>
+    <circle cx="-28" cy="186" r="54" class="ring L"/>
+    <circle cx="28" cy="186" r="54" class="ring R"/>
+    <text x="0" y="274" text-anchor="middle" class="mono keys">id: 1, 2, 5</text>
+    <text x="0" y="302" text-anchor="middle" class="sans nulls">all right rows</text>
+    <text x="0" y="322" text-anchor="middle" class="mono nulls">5 → name = null</text>
+  </g>
+
+  <!-- outer -->
+  <g transform="translate(818,0)">
+    <rect x="-105" y="92" width="210" height="282" rx="10" fill="#0f2a4d"/>
+    <text x="0" y="118" text-anchor="middle" class="mono title">'outer'</text>
+    <circle cx="-28" cy="186" r="54" class="fill"/>
+    <circle cx="28" cy="186" r="54" class="fill"/>
+    <circle cx="-28" cy="186" r="54" class="ring L"/>
+    <circle cx="28" cy="186" r="54" class="ring R"/>
+    <text x="0" y="274" text-anchor="middle" class="mono keys">id: 1, 2, 3, 4, 5</text>
+    <text x="0" y="302" text-anchor="middle" class="sans nulls">every row from both</text>
+    <text x="0" y="322" text-anchor="middle" class="mono nulls">3, 4 → dept = null</text>
+    <text x="0" y="340" text-anchor="middle" class="mono nulls">5 → name = null</text>
+  </g>
+</svg>

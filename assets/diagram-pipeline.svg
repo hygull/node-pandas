@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 190" width="960" height="190" role="img" aria-labelledby="t d">
+  <title id="t">A typical node-pandas pipeline</title>
+  <desc id="d">readCsv loads a CSV into a DataFrame, filter keeps rows, select keeps columns, groupBy splits by key, mean aggregates, and toCsv writes the result.</desc>
+  <defs>
+    <marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7dd3fc"/></marker>
+  </defs>
+  <style>
+    .sans { font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .box { fill: #0f2a4d; stroke: #1e4a7a; stroke-width: 1.5; }
+    .io  { fill: #13335c; stroke: #facc15; stroke-width: 1.5; }
+    .fn  { fill: #facc15; font-size: 15px; font-weight: 700; }
+    .cap { fill: #94a3b8; font-size: 12.5px; }
+    .arr { stroke: #7dd3fc; stroke-width: 2; }
+  </style>
+
+  <rect width="960" height="190" rx="14" fill="#0a1f3a"/>
+  <text x="40" y="42" class="sans" font-size="22" font-weight="700" fill="#facc15">A typical pipeline</text>
+
+  <rect x="25"  y="78" width="130" height="70" rx="8" class="io"/>
+  <rect x="181" y="78" width="130" height="70" rx="8" class="box"/>
+  <rect x="337" y="78" width="130" height="70" rx="8" class="box"/>
+  <rect x="493" y="78" width="130" height="70" rx="8" class="box"/>
+  <rect x="649" y="78" width="130" height="70" rx="8" class="box"/>
+  <rect x="805" y="78" width="130" height="70" rx="8" class="io"/>
+
+  <line x1="155" y1="113" x2="177" y2="113" class="arr" marker-end="url(#m)"/>
+  <line x1="311" y1="113" x2="333" y2="113" class="arr" marker-end="url(#m)"/>
+  <line x1="467" y1="113" x2="489" y2="113" class="arr" marker-end="url(#m)"/>
+  <line x1="623" y1="113" x2="645" y2="113" class="arr" marker-end="url(#m)"/>
+  <line x1="779" y1="113" x2="801" y2="113" class="arr" marker-end="url(#m)"/>
+
+  <g text-anchor="middle">
+    <text x="90"  y="108" class="mono fn">readCsv()</text> <text x="90"  y="130" class="sans cap">CSV → DataFrame</text>
+    <text x="246" y="108" class="mono fn">filter()</text>  <text x="246" y="130" class="sans cap">keep rows</text>
+    <text x="402" y="108" class="mono fn">select()</text>  <text x="402" y="130" class="sans cap">keep columns</text>
+    <text x="558" y="108" class="mono fn">groupBy()</text> <text x="558" y="130" class="sans cap">split by key</text>
+    <text x="714" y="108" class="mono fn">mean()</text>    <text x="714" y="130" class="sans cap">aggregate</text>
+    <text x="870" y="108" class="mono fn">toCsv()</text>   <text x="870" y="130" class="sans cap">DataFrame → CSV</text>
+  </g>
+
+  <text x="480" y="174" text-anchor="middle" class="sans cap">Each step returns a new object (groupBy returns a GroupBy), so calls chain left to right.</text>
+</svg>

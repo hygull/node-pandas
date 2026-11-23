@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 410" width="960" height="410" role="img" aria-labelledby="t d">
+  <title id="t">Anatomy of a node-pandas DataFrame</title>
+  <desc id="d">A DataFrame with index, columns, a highlighted column that is returned as a Series, and a highlighted row returned as a plain object.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7dd3fc"/>
+    </marker>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#facc15"/>
+    </marker>
+  </defs>
+  <style>
+    .sans { font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .cell { fill: #e2e8f0; font-size: 15px; }
+    .head { fill: #fef9c3; font-size: 15px; font-weight: 700; }
+    .idx  { fill: #94a3b8; font-size: 15px; }
+    .note { fill: #7dd3fc; font-size: 15px; }
+    .gold { fill: #facc15; font-size: 15px; }
+    .muted { fill: #94a3b8; font-size: 14px; }
+  </style>
+
+  <rect width="960" height="410" rx="14" fill="#0a1f3a"/>
+  <text x="40" y="42" class="sans" font-size="22" font-weight="700" fill="#facc15">Anatomy of a DataFrame</text>
+
+  <!-- table body -->
+  <rect x="270" y="100" width="430" height="200" fill="#0f2a4d" rx="4"/>
+  <rect x="200" y="100" width="70" height="200" fill="#0c2342"/>
+  <rect x="200" y="100" width="500" height="40" fill="#13335c"/>
+  <g stroke="#1e3a63" stroke-width="1">
+    <line x1="200" y1="140" x2="700" y2="140"/>
+    <line x1="200" y1="180" x2="700" y2="180"/>
+    <line x1="200" y1="220" x2="700" y2="220"/>
+    <line x1="200" y1="260" x2="700" y2="260"/>
+    <line x1="270" y1="100" x2="270" y2="300"/>
+    <line x1="490" y1="100" x2="490" y2="300"/>
+    <line x1="590" y1="100" x2="590" y2="300"/>
+  </g>
+
+  <!-- header -->
+  <text x="285" y="126" class="mono head">name</text>
+  <text x="505" y="126" class="mono head">team</text>
+  <text x="605" y="126" class="mono head">salary</text>
+
+  <!-- rows -->
+  <g class="mono">
+    <text x="228" y="166" class="idx">0</text>
+    <text x="285" y="166" class="cell">Subhash Agrawani</text>
+    <text x="505" y="166" class="cell">Eng</text>
+    <text x="605" y="166" class="cell">95000</text>
+
+    <text x="228" y="206" class="idx">1</text>
+    <text x="285" y="206" class="cell">Sandhya Agrawani</text>
+    <text x="505" y="206" class="cell">Sales</text>
+    <text x="605" y="206" class="cell">70000</text>
+
+    <text x="228" y="246" class="idx">2</text>
+    <text x="285" y="246" class="cell">Rishikesh Agrawani</text>
+    <text x="505" y="246" class="cell">Eng</text>
+    <text x="605" y="246" class="cell">90000</text>
+
+    <text x="228" y="286" class="idx">3</text>
+    <text x="285" y="286" class="cell">Malinikesh Agrawani</text>
+    <text x="505" y="286" class="cell">Eng</text>
+    <text x="605" y="286" class="cell">85000</text>
+  </g>
+
+  <!-- highlighted column: Series -->
+  <rect x="592" y="102" width="106" height="196" fill="none" stroke="#7dd3fc" stroke-width="2.5" rx="4"/>
+  <text x="645" y="80" class="mono note" text-anchor="middle">df.salary  →  Series</text>
+  <line x1="645" y1="86" x2="645" y2="98" stroke="#7dd3fc" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- highlighted row: object -->
+  <rect x="202" y="182" width="496" height="36" fill="none" stroke="#facc15" stroke-width="2.5" rx="4"/>
+  <line x1="740" y1="200" x2="706" y2="200" stroke="#facc15" stroke-width="2" marker-end="url(#g)"/>
+  <text x="750" y="196" class="mono gold">df.getRow(1)</text>
+  <text x="750" y="216" class="mono muted">→ { name, team, salary }</text>
+
+  <!-- index annotation -->
+  <text x="40" y="196" class="mono note">df.index</text>
+  <text x="40" y="216" class="mono muted">[0, 1, 2, 3]</text>
+  <line x1="150" y1="200" x2="194" y2="200" stroke="#7dd3fc" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- columns annotation -->
+  <path d="M272,312 L272,320 L698,320 L698,312" fill="none" stroke="#7dd3fc" stroke-width="2"/>
+  <text x="485" y="345" class="mono note" text-anchor="middle">df.columns  →  ['name', 'team', 'salary']</text>
+
+  <text x="40" y="386" class="sans muted">Series and DataFrame both extend Array, so .length, for…of and [i] indexing work natively.</text>
+</svg>

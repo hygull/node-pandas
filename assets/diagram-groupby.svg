@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" width="960" height="380" role="img" aria-labelledby="t d">
+  <title id="t">groupBy: split, apply, combine</title>
+  <desc id="d">Rows are split into Eng and Sales groups by the team column, the mean salary is computed per group, and the results are combined into a new DataFrame.</desc>
+  <defs>
+    <marker id="c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7dd3fc"/></marker>
+    <marker id="y" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#facc15"/></marker>
+  </defs>
+  <style>
+    .sans { font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .cell { fill: #e2e8f0; font-size: 14px; }
+    .head { fill: #fef9c3; font-size: 14px; font-weight: 700; }
+    .stage { fill: #94a3b8; font-size: 13px; font-weight: 700; letter-spacing: 1.5px; }
+    .eng { fill: #7dd3fc; }
+    .sales { fill: #facc15; }
+  </style>
+
+  <rect width="960" height="380" rx="14" fill="#0a1f3a"/>
+  <text x="40" y="42" class="sans" font-size="22" font-weight="700" fill="#facc15">groupBy: split → apply → combine</text>
+
+  <text x="40" y="78" class="sans stage">1 · SPLIT BY team</text>
+  <text x="350" y="78" class="sans stage">2 · APPLY mean()</text>
+  <text x="710" y="78" class="sans stage">3 · COMBINE</text>
+
+  <!-- source table -->
+  <rect x="40" y="92" width="210" height="192" fill="#0f2a4d" rx="4"/>
+  <rect x="40" y="92" width="210" height="32" fill="#13335c" rx="4"/>
+  <text x="54" y="113" class="mono head">team</text>
+  <text x="150" y="113" class="mono head">salary</text>
+  <g class="mono cell">
+    <rect x="40" y="124" width="4" height="32" class="eng"/>   <text x="54" y="145">Eng</text>   <text x="150" y="145">95000</text>
+    <rect x="40" y="156" width="4" height="32" class="sales"/> <text x="54" y="177">Sales</text> <text x="150" y="177">70000</text>
+    <rect x="40" y="188" width="4" height="32" class="eng"/>   <text x="54" y="209">Eng</text>   <text x="150" y="209">90000</text>
+    <rect x="40" y="220" width="4" height="32" class="eng"/>   <text x="54" y="241">Eng</text>   <text x="150" y="241">85000</text>
+    <rect x="40" y="252" width="4" height="32" class="sales"/> <text x="54" y="273">Sales</text> <text x="150" y="273">65000</text>
+  </g>
+
+  <!-- split arrows -->
+  <g fill="none" stroke-width="1.6">
+    <path d="M250,140 C300,140 300,140 346,140" stroke="#7dd3fc" marker-end="url(#c)"/>
+    <path d="M250,204 C300,204 300,148 346,144" stroke="#7dd3fc"/>
+    <path d="M250,236 C305,236 300,150 346,146" stroke="#7dd3fc"/>
+    <path d="M250,172 C305,172 300,236 346,238" stroke="#facc15"/>
+    <path d="M250,268 C300,268 300,242 346,242" stroke="#facc15" marker-end="url(#y)"/>
+  </g>
+
+  <!-- groups -->
+  <rect x="350" y="104" width="270" height="76" rx="8" fill="#0f2a4d" stroke="#7dd3fc" stroke-width="2"/>
+  <text x="366" y="130" class="mono" font-size="15" font-weight="700" fill="#7dd3fc">Eng</text>
+  <text x="366" y="154" class="mono cell">95000 · 90000 · 85000</text>
+  <text x="366" y="172" class="mono" font-size="13" fill="#94a3b8">mean = 90000</text>
+
+  <rect x="350" y="204" width="270" height="76" rx="8" fill="#0f2a4d" stroke="#facc15" stroke-width="2"/>
+  <text x="366" y="230" class="mono" font-size="15" font-weight="700" fill="#facc15">Sales</text>
+  <text x="366" y="254" class="mono cell">70000 · 65000</text>
+  <text x="366" y="272" class="mono" font-size="13" fill="#94a3b8">mean = 67500</text>
+
+  <!-- combine arrows -->
+  <path d="M620,142 C665,142 665,186 706,186" fill="none" stroke="#7dd3fc" stroke-width="1.6" marker-end="url(#c)"/>
+  <path d="M620,242 C665,242 665,218 706,218" fill="none" stroke="#facc15" stroke-width="1.6" marker-end="url(#y)"/>
+
+  <!-- result -->
+  <rect x="710" y="138" width="210" height="96" fill="#0f2a4d" rx="4"/>
+  <rect x="710" y="138" width="210" height="32" fill="#13335c" rx="4"/>
+  <text x="724" y="159" class="mono head">team</text>
+  <text x="820" y="159" class="mono head">salary</text>
+  <g class="mono cell">
+    <rect x="710" y="170" width="4" height="32" class="eng"/>   <text x="724" y="191">Eng</text>   <text x="820" y="191">90000</text>
+    <rect x="710" y="202" width="4" height="32" class="sales"/> <text x="724" y="223">Sales</text> <text x="820" y="223">67500</text>
+  </g>
+
+  <rect x="40" y="310" width="880" height="44" rx="8" fill="#071629"/>
+  <text x="60" y="338" class="mono" font-size="15" fill="#fef9c3">df.select(['team', 'salary']).groupBy('team').mean()</text>
+</svg>
