@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.1] - 2026-11-23
+
+### Fixed
+- `pd.Series([...])` can be called without `new` again (worked in 1.x, threw "Class constructor Series cannot be invoked without 'new'" in 2.x). `new pd.Series(...)` and `instanceof pd.Series` keep working.
+- `pd.readCsv()` no longer throws "DataFrame data must be a 2D array" on every call.
+- `merge(..., 'right')` keeps the join key value for rows that exist only in the right DataFrame (previously `null`).
+
+### Documentation
+- README rewritten: quick start, core concepts, five-step tour, pandas → node-pandas mapping table, API overview, and four SVG diagrams.
+- Full method reference moved to docs/api/series.md and docs/api/dataframe.md, with every example's output regenerated from the library.
+
 ## [2.3.0] - 2026-04-18
 
 ### Added
