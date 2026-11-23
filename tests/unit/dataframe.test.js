@@ -2037,6 +2037,41 @@ describe('DataFrame Class', () => {
         expect(merged.getCell(2, 'age')).toBe(35);
       });
 
+      test('should keep the join key value for right-only rows in right join', () => {
+        const df1 = DataFrame(
+          [[1, 'Rishikesh Agrawani'], [2, 'Hemkesh Agrawani']],
+          ['id', 'name']
+        );
+        const df2 = DataFrame(
+          [[1, 25], [2, 30], [3, 35]],
+          ['id', 'age']
+        );
+
+        const merged = df1.merge(df2, 'id', 'right');
+
+        expect(merged.getCell(0, 'id')).toBe(1);
+        expect(merged.getCell(1, 'id')).toBe(2);
+        expect(merged.getCell(2, 'id')).toBe(3);
+      });
+
+      test('should keep composite join key values for right-only rows in right join', () => {
+        const df1 = DataFrame(
+          [['Eng', 2025, 'Rishikesh Agrawani']],
+          ['team', 'year', 'name']
+        );
+        const df2 = DataFrame(
+          [['Eng', 2025, 90000], ['Sales', 2026, 70000]],
+          ['team', 'year', 'salary']
+        );
+
+        const merged = df1.merge(df2, ['team', 'year'], 'right');
+
+        expect(merged.getCell(1, 'team')).toBe('Sales');
+        expect(merged.getCell(1, 'year')).toBe(2026);
+        expect(merged.getCell(1, 'name')).toBeNull();
+        expect(merged.getCell(1, 'salary')).toBe(70000);
+      });
+
       test('should perform outer join on single column', () => {
         const df1 = DataFrame(
           [[1, 'Rishikesh Agrawani'], [2, 'Hemkesh Agrawani']],

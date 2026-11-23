@@ -1894,9 +1894,10 @@ class NodeDataFrame extends Array {
             mergedData.push(buildMergedRow(leftIdx, i));
           }
         } else {
-          // Create a row with nulls for left columns
-          const mergedRow = new Array(leftColumns.length).fill(null);
+          // Create a row with nulls for left columns, but keep the join key
+          // values from the right row (same as the outer join does)
           const rightRow = otherDataFrame.getRow(i);
+          const mergedRow = leftColumns.map(col => (joinKeys.includes(col) ? rightRow[col] : null));
           for (const col of rightColumnsToAdd) {
             mergedRow.push(rightRow[col]);
           }
