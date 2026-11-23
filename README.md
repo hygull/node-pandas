@@ -6,7 +6,7 @@
 
 [![npm version](https://img.shields.io/npm/v/node-pandas.svg?label=node-pandas&color=brightgreen)](https://www.npmjs.com/package/node-pandas)
 [![npm downloads](https://img.shields.io/npm/dm/node-pandas.svg)](https://www.npmjs.com/package/node-pandas)
-[![install size](https://packagephobia.com/badge?p=node-pandas)](https://packagephobia.com/result?p=node-pandas)
+[![unpacked size](https://img.shields.io/npm/unpacked-size/node-pandas)](https://packagephobia.com/result?p=node-pandas)
 [![license](https://img.shields.io/npm/l/node-pandas.svg)](./LICENSE)
 [![github stars](https://img.shields.io/github/stars/hygull/node-pandas?style=social)](https://github.com/hygull/node-pandas)
 
