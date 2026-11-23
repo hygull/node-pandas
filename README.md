@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/banner-devotional-krishna.svg" alt="node-pandas — Pandas for Node.js" width="100%" />
+  <img src="https://raw.githubusercontent.com/hygull/node-pandas/master/assets/banner-devotional-krishna.svg" alt="node-pandas — Pandas for Node.js" width="100%" />
 </p>
 
 # node-pandas
